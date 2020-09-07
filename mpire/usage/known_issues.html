@@ -185,7 +185,7 @@
 </div>
 <div class="section" id="unit-tests">
 <h2><a class="toc-backref" href="#id1">Unit tests</a><a class="headerlink" href="#unit-tests" title="Permalink to this headline">¶</a></h2>
-<p>When using the <code class="docutils literal notranslate"><span class="pre">'spawn'</span></code> or <code class="docutils literal notranslate"><span class="pre">'forkserver'</span></code> method you’ll probably run in to one or two issues when running
+<p>When using the <code class="docutils literal notranslate"><span class="pre">'spawn'</span></code> or <code class="docutils literal notranslate"><span class="pre">'forkserver'</span></code> method you’ll probably run into one or two issues when running
 unittests in your own package. One problem that might occur is that your unittests will restart whenever the piece of
 code containing such a start method is called, leading to very funky terminal output. To remedy this problem make sure
 your <code class="docutils literal notranslate"><span class="pre">setup</span></code> call in <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> is surrounded by an <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">__name__</span> <span class="pre">==</span> <span class="pre">'__main__':</span></code> clause:</p>
