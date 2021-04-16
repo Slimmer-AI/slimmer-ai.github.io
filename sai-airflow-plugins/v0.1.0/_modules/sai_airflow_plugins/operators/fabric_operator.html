@@ -1,0 +1,420 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>sai_airflow_plugins.operators.fabric_operator &mdash; sai-airflow-plugins 0.1.0
+ documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/banner.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> sai-airflow-plugins
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">sai-airflow-plugins documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Basic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">sai-airflow-plugins</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sai_airflow_plugins.operators.fabric_operator</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sai_airflow_plugins.operators.fabric_operator</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span> <span class="nn">airflow.exceptions</span> <span class="kn">import</span> <span class="n">AirflowException</span>
+<span class="kn">from</span> <span class="nn">airflow.models.baseoperator</span> <span class="kn">import</span> <span class="n">BaseOperator</span>
+<span class="kn">from</span> <span class="nn">airflow.utils.decorators</span> <span class="kn">import</span> <span class="n">apply_defaults</span>
+<span class="kn">from</span> <span class="nn">fabric</span> <span class="kn">import</span> <span class="n">Result</span>
+<span class="kn">from</span> <span class="nn">invoke</span> <span class="kn">import</span> <span class="n">Responder</span><span class="p">,</span> <span class="n">StreamWatcher</span>
+
+<span class="kn">from</span> <span class="nn">sai_airflow_plugins.hooks.fabric_hook</span> <span class="kn">import</span> <span class="n">FabricHook</span>
+
+
+<div class="viewcode-block" id="FabricOperator"><a class="viewcode-back" href="../../../reference.html#sai_airflow_plugins.operators.fabric_operator.FabricOperator">[docs]</a><span class="k">class</span> <span class="nc">FabricOperator</span><span class="p">(</span><span class="n">BaseOperator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Operator to execute commands on a remote host using the [Fabric](https://www.fabfile.org) library.</span>
+<span class="sd">    It uses `FabricHook` for the connection configuration, which is derived from the standard `SSHHook`.</span>
+
+<span class="sd">    The advantage of this operator over the standard `SSHOperator` is that you can add watchers that respond to</span>
+<span class="sd">    specific command output. A number of predefined watchers are included in this operator. Note, however, that</span>
+<span class="sd">    some of these require the FabricHook to be configured with a password and not a private key.</span>
+
+<span class="sd">    :param fabric_hook: predefined fabric_hook to use for remote execution. Either `fabric_hook` or `ssh_conn_id` needs</span>
+<span class="sd">                        to be provided.</span>
+<span class="sd">    :param ssh_conn_id: connection id from airflow Connections. `ssh_conn_id` will be ignored if `fabric_hook` is</span>
+<span class="sd">                        provided. (templated)</span>
+<span class="sd">    :param remote_host: remote host to connect. (templated) Nullable. If provided, it will replace the `remote_host`</span>
+<span class="sd">                        which was defined in `fabric_hook` or predefined in the connection of `ssh_conn_id`.</span>
+<span class="sd">    :param command: command to execute on remote host. (templated)</span>
+<span class="sd">    :param watchers: Watchers for responding to specific command output. This is a list of dicts specifying a class</span>
+<span class="sd">                     of type ``StreamWatcher`` and its arguments. For each dict the corresponding object is created</span>
+<span class="sd">                     and added to Fabric&#39;s run function. It&#39;s done this way because arguments to an operator are</span>
+<span class="sd">                     pickled and StreamWatcher objects are derived from thread.local which can&#39;t be pickled.</span>
+<span class="sd">                     Example:</span>
+<span class="sd">                     &gt;&gt;&gt; {&quot;watchers&quot;: [{&quot;class&quot;: Responder, &quot;pattern&quot;: r&quot;Continue\\?&quot;, &quot;response&quot;: &quot;yes\\n&quot;}]}</span>
+<span class="sd">                     See also: http://docs.pyinvoke.org/en/latest/concepts/watchers.html</span>
+<span class="sd">    :param add_sudo_password_responder: adds a responder for the sudo password prompt. It replies with the password of</span>
+<span class="sd">                                        the SSH connection. Set this to True if your command contains one or more sudo</span>
+<span class="sd">                                        statements.</span>
+<span class="sd">    :param add_generic_password_responder: adds a responder for a generic password prompt. It replies with the password</span>
+<span class="sd">                                           of the SSH connection. This is useful if you execute other ssh commands on</span>
+<span class="sd">                                           the remote host, for example scp and rsync.</span>
+<span class="sd">    :param add_unknown_host_key_responder: adds a responder for a host authenticity check with an unknown key.</span>
+<span class="sd">                                           It replies ``yes`` to continue connecting. This is useful if you execute</span>
+<span class="sd">                                           other ssh commands on the remote host, for example scp and rsync.</span>
+<span class="sd">    :param connect_timeout: Connection timeout, in seconds. The default is 10.</span>
+<span class="sd">    :param environment: a dict of shell environment variables. Note that the server will reject them silently if</span>
+<span class="sd">                        `AcceptEnv` is not set in SSH config. In such cases setting `inline_ssh_env` to True may help.</span>
+<span class="sd">                        (templated)</span>
+<span class="sd">    :param inline_ssh_env: whether to send environment variables &quot;inline&quot; as prefixes in front of command strings</span>
+<span class="sd">                           (export VARNAME=value &amp;&amp; mycommand here), instead of trying to submit them through the SSH</span>
+<span class="sd">                           protocol itself (which is the default behavior). This is necessary if the remote server</span>
+<span class="sd">                           has a restricted AcceptEnv setting (which is the common default).</span>
+<span class="sd">    :param xcom_push_key: push stdout to an XCom with this key. If None (default), or stdout is empty, then no XCom</span>
+<span class="sd">                          will be pushed.</span>
+<span class="sd">    :param get_pty: request a pseudo-terminal from the server. Set to ``True`` to have the remote process killed upon</span>
+<span class="sd">                    task timeout. The default is ``False`` but note that `get_pty` is forced to ``True`` when the</span>
+<span class="sd">                    `command` starts with ``sudo`` or `add_sudo_password_responder` is ``True``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">template_fields</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ssh_conn_id&quot;</span><span class="p">,</span> <span class="s2">&quot;command&quot;</span><span class="p">,</span> <span class="s2">&quot;remote_host&quot;</span><span class="p">,</span> <span class="s2">&quot;environment&quot;</span><span class="p">)</span>
+    <span class="n">template_ext</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.sh&quot;</span><span class="p">,)</span>
+    <span class="n">ui_color</span> <span class="o">=</span> <span class="s2">&quot;#ebfaff&quot;</span>
+
+    <span class="nd">@apply_defaults</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">fabric_hook</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FabricHook</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">ssh_conn_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">remote_host</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">command</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">watchers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">add_sudo_password_responder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">add_generic_password_responder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">add_unknown_host_key_responder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">connect_timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+                 <span class="n">environment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">inline_ssh_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">xcom_push_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">get_pty</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fabric_hook</span> <span class="o">=</span> <span class="n">fabric_hook</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ssh_conn_id</span> <span class="o">=</span> <span class="n">ssh_conn_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remote_host</span> <span class="o">=</span> <span class="n">remote_host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="n">command</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">watchers</span> <span class="o">=</span> <span class="n">watchers</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_sudo_password_responder</span> <span class="o">=</span> <span class="n">add_sudo_password_responder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_generic_password_responder</span> <span class="o">=</span> <span class="n">add_generic_password_responder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_unknown_host_key_responder</span> <span class="o">=</span> <span class="n">add_unknown_host_key_responder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect_timeout</span> <span class="o">=</span> <span class="n">connect_timeout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">environment</span> <span class="o">=</span> <span class="n">environment</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inline_ssh_env</span> <span class="o">=</span> <span class="n">inline_ssh_env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xcom_push_key</span> <span class="o">=</span> <span class="n">xcom_push_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_pty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;sudo&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_sudo_password_responder</span> <span class="ow">or</span> <span class="n">get_pty</span>
+
+<div class="viewcode-block" id="FabricOperator.execute"><a class="viewcode-back" href="../../../reference.html#sai_airflow_plugins.operators.fabric_operator.FabricOperator.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Executes ``self.command`` over the configured SSH connection.</span>
+
+<span class="sd">        :param context: Context dict provided by airflow</span>
+<span class="sd">        :return: True or the connection&#39;s stdout if ``self.do_xcom_push`` is True.</span>
+<span class="sd">                 On an error, raises AirflowException.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_fabric_command</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">exited</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Push the output to an XCom if requested</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xcom_push_key</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="p">:</span>
+                <span class="n">task_inst</span> <span class="o">=</span> <span class="n">context</span><span class="p">[</span><span class="s2">&quot;task_instance&quot;</span><span class="p">]</span>
+                <span class="n">task_inst</span><span class="o">.</span><span class="n">xcom_push</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xcom_push_key</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AirflowException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Command exited with return code </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">exited</span><span class="si">}</span><span class="s2">. See log output for details.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FabricOperator.execute_fabric_command"><a class="viewcode-back" href="../../../reference.html#sai_airflow_plugins.operators.fabric_operator.FabricOperator.execute_fabric_command">[docs]</a>    <span class="k">def</span> <span class="nf">execute_fabric_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Executes ``self.command`` over the configured SSH connection.</span>
+
+<span class="sd">        :return: The `Result` object from Fabric&#39;s `run` method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fabric_hook</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fabric_hook</span><span class="p">,</span> <span class="n">FabricHook</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssh_conn_id</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;ssh_conn_id is ignored when fabric_hook is provided.&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote_host</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;remote_host is provided explicitly. It will replace the remote_host which was &quot;</span>
+                                  <span class="s2">&quot;defined in fabric_hook.&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fabric_hook</span><span class="o">.</span><span class="n">remote_host</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote_host</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssh_conn_id</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;fabric_hook is not provided or invalid. Trying ssh_conn_id to create FabricHook.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote_host</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fabric_hook</span> <span class="o">=</span> <span class="n">FabricHook</span><span class="p">(</span><span class="n">ssh_conn_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ssh_conn_id</span><span class="p">,</span>
+                                                  <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connect_timeout</span><span class="p">,</span>
+                                                  <span class="n">inline_ssh_env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inline_ssh_env</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Prevent empty `SSHHook.remote_host` field which would otherwise raise an exception</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;remote_host is provided explicitly. It will replace the remote_host which was &quot;</span>
+                                  <span class="s2">&quot;predefined in the connection specified by ssh_conn_id.&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fabric_hook</span> <span class="o">=</span> <span class="n">FabricHook</span><span class="p">(</span><span class="n">ssh_conn_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ssh_conn_id</span><span class="p">,</span>
+                                                  <span class="n">remote_host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">remote_host</span><span class="p">,</span>
+                                                  <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connect_timeout</span><span class="p">,</span>
+                                                  <span class="n">inline_ssh_env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inline_ssh_env</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">AirflowException</span><span class="p">(</span><span class="s2">&quot;Cannot operate without fabric_hook or ssh_conn_id.&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">AirflowException</span><span class="p">(</span><span class="s2">&quot;SSH command not specified. Aborting.&quot;</span><span class="p">)</span>
+
+            <span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fabric_hook</span><span class="o">.</span><span class="n">get_fabric_conn</span><span class="p">()</span>
+
+            <span class="c1"># Create watcher objects, using the provided dictionary to instantiate the class and supply its kwargs</span>
+            <span class="n">watchers</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">watcher_dict</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">watchers</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">watcher_class</span> <span class="o">=</span> <span class="n">watcher_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Watcher class missing. Defaulting to </span><span class="si">{</span><span class="n">Responder</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                    <span class="n">watcher_class</span> <span class="o">=</span> <span class="n">Responder</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">watcher_class</span><span class="p">,</span> <span class="n">StreamWatcher</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">AirflowException</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The class attribute of a watcher dict must contain a subclass of </span><span class="si">{</span><span class="n">StreamWatcher</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="n">watcher</span> <span class="o">=</span> <span class="n">watcher_class</span><span class="p">(</span><span class="o">**</span><span class="n">watcher_dict</span><span class="p">)</span>
+                <span class="n">watchers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">watcher</span><span class="p">)</span>
+
+            <span class="c1"># Add predefined watchers</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_sudo_password_responder</span><span class="p">:</span>
+                <span class="n">watchers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fabric_hook</span><span class="o">.</span><span class="n">get_sudo_pass_responder</span><span class="p">())</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_generic_password_responder</span><span class="p">:</span>
+                <span class="n">watchers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fabric_hook</span><span class="o">.</span><span class="n">get_generic_pass_responder</span><span class="p">())</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_unknown_host_key_responder</span><span class="p">:</span>
+                <span class="n">watchers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fabric_hook</span><span class="o">.</span><span class="n">get_unknown_host_key_responder</span><span class="p">())</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running command: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">:</span>
+                <span class="n">formatted_env_msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;With environment variables:</span><span class="se">\n</span><span class="si">{</span><span class="n">formatted_env_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">conn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span>
+                <span class="n">pty</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_pty</span><span class="p">,</span>
+                <span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">,</span>
+                <span class="n">watchers</span><span class="o">=</span><span class="n">watchers</span><span class="p">,</span>
+                <span class="n">warn</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># don&#39;t directly raise an UnexpectedExit when the exit code is non-zero</span>
+            <span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AirflowException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fabric operator error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Slimmer.AI.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> Other Versions</span>
+        v: v0.1.0
+        <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        <dl>
+            <dt>Tags</dt>
+            <dd><a href="fabric_operator.html">v0.1.0</a></dd>
+        </dl>
+        <dl>
+            <dt>Branches</dt>
+            <dd><a href="../../../../main/index.html">main</a></dd>
+        </dl>
+    </div>
+</div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
