@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Setup &mdash; mpire 1.2.0 documentation</title>
+  <title>Setup &mdash; mpire 1.2.1 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                1.2.0
+                1.2.1
               </div>
             
           
@@ -458,7 +458,8 @@ import packages within the called function:</p>
 <h2><a class="toc-backref" href="#id8">Keep alive</a><a class="headerlink" href="#keep-alive" title="Permalink to this headline">¶</a></h2>
 <p>Workers can be kept alive in between consecutive map calls using the <code class="docutils literal notranslate"><span class="pre">keep_alive</span></code> flag. This is useful when your
 workers have a long startup time and you need to call one of the map functions multiple times. When either the function
-to execute or the <code class="docutils literal notranslate"><span class="pre">worker_lifespan</span></code> parameter changes MPIRE will ignore the flag as it needs to restart the workers.</p>
+to execute or the <code class="docutils literal notranslate"><span class="pre">worker_lifespan</span></code> parameter changes MPIRE will ignore the flag as it needs to restart the workers
+anyway.</p>
 <p>Building further on the worker state example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
@@ -558,10 +559,10 @@ to execute or the <code class="docutils literal notranslate"><span class="pre">w
             <dd><a href="../v1.1.2/usage/setup.html">v1.1.2</a></dd>
             <dd><a href="../v1.1.3/usage/setup.html">v1.1.3</a></dd>
             <dd><a href="../v1.2.0/usage/setup.html">v1.2.0</a></dd>
+            <dd><a href="../v1.2.1/usage/setup.html">v1.2.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
-            <dd><a href="../feature_keep_alive/usage/setup.html">feature/keep_alive</a></dd>
             <dd><a href="../master/usage/setup.html">master</a></dd>
         </dl>
     </div>
