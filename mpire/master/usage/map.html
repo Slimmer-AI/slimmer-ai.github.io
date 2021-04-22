@@ -4,10 +4,11 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Map family &mdash; mpire 1.1.3 documentation</title>
+  <title>Map family &mdash; mpire 1.2.0 documentation</title>
   
 
   
@@ -67,7 +68,7 @@
             
             
               <div class="version">
-                1.1.3
+                1.2.0
               </div>
             
           
@@ -173,7 +174,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="map-family">
+  <section id="map-family">
 <h1>Map family<a class="headerlink" href="#map-family" title="Permalink to this headline">¶</a></h1>
 <p>This section describes the different ways of interacting with a <a class="reference internal" href="../reference/index.html#mpire.WorkerPool" title="mpire.WorkerPool"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mpire.WorkerPool</span></code></a> object.</p>
 <div class="contents local topic" id="contents">
@@ -193,7 +194,7 @@
 <li><p><a class="reference internal" href="#multiple-progress-bars-with-nested-workerpools" id="id9">Multiple progress bars with nested WorkerPools</a></p></li>
 </ul>
 </div>
-<div class="section" id="map-family-of-functions">
+<section id="map-family-of-functions">
 <h2><a class="toc-backref" href="#id1">map family of functions</a><a class="headerlink" href="#map-family-of-functions" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="../reference/index.html#mpire.WorkerPool" title="mpire.WorkerPool"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mpire.WorkerPool</span></code></a> implements four types of parallel <code class="docutils literal notranslate"><span class="pre">map</span></code> functions, being:</p>
 <ul class="simple">
@@ -284,8 +285,8 @@ dictionary:</p>
 <p><a class="reference internal" href="../reference/index.html#mpire.utils.make_single_arguments" title="mpire.utils.make_single_arguments"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mpire.utils.make_single_arguments()</span></code></a> expects an iterable of arguments and converts them to tuples accordingly. The
 second argument of this function specifies if you want the function to return a generator or a materialized list. If we
 would like to return a generator we would need to pass on the iterable length as well.</p>
-</div>
-<div class="section" id="task-chunking">
+</section>
+<section id="task-chunking">
 <h2><a class="toc-backref" href="#id2">Task chunking</a><a class="headerlink" href="#task-chunking" title="Permalink to this headline">¶</a></h2>
 <p>By default, MPIRE chunks the given tasks in to four times the number of jobs chunks. Each worker is given one chunk of
 tasks at a time before returning its results. This usually makes processing faster when you have rather small tasks
@@ -331,10 +332,10 @@ last example uses a fixed chunk size of four, so MPIRE doesn’t need to know th
 <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,)]</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="numpy-arrays">
+</section>
+<section id="numpy-arrays">
 <h2><a class="toc-backref" href="#id3">Numpy arrays</a><a class="headerlink" href="#numpy-arrays" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="chunking">
+<section id="chunking">
 <h3><a class="toc-backref" href="#id4">Chunking</a><a class="headerlink" href="#chunking" title="Permalink to this headline">¶</a></h3>
 <p>Numpy arrays are treated a little bit differently when passed on to the <code class="docutils literal notranslate"><span class="pre">map</span></code> functions. Usually MPIRE uses
 <code class="docutils literal notranslate"><span class="pre">itertools.islice</span></code> for chunking, which depends on the <code class="docutils literal notranslate"><span class="pre">__iter__</span></code> special function of the container object. But
@@ -388,8 +389,8 @@ individually. Instead, MPIRE will chunk them in to something more reasonable usi
 </div>
 <p>Each chunk is now a single numpy array containing as many rows as the chunk size, except for the last chunk as there
 aren’t enough rows left.</p>
-</div>
-<div class="section" id="return-value">
+</section>
+<section id="return-value">
 <h3><a class="toc-backref" href="#id5">Return value</a><a class="headerlink" href="#return-value" title="Permalink to this headline">¶</a></h3>
 <p>When the user defined function returns numpy arrays and you’re applying the <a class="reference internal" href="../reference/index.html#mpire.WorkerPool.map" title="mpire.WorkerPool.map"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mpire.WorkerPool.map()</span></code></a> function MPIRE
 will concatenate the resulting numpy arrays to a single array by default. For example:</p>
@@ -431,9 +432,9 @@ will concatenate the resulting numpy arrays to a single array by default. For ex
  <span class="n">array</span><span class="p">([[</span><span class="mf">5.11783283</span><span class="p">,</span> <span class="mf">5.12585031</span><span class="p">,</span> <span class="mf">5.39864368</span><span class="p">]])]</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="maximum-number-of-active-tasks">
+</section>
+</section>
+<section id="maximum-number-of-active-tasks">
 <h2><a class="toc-backref" href="#id6">Maximum number of active tasks</a><a class="headerlink" href="#maximum-number-of-active-tasks" title="Permalink to this headline">¶</a></h2>
 <p>When you have tasks that take up a lot of memory you can limit the number of jobs or limit the number of active tasks
 (i.e., the number of tasks currently being available to the workers, tasks that are in the queue ready to be processed).
@@ -451,8 +452,8 @@ amount of active tasks.</p>
                        <span class="n">chunk_size</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e5</span><span class="p">),</span> <span class="n">max_tasks_active</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="worker-lifespan">
+</section>
+<section id="worker-lifespan">
 <h2><a class="toc-backref" href="#id7">Worker lifespan</a><a class="headerlink" href="#worker-lifespan" title="Permalink to this headline">¶</a></h2>
 <p>Occasionally, workers that process multiple, memory intensive tasks do not release their used up memory properly, which
 results in memory usage building up. This is not a bug in MPIRE, but a consequence of Python’s poor garbage collection.
@@ -464,8 +465,8 @@ of tasks) after which a worker should restart.</p>
 </pre></div>
 </div>
 <p>In this example each worker is restarted after finishing a single chunk of tasks.</p>
-</div>
-<div class="section" id="progress-bar">
+</section>
+<section id="progress-bar">
 <h2><a class="toc-backref" href="#id8">Progress bar</a><a class="headerlink" href="#progress-bar" title="Permalink to this headline">¶</a></h2>
 <p>Progress bar support is added through the <a class="reference external" href="https://pypi.python.org/pypi/tqdm">tqdm</a> package (installed by default when installing MPIRE). The most easy way
 to include a progress bar is by enabling the <code class="docutils literal notranslate"><span class="pre">progress_bar</span></code> flag in any of the <code class="docutils literal notranslate"><span class="pre">map</span></code> functions:</p>
@@ -488,8 +489,8 @@ the notebook.</p>
 <p>Please keep in mind that to show real-time progress information MPIRE starts an additional child process, which
 could consume a bit of the available compute power of your machine.</p>
 </div>
-</div>
-<div class="section" id="multiple-progress-bars-with-nested-workerpools">
+</section>
+<section id="multiple-progress-bars-with-nested-workerpools">
 <h2><a class="toc-backref" href="#id9">Multiple progress bars with nested WorkerPools</a><a class="headerlink" href="#multiple-progress-bars-with-nested-workerpools" title="Permalink to this headline">¶</a></h2>
 <p>In MPIRE you can easily print a progress bar on a different position on the terminal using the <code class="docutils literal notranslate"><span class="pre">progress_bar_position</span></code>
 parameter in the map functions, which facilitates the use of multiple progress bars. Here’s an example of using multiple
@@ -516,8 +517,8 @@ the main WorkerPool (which is the default).</p>
 notebook session. It’ll work but you’ll get some additional new lines in your output and it could be that your main
 progress bar won’t update as you would expect. Note that you can always use the MPIRE dashboard.</p>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
@@ -540,7 +541,7 @@ progress bar won’t update as you would expect. Note that you can always use th
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2020, Slimmer AI
+        &copy; Copyright 2021, Slimmer AI
 
     </p>
   </div>
@@ -573,9 +574,11 @@ progress bar won’t update as you would expect. Note that you can always use th
             <dt>Tags</dt>
             <dd><a href="../../v1.1.2/usage/map.html">v1.1.2</a></dd>
             <dd><a href="../../v1.1.3/usage/map.html">v1.1.3</a></dd>
+            <dd><a href="../../v1.2.0/usage/map.html">v1.2.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
+            <dd><a href="../../feature_keep_alive/usage/map.html">feature/keep_alive</a></dd>
             <dd><a href="map.html">master</a></dd>
         </dl>
     </div>

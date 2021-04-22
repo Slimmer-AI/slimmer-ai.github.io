@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>mpire.pool &mdash; mpire 1.1.3 documentation</title>
+  <title>mpire.pool &mdash; mpire 1.2.0 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.1.3
+                1.2.0
               </div>
             
           
@@ -166,7 +166,6 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">queue</span>
 <span class="kn">import</span> <span class="nn">signal</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -193,7 +192,7 @@
 
 <div class="viewcode-block" id="WorkerPool.__init__"><a class="viewcode-back" href="../../reference/index.html#mpire.WorkerPool.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">daemon</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cpu_ids</span><span class="p">:</span> <span class="n">CPUList</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">shared_objects</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pass_worker_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">use_worker_state</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-                 <span class="n">start_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;fork&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+                 <span class="n">start_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;fork&#39;</span><span class="p">,</span> <span class="n">keep_alive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param n_jobs: Number of workers to spawn. If ``None``, will use ``cpu_count()``</span>
 <span class="sd">        :param daemon: Whether to start the child processes as daemon</span>
@@ -213,6 +212,8 @@
 <span class="sd">            https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods for more information and</span>
 <span class="sd">            https://docs.python.org/3/library/multiprocessing.html#the-spawn-and-forkserver-start-methods for some</span>
 <span class="sd">            caveats when using the &#39;spawn&#39; or &#39;forkserver&#39; methods</span>
+<span class="sd">        :param keep_alive: When True it will keep workers alive after completing a map call, allowing to reuse workers</span>
+<span class="sd">            when map is called with the same function and worker lifespan multiple times in a row</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Set parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">=</span> <span class="n">n_jobs</span> <span class="ow">or</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
@@ -267,10 +268,13 @@
         <span class="c1"># Whether to let a worker have a worker state</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_worker_state</span> <span class="o">=</span> <span class="n">use_worker_state</span>
 
+        <span class="c1"># Whether to keep workers alive after completing a map call</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span> <span class="o">=</span> <span class="n">keep_alive</span>
+
         <span class="c1"># Whether or not an exception was caught by one of the child processes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exception_caught</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">_check_cpu_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cpu_ids</span><span class="p">:</span> <span class="n">CPUList</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_check_cpu_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cpu_ids</span><span class="p">:</span> <span class="n">CPUList</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Checks the cpu_ids parameter for correctness</span>
 
@@ -296,11 +300,11 @@
             <span class="n">min_cpu_id</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">for</span> <span class="n">cpu_id</span> <span class="ow">in</span> <span class="n">cpu_ids</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cpu_id</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                    <span class="n">converted_cpu_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">cpu_id</span><span class="p">)))</span>
+                    <span class="n">converted_cpu_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cpu_id</span><span class="p">)</span>
                     <span class="n">max_cpu_id</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_cpu_id</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">cpu</span> <span class="k">for</span> <span class="n">cpu</span> <span class="ow">in</span> <span class="n">cpu_id</span><span class="p">))</span>
                     <span class="n">min_cpu_id</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">min_cpu_id</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">cpu</span> <span class="k">for</span> <span class="n">cpu</span> <span class="ow">in</span> <span class="n">cpu_id</span><span class="p">))</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cpu_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-                    <span class="n">converted_cpu_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cpu_id</span><span class="p">))</span>
+                    <span class="n">converted_cpu_ids</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">cpu_id</span><span class="p">])</span>
                     <span class="n">max_cpu_id</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_cpu_id</span><span class="p">,</span> <span class="n">cpu_id</span><span class="p">)</span>
                     <span class="n">min_cpu_id</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">min_cpu_id</span><span class="p">,</span> <span class="n">cpu_id</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -353,6 +357,15 @@
 <span class="sd">        :param use_worker_state: Whether to let a worker have a worker state or not</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_worker_state</span> <span class="o">=</span> <span class="n">use_worker_state</span></div>
+
+<div class="viewcode-block" id="WorkerPool.set_keep_alive"><a class="viewcode-back" href="../../reference/index.html#mpire.WorkerPool.set_keep_alive">[docs]</a>    <span class="k">def</span> <span class="nf">set_keep_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keep_alive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set whether workers should be kept alive in between consecutive map calls.</span>
+
+<span class="sd">        :param keep_alive: When True it will keep workers alive after completing a map call, allowing to reuse workers</span>
+<span class="sd">            when map is called with the same function and worker lifespan multiple times in a row</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span> <span class="o">=</span> <span class="n">keep_alive</span></div>
 
 <div class="viewcode-block" id="WorkerPool.start_workers"><a class="viewcode-back" href="../../reference/index.html#mpire.WorkerPool.start_workers">[docs]</a>    <span class="k">def</span> <span class="nf">start_workers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_pointer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">worker_lifespan</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -408,8 +421,7 @@
 
             <span class="c1"># Pin CPU if desired</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpu_ids</span><span class="p">:</span>
-                <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s1">&#39;taskset -p -c </span><span class="si">%s</span><span class="s1"> </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cpu_ids</span><span class="p">[</span><span class="n">worker_id</span><span class="p">],</span> <span class="n">w</span><span class="o">.</span><span class="n">pid</span><span class="p">),</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span>
-                                <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">sched_setaffinity</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpu_ids</span><span class="p">[</span><span class="n">worker_id</span><span class="p">])</span>
 
             <span class="k">return</span> <span class="n">w</span>
 
@@ -803,8 +815,12 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterable_of_args</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="n">iterator_of_chunked_args</span> <span class="o">=</span> <span class="n">chunk_tasks</span><span class="p">(</span><span class="n">iterable_of_args</span><span class="p">,</span> <span class="n">n_tasks</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="n">n_splits</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
 
-        <span class="c1"># Start workers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">start_workers</span><span class="p">(</span><span class="n">func_pointer</span><span class="p">,</span> <span class="n">worker_lifespan</span><span class="p">)</span>
+        <span class="c1"># Start workers if there aren&#39;t any. If they already exist they must be restarted when either the function to</span>
+        <span class="c1"># execute or the worker lifespan changes</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span> <span class="ow">and</span> <span class="p">(</span><span class="n">func_pointer</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_pointer</span> <span class="ow">or</span> <span class="n">worker_lifespan</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">worker_lifespan</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stop_and_join</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start_workers</span><span class="p">(</span><span class="n">func_pointer</span><span class="p">,</span> <span class="n">worker_lifespan</span><span class="p">)</span>
 
         <span class="c1"># Create exception and progress bar handlers. The exception handler will receive any exceptions thrown by the</span>
         <span class="c1"># workers, terminates everything and re-raise an exceptoin in the main process. The progress bar handler will</span>
@@ -864,9 +880,10 @@
                 <span class="c1"># Restart workers if necessary</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_restart_workers</span><span class="p">()</span>
 
-            <span class="c1"># Clean up time</span>
+            <span class="c1"># Clean up time. When keep_alive is set to True we won&#39;t join the workers</span>
             <span class="n">exception_handler</span><span class="o">.</span><span class="n">raise_on_exception</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">stop_and_join</span><span class="p">()</span></div>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stop_and_join</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">_check_map_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable_of_args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">iterable_len</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
                               <span class="n">max_tasks_active</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">chunk_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">n_splits</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
@@ -958,7 +975,7 @@
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2020, Slimmer AI
+        &copy; Copyright 2021, Slimmer AI
 
     </p>
   </div>
@@ -991,9 +1008,11 @@
             <dt>Tags</dt>
             <dd><a href="../../v1.1.2/index.html">v1.1.2</a></dd>
             <dd><a href="../../v1.1.3/index.html">v1.1.3</a></dd>
+            <dd><a href="../../v1.2.0/index.html">v1.2.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
+            <dd><a href="../../feature_keep_alive/index.html">feature/keep_alive</a></dd>
             <dd><a href="../../master/_modules/mpire/pool.html">master</a></dd>
         </dl>
     </div>

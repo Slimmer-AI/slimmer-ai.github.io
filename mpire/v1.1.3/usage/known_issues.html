@@ -4,7 +4,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Known issues &mdash; mpire 1.1.3 documentation</title>
@@ -173,7 +174,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="known-issues">
+  <section id="known-issues">
 <h1>Known issues<a class="headerlink" href="#known-issues" title="Permalink to this headline">¶</a></h1>
 <p>This section describes the known issues in MPIRE.</p>
 <div class="contents local topic" id="contents">
@@ -183,7 +184,7 @@
 <li><p><a class="reference internal" href="#unpicklable-tasks-results" id="id2">Unpicklable tasks/results</a></p></li>
 </ul>
 </div>
-<div class="section" id="unit-tests">
+<section id="unit-tests">
 <h2><a class="toc-backref" href="#id1">Unit tests</a><a class="headerlink" href="#unit-tests" title="Permalink to this headline">¶</a></h2>
 <p>When using the <code class="docutils literal notranslate"><span class="pre">'spawn'</span></code> or <code class="docutils literal notranslate"><span class="pre">'forkserver'</span></code> method you’ll probably run in to one or two issues when running
 unittests in your own package. One problem that might occur is that your unittests will restart whenever the piece of
@@ -220,8 +221,8 @@ will see errors like:</p>
 </pre></div>
 </div>
 <p>This will work just fine. See the <a class="reference external" href="https://docs.python.org/3.4/library/unittest.html#command-line-interface">unittest</a> documentation for more information.</p>
-</div>
-<div class="section" id="unpicklable-tasks-results">
+</section>
+<section id="unpicklable-tasks-results">
 <h2><a class="toc-backref" href="#id2">Unpicklable tasks/results</a><a class="headerlink" href="#unpicklable-tasks-results" title="Permalink to this headline">¶</a></h2>
 <p>Sometimes you can encounter deadlocks in your code when using MPIRE. When you encounter this, it could well be that some
 tasks or results from your script can’t be pickled. MPIRE makes use of multiprocessing queues for inter-process
@@ -230,8 +231,8 @@ communication and if your function returns unpicklable results the queue will un
 quit gracefully when encountering a pickle error. However, this would mean objects would always be pickled twice. This
 would add a heavy performance penalty and is therefore not an acceptable solution. Instead, the user should make sure
 their tasks and results are always picklable (which in most cases won’t be a problem).</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
@@ -254,7 +255,7 @@ their tasks and results are always picklable (which in most cases won’t be a p
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2020, Sybren Jansen
+        &copy; Copyright 2021, Sybren Jansen
 
     </p>
   </div>
@@ -287,9 +288,11 @@ their tasks and results are always picklable (which in most cases won’t be a p
             <dt>Tags</dt>
             <dd><a href="../../v1.1.2/usage/known_issues.html">v1.1.2</a></dd>
             <dd><a href="known_issues.html">v1.1.3</a></dd>
+            <dd><a href="../../v1.2.0/usage/known_issues.html">v1.2.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
+            <dd><a href="../../feature_keep_alive/usage/known_issues.html">feature/keep_alive</a></dd>
             <dd><a href="../../master/usage/known_issues.html">master</a></dd>
         </dl>
     </div>

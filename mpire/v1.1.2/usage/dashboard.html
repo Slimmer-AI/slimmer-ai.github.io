@@ -4,7 +4,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Dashboard &mdash; mpire 1.1.2 documentation</title>
@@ -173,7 +174,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="dashboard">
+  <section id="dashboard">
 <h1>Dashboard<a class="headerlink" href="#dashboard" title="Permalink to this headline">¶</a></h1>
 <p>The dashboard allows you to see progress information from a browser. This is convenient when running scripts in a
 notebook or screen, or want to share the progress information with others.</p>
@@ -186,7 +187,7 @@ notebook or screen, or want to share the progress information with others.</p>
 <li><p><a class="reference internal" href="#using-the-dashboard" id="id3">Using the dashboard</a></p></li>
 </ul>
 </div>
-<div class="section" id="starting-the-dashboard">
+<section id="starting-the-dashboard">
 <h2><a class="toc-backref" href="#id1">Starting the dashboard</a><a class="headerlink" href="#starting-the-dashboard" title="Permalink to this headline">¶</a></h2>
 <p>You can start the dashboard programmatically:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mpire.dashboard</span> <span class="kn">import</span> <span class="n">start_dashboard</span>
@@ -223,8 +224,8 @@ Server is listening on localhost:8098
 <a class="reference internal" href="../reference/index.html#mpire.dashboard.start_dashboard" title="mpire.dashboard.start_dashboard"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mpire.dashboard.start_dashboard()</span></code></a>.</p>
 <p>The benefit of starting a dashboard this way is that your dashboard keeps running in case of errors in your script. You
 will be able to see what the error was, when it occurred and where it occurred in your code.</p>
-</div>
-<div class="section" id="connecting-to-an-existing-dashboard">
+</section>
+<section id="connecting-to-an-existing-dashboard">
 <h2><a class="toc-backref" href="#id2">Connecting to an existing dashboard</a><a class="headerlink" href="#connecting-to-an-existing-dashboard" title="Permalink to this headline">¶</a></h2>
 <p>If you have started a dashboard elsewhere, you can connect to it using:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mpire.dashboard</span> <span class="kn">import</span> <span class="n">connect_to_dashboard</span>
@@ -235,8 +236,8 @@ will be able to see what the error was, when it occurred and where it occurred i
 <p>Make sure you use the <code class="docutils literal notranslate"><span class="pre">manager_port_nr</span></code>, not the <code class="docutils literal notranslate"><span class="pre">dashboard_port_nr</span></code> in the examples above.</p>
 <p>You can connect to an existing dashboard on the same, but also on a remote machine (if the ports are open). If
 <code class="docutils literal notranslate"><span class="pre">manager_host</span></code> is omitted it will fall back to using <code class="docutils literal notranslate"><span class="pre">'localhost'</span></code>.</p>
-</div>
-<div class="section" id="using-the-dashboard">
+</section>
+<section id="using-the-dashboard">
 <h2><a class="toc-backref" href="#id3">Using the dashboard</a><a class="headerlink" href="#using-the-dashboard" title="Permalink to this headline">¶</a></h2>
 <p>When you have connected to a dashboard you don’t need to change anything to your code. When you have enabled the use of
 a progress bar in your <code class="docutils literal notranslate"><span class="pre">map</span></code> call the progress bar will automatically register itself to the dashboard server and show
@@ -251,7 +252,7 @@ up, like here:</p>
 </div>
 <p>This will show something like:</p>
 <a class=""
-               data-lightbox="group-1771a001-b03b-453a-bbca-536a598920a8"
+               data-lightbox="group-726b19e5-58c1-4ff2-a883-04415edaa2b3"
                href="../_images/mpire_dashboard1.png"
                title="MPIRE dashboard"
                data-title="MPIRE dashboard"
@@ -264,7 +265,7 @@ up, like here:</p>
 the screenshot above).</p>
 <p>It will let you know when a <code class="docutils literal notranslate"><span class="pre">KeyboardInterrupt</span></code> signal was send to the running process:</p>
 <a class=""
-               data-lightbox="group-f2924f24-db7e-4f30-81c9-b19b074c7532"
+               data-lightbox="group-b5675a56-9fdb-4ad4-bf1a-9c86489160eb"
                href="../_images/mpire_dashboard_keyboard_interrupt1.png"
                title="MPIRE dashboard - KeyboardInterrupt has been raised"
                data-title="MPIRE dashboard - KeyboardInterrupt has been raised"
@@ -275,7 +276,7 @@ the screenshot above).</p>
                      alt=""/>
                 </a><p>or show the traceback information in case of an exception:</p>
 <a class=""
-               data-lightbox="group-6c6e4560-da29-43eb-8eff-2ac9ca670b7e"
+               data-lightbox="group-f3763501-4131-4454-986a-8975abc5a65e"
                href="../_images/mpire_dashboard_error1.png"
                title="MPIRE dashboard - Error traceback"
                data-title="MPIRE dashboard - Error traceback"
@@ -285,8 +286,8 @@ the screenshot above).</p>
                      height="auto"
                      alt=""/>
                 </a><p>The dashboard will update automatically every 0.5 seconds.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
@@ -309,7 +310,7 @@ the screenshot above).</p>
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2020, Sybren Jansen
+        &copy; Copyright 2021, Sybren Jansen
 
     </p>
   </div>
@@ -342,9 +343,11 @@ the screenshot above).</p>
             <dt>Tags</dt>
             <dd><a href="dashboard.html">v1.1.2</a></dd>
             <dd><a href="../../v1.1.3/usage/dashboard.html">v1.1.3</a></dd>
+            <dd><a href="../../v1.2.0/usage/dashboard.html">v1.2.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
+            <dd><a href="../../feature_keep_alive/usage/dashboard.html">feature/keep_alive</a></dd>
             <dd><a href="../../master/usage/dashboard.html">master</a></dd>
         </dl>
     </div>
