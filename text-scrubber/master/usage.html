@@ -4,10 +4,11 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Basic usage &mdash; text-scrubber 0.1.1 documentation</title>
+  <title>Basic usage &mdash; text-scrubber 0.2.0 documentation</title>
   
 
   
@@ -62,7 +63,7 @@
             
             
               <div class="version">
-                0.1.1
+                0.2.0
               </div>
             
           
@@ -167,7 +168,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="basic-usage">
+  <section id="basic-usage">
 <h1>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <p class="topic-title">Contents</p>
@@ -180,7 +181,7 @@
 </li>
 </ul>
 </div>
-<div class="section" id="textscrubber">
+<section id="textscrubber">
 <h2><a class="toc-backref" href="#id1">TextScrubber</a><a class="headerlink" href="#textscrubber" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="reference.html#text_scrubber.text_scrubber.TextScrubber" title="text_scrubber.text_scrubber.TextScrubber"><code class="xref py py-obj docutils literal notranslate"><span class="pre">text_scrubber.text_scrubber.TextScrubber</span></code></a> class cleans a single or a collection of strings. It can be easily
 constructed and configured with building blocks:</p>
@@ -203,8 +204,8 @@ constructed and configured with building blocks:</p>
 </div>
 <p>For a complete list of building blocks please refer to the <a class="reference internal" href="reference.html#text_scrubber.text_scrubber.TextScrubber" title="text_scrubber.text_scrubber.TextScrubber"><code class="xref py py-obj docutils literal notranslate"><span class="pre">text_scrubber.text_scrubber.TextScrubber</span></code></a> API
 reference.</p>
-</div>
-<div class="section" id="geo">
+</section>
+<section id="geo">
 <h2><a class="toc-backref" href="#id2">Geo</a><a class="headerlink" href="#geo" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">text_scrubber.geo</span></code> module contains functions to normalize geographical data which deal with spelling errors,
 country name variations, etc.:</p>
@@ -242,7 +243,7 @@ country name variations, etc.:</p>
 <p>Whenever a country is considered part of another country <code class="docutils literal notranslate"><span class="pre">normalize_country</span></code> will return the latter.
 E.g., <code class="docutils literal notranslate"><span class="pre">Puerto</span> <span class="pre">Rico</span></code> is mapped to <code class="docutils literal notranslate"><span class="pre">United</span> <span class="pre">States</span></code> and <code class="docutils literal notranslate"><span class="pre">Greenland</span></code> to <code class="docutils literal notranslate"><span class="pre">Denmark</span></code>.</p>
 </div>
-<div class="section" id="cleaning">
+<section id="cleaning">
 <h3><a class="toc-backref" href="#id3">Cleaning</a><a class="headerlink" href="#cleaning" title="Permalink to this headline">¶</a></h3>
 <p>There are clean functions available for countries/states/cities, which all follow the same cleaning pipeline:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">text_scrubber.geo</span> <span class="kn">import</span> <span class="n">clean_country</span><span class="p">,</span> <span class="n">clean_state</span><span class="p">,</span> <span class="n">clean_city</span>
@@ -253,9 +254,9 @@ E.g., <code class="docutils literal notranslate"><span class="pre">Puerto</span>
 <span class="n">clean_city</span><span class="p">(</span><span class="s1">&#39;neustadt/westerwald&#39;</span><span class="p">)</span>  <span class="c1"># &#39;neustadt westerwald&#39;</span>
 </pre></div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>
@@ -278,7 +279,7 @@ E.g., <code class="docutils literal notranslate"><span class="pre">Puerto</span>
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2020, Slimmer AI
+        &copy; Copyright 2021, Slimmer AI
 
     </p>
   </div>
@@ -311,6 +312,7 @@ E.g., <code class="docutils literal notranslate"><span class="pre">Puerto</span>
             <dt>Tags</dt>
             <dd><a href="../v0.1/usage.html">v0.1</a></dd>
             <dd><a href="../v0.1.1/usage.html">v0.1.1</a></dd>
+            <dd><a href="../v0.2.0/usage.html">v0.2.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
