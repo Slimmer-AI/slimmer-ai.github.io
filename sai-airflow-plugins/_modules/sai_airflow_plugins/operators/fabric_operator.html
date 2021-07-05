@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>sai_airflow_plugins.operators.fabric_operator &mdash; sai-airflow-plugins 0.1.1
+  <title>sai_airflow_plugins.operators.fabric_operator &mdash; sai-airflow-plugins 0.1.2
  documentation</title>
   
 
@@ -376,9 +376,9 @@
                 <span class="n">run_kwargs</span><span class="p">[</span><span class="s2">&quot;password&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fabric_hook</span><span class="o">.</span><span class="n">password</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sudo_user</span><span class="p">:</span>
                     <span class="n">run_kwargs</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sudo_user</span>
-                <span class="n">res</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">sudo</span><span class="p">(</span><span class="n">run_kwargs</span><span class="p">)</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">sudo</span><span class="p">(</span><span class="o">**</span><span class="n">run_kwargs</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">res</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">run_kwargs</span><span class="p">)</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="o">**</span><span class="n">run_kwargs</span><span class="p">)</span>
 
             <span class="c1"># Strip stdout if requested</span>
             <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">stdout</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">strip_stdout</span><span class="p">:</span>
@@ -431,6 +431,7 @@
             <dt>Tags</dt>
             <dd><a href="../../../v0.1.0/index.html">v0.1.0</a></dd>
             <dd><a href="../../../v0.1.1/index.html">v0.1.1</a></dd>
+            <dd><a href="../../../v0.1.2/index.html">v0.1.2</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
