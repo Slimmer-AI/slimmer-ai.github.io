@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>sai_airflow_plugins.operators.fabric_operator &mdash; sai-airflow-plugins 0.1.0
+  <title>sai_airflow_plugins.operators.fabric_operator &mdash; sai-airflow-plugins 0.1.1
  documentation</title>
   
 
@@ -186,6 +186,11 @@
 <span class="sd">    :param remote_host: remote host to connect. (templated) Nullable. If provided, it will replace the `remote_host`</span>
 <span class="sd">                        which was defined in `fabric_hook` or predefined in the connection of `ssh_conn_id`.</span>
 <span class="sd">    :param command: command to execute on remote host. (templated)</span>
+<span class="sd">    :param use_sudo: uses Fabric&#39;s sudo function instead of run. Because this function automatically adds a responder</span>
+<span class="sd">                     for the password prompt, parameter `add_sudo_password_responder` will be ignored. It uses the</span>
+<span class="sd">                     SSH connection&#39;s password as reply.</span>
+<span class="sd">    :param sudo_user: If `use_sudo` is `True`, run the command as this user. If not supplied it will run as root.</span>
+<span class="sd">                      This parameter is ignored if `use_sudo` is `False`.</span>
 <span class="sd">    :param watchers: Watchers for responding to specific command output. This is a list of dicts specifying a class</span>
 <span class="sd">                     of type ``StreamWatcher`` and its arguments. For each dict the corresponding object is created</span>
 <span class="sd">                     and added to Fabric&#39;s run function. It&#39;s done this way because arguments to an operator are</span>
@@ -195,7 +200,7 @@
 <span class="sd">                     See also: http://docs.pyinvoke.org/en/latest/concepts/watchers.html</span>
 <span class="sd">    :param add_sudo_password_responder: adds a responder for the sudo password prompt. It replies with the password of</span>
 <span class="sd">                                        the SSH connection. Set this to True if your command contains one or more sudo</span>
-<span class="sd">                                        statements.</span>
+<span class="sd">                                        statements. If you use `use_sudo` instead, then don&#39;t use this parameter.</span>
 <span class="sd">    :param add_generic_password_responder: adds a responder for a generic password prompt. It replies with the password</span>
 <span class="sd">                                           of the SSH connection. This is useful if you execute other ssh commands on</span>
 <span class="sd">                                           the remote host, for example scp and rsync.</span>
@@ -212,9 +217,11 @@
 <span class="sd">                           has a restricted AcceptEnv setting (which is the common default).</span>
 <span class="sd">    :param xcom_push_key: push stdout to an XCom with this key. If None (default), or stdout is empty, then no XCom</span>
 <span class="sd">                          will be pushed.</span>
-<span class="sd">    :param get_pty: request a pseudo-terminal from the server. Set to ``True`` to have the remote process killed upon</span>
-<span class="sd">                    task timeout. The default is ``False`` but note that `get_pty` is forced to ``True`` when the</span>
-<span class="sd">                    `command` starts with ``sudo`` or `add_sudo_password_responder` is ``True``.</span>
+<span class="sd">    :param strip_stdout: strip leading and trailing whitespace from stdout. Useful, for example, when pushing stdout</span>
+<span class="sd">                         to an XCom and you don&#39;t want a trailing newline in it.</span>
+<span class="sd">    :param get_pty: request a pseudo-terminal from the server, instead of connecting directly to the stdout/stderr</span>
+<span class="sd">                    streams. This may be necessary when running programs that require a terminal. Note that stderr</span>
+<span class="sd">                    output will be included in stdout, and thus added to an XCom when using `xcom_push_key`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">template_fields</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ssh_conn_id&quot;</span><span class="p">,</span> <span class="s2">&quot;command&quot;</span><span class="p">,</span> <span class="s2">&quot;remote_host&quot;</span><span class="p">,</span> <span class="s2">&quot;environment&quot;</span><span class="p">)</span>
@@ -227,6 +234,8 @@
                  <span class="n">ssh_conn_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">remote_host</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">command</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">use_sudo</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">sudo_user</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">watchers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">add_sudo_password_responder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">add_generic_password_responder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -235,6 +244,7 @@
                  <span class="n">environment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">inline_ssh_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">xcom_push_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">strip_stdout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">get_pty</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="o">*</span><span class="n">args</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -243,15 +253,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ssh_conn_id</span> <span class="o">=</span> <span class="n">ssh_conn_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remote_host</span> <span class="o">=</span> <span class="n">remote_host</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="n">command</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_sudo</span> <span class="o">=</span> <span class="n">use_sudo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sudo_user</span> <span class="o">=</span> <span class="n">sudo_user</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">watchers</span> <span class="o">=</span> <span class="n">watchers</span> <span class="ow">or</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_sudo_password_responder</span> <span class="o">=</span> <span class="n">add_sudo_password_responder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_sudo_password_responder</span> <span class="o">=</span> <span class="kc">False</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_sudo</span> <span class="k">else</span> <span class="n">add_sudo_password_responder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_generic_password_responder</span> <span class="o">=</span> <span class="n">add_generic_password_responder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_unknown_host_key_responder</span> <span class="o">=</span> <span class="n">add_unknown_host_key_responder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">connect_timeout</span> <span class="o">=</span> <span class="n">connect_timeout</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">environment</span> <span class="o">=</span> <span class="n">environment</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inline_ssh_env</span> <span class="o">=</span> <span class="n">inline_ssh_env</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xcom_push_key</span> <span class="o">=</span> <span class="n">xcom_push_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">get_pty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;sudo&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_sudo_password_responder</span> <span class="ow">or</span> <span class="n">get_pty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strip_stdout</span> <span class="o">=</span> <span class="n">strip_stdout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_pty</span> <span class="o">=</span> <span class="n">get_pty</span>
 
 <div class="viewcode-block" id="FabricOperator.execute"><a class="viewcode-back" href="../../../reference.html#sai_airflow_plugins.operators.fabric_operator.FabricOperator.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -339,18 +352,39 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_unknown_host_key_responder</span><span class="p">:</span>
                 <span class="n">watchers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fabric_hook</span><span class="o">.</span><span class="n">get_unknown_host_key_responder</span><span class="p">())</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running command: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_sudo</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sudo_user</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running sudo command as &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sudo_user</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running sudo command: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running command: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">:</span>
                 <span class="n">formatted_env_msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;With environment variables:</span><span class="se">\n</span><span class="si">{</span><span class="n">formatted_env_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-            <span class="k">return</span> <span class="n">conn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="n">run_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
                 <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span>
                 <span class="n">pty</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_pty</span><span class="p">,</span>
                 <span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">,</span>
                 <span class="n">watchers</span><span class="o">=</span><span class="n">watchers</span><span class="p">,</span>
                 <span class="n">warn</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># don&#39;t directly raise an UnexpectedExit when the exit code is non-zero</span>
             <span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_sudo</span><span class="p">:</span>
+                <span class="n">run_kwargs</span><span class="p">[</span><span class="s2">&quot;password&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fabric_hook</span><span class="o">.</span><span class="n">password</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sudo_user</span><span class="p">:</span>
+                    <span class="n">run_kwargs</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sudo_user</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">sudo</span><span class="p">(</span><span class="n">run_kwargs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">run_kwargs</span><span class="p">)</span>
+
+            <span class="c1"># Strip stdout if requested</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">stdout</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">strip_stdout</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="k">return</span> <span class="n">res</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">AirflowException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fabric operator error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div></div>
@@ -396,9 +430,11 @@
         <dl>
             <dt>Tags</dt>
             <dd><a href="../../../v0.1.0/index.html">v0.1.0</a></dd>
+            <dd><a href="../../../v0.1.1/index.html">v0.1.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
+            <dd><a href="../../../add_fabric_sudo_function/index.html">add_fabric_sudo_function</a></dd>
             <dd><a href="../../../main/_modules/sai_airflow_plugins/operators/fabric_operator.html">main</a></dd>
         </dl>
     </div>

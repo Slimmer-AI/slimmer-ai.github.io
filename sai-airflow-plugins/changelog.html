@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Changelog &mdash; sai-airflow-plugins 0.1.0
+  <title>Changelog &mdash; sai-airflow-plugins 0.1.1
  documentation</title>
   
 
@@ -95,6 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">0.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">0.1.1</a></li>
 </ul>
 </li>
 </ul>
@@ -198,6 +199,16 @@
 </li>
 </ul>
 </div>
+<div class="section" id="id2">
+<h2>0.1.1<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p><em>(2021-07-05)</em></p>
+<ul class="simple">
+<li><p>Added parameters <cite>use_sudo</cite>, <cite>sudo_user</cite> and <cite>strip_stdout</cite> to
+<a class="reference internal" href="reference.html#sai_airflow_plugins.operators.fabric_operator.FabricOperator" title="sai_airflow_plugins.operators.fabric_operator.FabricOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">FabricOperator</span></code></a></p></li>
+<li><p>Parameter <cite>get_pty</cite> in <a class="reference internal" href="reference.html#sai_airflow_plugins.operators.fabric_operator.FabricOperator" title="sai_airflow_plugins.operators.fabric_operator.FabricOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">FabricOperator</span></code></a> is no longer
+automatically set to True when running a sudo command</p></li>
+</ul>
+</div>
 </div>
 
 
@@ -244,9 +255,11 @@
         <dl>
             <dt>Tags</dt>
             <dd><a href="v0.1.0/changelog.html">v0.1.0</a></dd>
+            <dd><a href="v0.1.1/changelog.html">v0.1.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
+            <dd><a href="add_fabric_sudo_function/changelog.html">add_fabric_sudo_function</a></dd>
             <dd><a href="main/changelog.html">main</a></dd>
         </dl>
     </div>

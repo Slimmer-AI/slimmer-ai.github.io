@@ -1,0 +1,277 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>sai_airflow_plugins.operators.conditional_operators &mdash; sai-airflow-plugins 0.1.1
+ documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/banner.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> sai-airflow-plugins
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">sai-airflow-plugins documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Basic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">sai-airflow-plugins</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sai_airflow_plugins.operators.conditional_operators</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sai_airflow_plugins.operators.conditional_operators</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">airflow.operators.bash_operator</span> <span class="kn">import</span> <span class="n">BashOperator</span>
+<span class="kn">from</span> <span class="nn">airflow.operators.dagrun_operator</span> <span class="kn">import</span> <span class="n">TriggerDagRunOperator</span>
+<span class="kn">from</span> <span class="nn">airflow.operators.python_operator</span> <span class="kn">import</span> <span class="n">PythonOperator</span>
+
+<span class="kn">from</span> <span class="nn">sai_airflow_plugins.operators.conditional_skip_mixin</span> <span class="kn">import</span> <span class="n">ConditionalSkipMixin</span>
+<span class="kn">from</span> <span class="nn">sai_airflow_plugins.operators.fabric_operator</span> <span class="kn">import</span> <span class="n">FabricOperator</span>
+
+
+<div class="viewcode-block" id="ConditionalBashOperator"><a class="viewcode-back" href="../../../reference.html#sai_airflow_plugins.operators.conditional_operators.ConditionalBashOperator">[docs]</a><span class="k">class</span> <span class="nc">ConditionalBashOperator</span><span class="p">(</span><span class="n">ConditionalSkipMixin</span><span class="p">,</span> <span class="n">BashOperator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Conditional bash operator.</span>
+
+<span class="sd">    .. seealso:: :class:`~sai_airflow_plugins.operators.conditional_skip_mixin.ConditionalSkipMixin` and</span>
+<span class="sd">                 :class:`~airflow.operators.bash_operator.BashOperator`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">template_fields</span> <span class="o">=</span> <span class="n">BashOperator</span><span class="o">.</span><span class="n">template_fields</span> <span class="o">+</span> <span class="n">ConditionalSkipMixin</span><span class="o">.</span><span class="n">template_fields</span>
+    <span class="n">ui_color</span> <span class="o">=</span> <span class="s2">&quot;#ede4ff&quot;</span></div>
+
+
+<div class="viewcode-block" id="ConditionalPythonOperator"><a class="viewcode-back" href="../../../reference.html#sai_airflow_plugins.operators.conditional_operators.ConditionalPythonOperator">[docs]</a><span class="k">class</span> <span class="nc">ConditionalPythonOperator</span><span class="p">(</span><span class="n">ConditionalSkipMixin</span><span class="p">,</span> <span class="n">PythonOperator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Conditional python operator.</span>
+
+<span class="sd">    .. seealso:: :class:`~sai_airflow_plugins.operators.conditional_skip_mixin.ConditionalSkipMixin` and</span>
+<span class="sd">                 :class:`~airflow.operators.python_operator.PythonOperator`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">template_fields</span> <span class="o">=</span> <span class="n">PythonOperator</span><span class="o">.</span><span class="n">template_fields</span> <span class="o">+</span> <span class="n">ConditionalSkipMixin</span><span class="o">.</span><span class="n">template_fields</span>
+    <span class="n">ui_color</span> <span class="o">=</span> <span class="s2">&quot;#ffebff&quot;</span></div>
+
+
+<div class="viewcode-block" id="ConditionalTriggerDagRunOperator"><a class="viewcode-back" href="../../../reference.html#sai_airflow_plugins.operators.conditional_operators.ConditionalTriggerDagRunOperator">[docs]</a><span class="k">class</span> <span class="nc">ConditionalTriggerDagRunOperator</span><span class="p">(</span><span class="n">ConditionalSkipMixin</span><span class="p">,</span> <span class="n">TriggerDagRunOperator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Conditional trigger DAG run operator.</span>
+
+<span class="sd">    .. seealso:: :class:`~sai_airflow_plugins.operators.conditional_skip_mixin.ConditionalSkipMixin` and</span>
+<span class="sd">                 :class:`~airflow.operators.dagrun_operator.TriggerDagRunOperator`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">template_fields</span> <span class="o">=</span> <span class="n">TriggerDagRunOperator</span><span class="o">.</span><span class="n">template_fields</span> <span class="o">+</span> <span class="n">ConditionalSkipMixin</span><span class="o">.</span><span class="n">template_fields</span>
+    <span class="n">ui_color</span> <span class="o">=</span> <span class="s2">&quot;#efeaff&quot;</span></div>
+
+
+<div class="viewcode-block" id="ConditionalFabricOperator"><a class="viewcode-back" href="../../../reference.html#sai_airflow_plugins.operators.conditional_operators.ConditionalFabricOperator">[docs]</a><span class="k">class</span> <span class="nc">ConditionalFabricOperator</span><span class="p">(</span><span class="n">ConditionalSkipMixin</span><span class="p">,</span> <span class="n">FabricOperator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Conditional Fabric operator.</span>
+
+<span class="sd">    .. seealso:: :class:`~sai_airflow_plugins.operators.conditional_skip_mixin.ConditionalSkipMixin` and</span>
+<span class="sd">                 :class:`~sai_airflow_plugins.operators.fabric_operator.FabricOperator`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">template_fields</span> <span class="o">=</span> <span class="n">FabricOperator</span><span class="o">.</span><span class="n">template_fields</span> <span class="o">+</span> <span class="n">ConditionalSkipMixin</span><span class="o">.</span><span class="n">template_fields</span>
+    <span class="n">ui_color</span> <span class="o">=</span> <span class="s2">&quot;#feffe5&quot;</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Slimmer.AI.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> Other Versions</span>
+        v: add_fabric_sudo_function
+        <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        <dl>
+            <dt>Tags</dt>
+            <dd><a href="../../../../v0.1.0/index.html">v0.1.0</a></dd>
+            <dd><a href="../../../../v0.1.1/index.html">v0.1.1</a></dd>
+        </dl>
+        <dl>
+            <dt>Branches</dt>
+            <dd><a href="conditional_operators.html">add_fabric_sudo_function</a></dd>
+            <dd><a href="../../../../main/index.html">main</a></dd>
+        </dl>
+    </div>
+</div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
