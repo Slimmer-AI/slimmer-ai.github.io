@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>API reference &mdash; sai-airflow-plugins 0.1.2
+  <title>API reference &mdash; sai-airflow-plugins 0.1.3
  documentation</title>
   
 
@@ -259,46 +259,6 @@ connecting. This is useful if you execute other ssh commands on the remote host,
 
 </dd></dl>
 
-<span class="target" id="module-sai_airflow_plugins.hooks.mattermost_webhook_hook"></span><dl class="py class">
-<dt id="sai_airflow_plugins.hooks.mattermost_webhook_hook.MattermostWebhookHook">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">sai_airflow_plugins.hooks.mattermost_webhook_hook.</span></code><code class="sig-name descname"><span class="pre">MattermostWebhookHook</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">http_conn_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">webhook_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">props</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon_emoji</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon_url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sai_airflow_plugins/hooks/mattermost_webhook_hook.html#MattermostWebhookHook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sai_airflow_plugins.hooks.mattermost_webhook_hook.MattermostWebhookHook" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">airflow.providers.http.hooks.http.HttpHook</span></code></p>
-<p>This hook allows you to post messages to Mattermost using incoming webhooks.
-It takes either a Mattermost webhook token directly or a connection that has a Mattermost webhook token.
-If both are supplied, http_conn_id will be used as base_url, and webhook_token will be taken as endpoint,
-the relative path of the url.</p>
-<p>Each Mattermost webhook token can be pre-configured to use a specific channel, username and icon. You can override
-these defaults in this hook.</p>
-<p>This hook is based on <cite>airflow.contrib.hooks.SlackWebhookHook</cite> as the Mattermost interface is largely similar
-to that of Slack.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>http_conn_id</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – connection that optionally has a Mattermost webhook token in the extra field</p></li>
-<li><p><strong>webhook_token</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Mattermost webhook token. If http_conn_id isn’t supplied this should be the full webhook url.</p></li>
-<li><p><strong>message</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The message you want to send on Mattermost</p></li>
-<li><p><strong>attachments</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]]) – The attachments to send on Mattermost. Should be a list of dictionaries representing
-Mattermost attachments.</p></li>
-<li><p><strong>props</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]) – The props to send on Mattermost. Should be a dictionary representing Mattermost props.</p></li>
-<li><p><strong>post_type</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Sets an optional Mattermost post type, mainly for use by plugins. If supplied, must begin with
-“<a href="#id4"><span class="problematic" id="id5">custom_</span></a>”</p></li>
-<li><p><strong>channel</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The channel the message should be posted to</p></li>
-<li><p><strong>username</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The username to post with</p></li>
-<li><p><strong>icon_emoji</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The emoji to use as icon for the user posting to Mattermost</p></li>
-<li><p><strong>icon_url</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The icon image URL string to use in place of the default icon.</p></li>
-<li><p><strong>proxy</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Proxy to use to make the Mattermost webhook call</p></li>
-<li><p><strong>extra_options</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]) – Extra options for http hook</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="sai_airflow_plugins.hooks.mattermost_webhook_hook.MattermostWebhookHook.execute">
-<code class="sig-name descname"><span class="pre">execute</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sai_airflow_plugins/hooks/mattermost_webhook_hook.html#MattermostWebhookHook.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sai_airflow_plugins.hooks.mattermost_webhook_hook.MattermostWebhookHook.execute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Execute the Mattermost webhook call</p>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 <div class="section" id="module-sai_airflow_plugins.operators.fabric_operator">
 <span id="sai-airflow-plugins-operators"></span><h2><a class="toc-backref" href="#id2">sai_airflow_plugins.operators</a><a class="headerlink" href="#module-sai_airflow_plugins.operators.fabric_operator" title="Permalink to this headline">¶</a></h2>
@@ -402,51 +362,6 @@ On an error, raises AirflowException.</p>
 <dl class="py attribute">
 <dt id="sai_airflow_plugins.operators.fabric_operator.FabricOperator.ui_color">
 <code class="sig-name descname"><span class="pre">ui_color</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'#ebfaff'</span></em><a class="headerlink" href="#sai_airflow_plugins.operators.fabric_operator.FabricOperator.ui_color" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<span class="target" id="module-sai_airflow_plugins.operators.mattermost_webhook_operator"></span><dl class="py class">
-<dt id="sai_airflow_plugins.operators.mattermost_webhook_operator.MattermostWebhookOperator">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">sai_airflow_plugins.operators.mattermost_webhook_operator.</span></code><code class="sig-name descname"><span class="pre">MattermostWebhookOperator</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">http_conn_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">webhook_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">props</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon_emoji</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon_url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sai_airflow_plugins/operators/mattermost_webhook_operator.html#MattermostWebhookOperator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sai_airflow_plugins.operators.mattermost_webhook_operator.MattermostWebhookOperator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">airflow.providers.http.operators.http.SimpleHttpOperator</span></code></p>
-<p>This operator allows you to post messages to Mattermost using incoming webhooks.
-It takes either a Mattermost webhook token directly or a connection that has a Mattermost webhook token.
-If both are supplied, http_conn_id will be used as base_url, and webhook_token will be taken as endpoint,
-the relative path of the url.</p>
-<p>Each Mattermost webhook token can be pre-configured to use a specific channel, username and icon. You can override
-these defaults in this operator.</p>
-<p>This operator is based on <cite>airflow.contrib.operators.SlackWebhookOperator</cite> as the Mattermost interface is largely
-similar to that of Slack.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>http_conn_id</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – connection that optionally has a Mattermost webhook token in the extra field</p></li>
-<li><p><strong>webhook_token</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Mattermost webhook token. If http_conn_id isn’t supplied this should be the full webhook url.</p></li>
-<li><p><strong>message</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The message you want to send on Mattermost</p></li>
-<li><p><strong>attachments</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]]) – The attachments to send on Mattermost. Should be a list of dictionaries representing
-Mattermost attachments.</p></li>
-<li><p><strong>props</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]) – The props to send on Mattermost. Should be a dictionary representing Mattermost props.</p></li>
-<li><p><strong>post_type</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Sets an optional Mattermost post type, mainly for use by plugins. If supplied, must begin with
-“<a href="#id6"><span class="problematic" id="id7">custom_</span></a>”</p></li>
-<li><p><strong>channel</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The channel the message should be posted to</p></li>
-<li><p><strong>username</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The username to post with</p></li>
-<li><p><strong>icon_emoji</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The emoji to use as icon for the user posting to Mattermost</p></li>
-<li><p><strong>icon_url</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The icon image URL string to use in place of the default icon.</p></li>
-<li><p><strong>proxy</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Proxy to use to make the Mattermost webhook call</p></li>
-<li><p><strong>extra_options</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]) – Extra options for http hook</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="sai_airflow_plugins.operators.mattermost_webhook_operator.MattermostWebhookOperator.execute">
-<code class="sig-name descname"><span class="pre">execute</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sai_airflow_plugins/operators/mattermost_webhook_operator.html#MattermostWebhookOperator.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sai_airflow_plugins.operators.mattermost_webhook_operator.MattermostWebhookOperator.execute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call the MattermostWebhookHook to post the provided Mattermost message</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="sai_airflow_plugins.operators.mattermost_webhook_operator.MattermostWebhookOperator.template_fields">
-<code class="sig-name descname"><span class="pre">template_fields</span></code><em class="property"><span class="pre">:</span> <span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">['webhook_token',</span> <span class="pre">'message',</span> <span class="pre">'attachments',</span> <span class="pre">'props',</span> <span class="pre">'post_type',</span> <span class="pre">'channel',</span> <span class="pre">'username',</span> <span class="pre">'proxy',</span> <span class="pre">'extra_options']</span></em><a class="headerlink" href="#sai_airflow_plugins.operators.mattermost_webhook_operator.MattermostWebhookOperator.template_fields" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -769,6 +684,7 @@ only if the exit code is 0. Like <cite>FabricOperator</cite> it uses a standard 
             <dd><a href="v0.1.0/reference.html">v0.1.0</a></dd>
             <dd><a href="v0.1.1/reference.html">v0.1.1</a></dd>
             <dd><a href="v0.1.2/reference.html">v0.1.2</a></dd>
+            <dd><a href="v0.1.3/reference.html">v0.1.3</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
