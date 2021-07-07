@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to the MPIRE documentation! &mdash; mpire 1.2.2 documentation</title>
+  <title>Welcome to the MPIRE documentation! &mdash; mpire 2.0.0 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.2.2
+                2.0.0
               </div>
             
           
@@ -97,7 +97,9 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage/index.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 </ul>
@@ -169,14 +171,20 @@
 <h1>Welcome to the MPIRE documentation!<a class="headerlink" href="#welcome-to-the-mpire-documentation" title="Permalink to this headline">¶</a></h1>
 <p>MPIRE, short for MultiProcessing Is Really Easy, is a Python package for multiprocessing, but faster and more
 user-friendly than the default multiprocessing package. It combines the convenient map like functions of
-<code class="docutils literal notranslate"><span class="pre">multiprocessing.Pool</span></code> with the benefits of using copy-on-write shared objects of <code class="docutils literal notranslate"><span class="pre">multiprocessing.Process</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">multiprocessing.Pool</span></code> with the benefits of using copy-on-write shared objects of <code class="docutils literal notranslate"><span class="pre">multiprocessing.Process</span></code>,
+together with easy-to-use worker state, worker insights, and progress bar functionality.</p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Multiprocessing with map/map_unordered/imap/imap_unordered functions</p></li>
 <li><p>Easy use of copy-on-write shared objects with a pool of workers</p></li>
-<li><p>Each worker can have its own state (e.g., to load a memory-intensive model only once for each worker without the
-need of sending it through a queue)</p></li>
+<li><p>Each worker can have its own state and with convenient worker init and exit functionality this state can be easily
+manipulated (e.g., to load a memory-intensive model only once for each worker without the need of sending it through a
+queue)</p></li>
+<li><p>Progress bar support using <a class="reference external" href="https://tqdm.github.io/">tqdm</a></p></li>
+<li><p>Progress dashboard support</p></li>
+<li><p>Graceful and user-friendly exception handling</p></li>
+<li><p>Worker insights gives you insight in your multiprocessing efficiency</p></li>
 <li><p>Automatic task chunking for all available map functions to speed up processing of small task queues (including numpy
 arrays)</p></li>
 <li><p>Adjustable maximum number of active tasks to avoid memory problems</p></li>
@@ -184,11 +192,8 @@ arrays)</p></li>
 <li><p>Nested pool of workers are allowed when setting the <code class="docutils literal notranslate"><span class="pre">daemon</span></code> option</p></li>
 <li><p>Child processes can be pinned to specific or a range of CPUs</p></li>
 <li><p>Multiple process start methods available, including: <code class="docutils literal notranslate"><span class="pre">fork</span></code> (default), <code class="docutils literal notranslate"><span class="pre">forkserver</span></code>, <code class="docutils literal notranslate"><span class="pre">spawn</span></code>, and <code class="docutils literal notranslate"><span class="pre">threading</span></code></p></li>
-<li><p>Progress bar support using <a class="reference external" href="https://tqdm.github.io/">tqdm</a></p></li>
-<li><p>Progress dashboard support</p></li>
-<li><p>(Optional) <a class="reference external" href="https://pypi.org/project/dill/">dill</a> support</p></li>
+<li><p>Uses <a class="reference external" href="https://pypi.org/project/dill/">dill</a> as serialization backend through <a class="reference external" href="https://github.com/uqfoundation/multiprocess">multiprocess</a>, enabling parallelizing functions in iPython (notebooks)</p></li>
 </ul>
-<p>If you have any issues or suggestions please inform the author.</p>
 </section>
 <section id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
@@ -197,13 +202,14 @@ arrays)</p></li>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage/index.html">Usage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="usage/setup.html">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/worker_pool.html">WorkerPool</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/map.html">Map family</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/dashboard.html">Dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage/known_issues.html">Known issues</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 </ul>
@@ -266,6 +272,7 @@ arrays)</p></li>
             <dd><a href="v1.2.0/index.html">v1.2.0</a></dd>
             <dd><a href="v1.2.1/index.html">v1.2.1</a></dd>
             <dd><a href="v1.2.2/index.html">v1.2.2</a></dd>
+            <dd><a href="v2.0.0/index.html">v2.0.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

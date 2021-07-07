@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Map family &mdash; mpire 1.2.2 documentation</title>
+  <title>Map family &mdash; mpire 2.0.0 documentation</title>
   
 
   
@@ -44,7 +44,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Dashboard" href="dashboard.html" />
-    <link rel="prev" title="Setup" href="setup.html" /> 
+    <link rel="prev" title="WorkerPool" href="worker_pool.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                1.2.2
+                2.0.0
               </div>
             
           
@@ -98,13 +98,14 @@
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Usage</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="setup.html">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="worker_pool.html">WorkerPool</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Map family</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dashboard.html">Dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="known_issues.html">Known issues</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting.html">Troubleshooting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
 </ul>
@@ -176,26 +177,28 @@
             
   <section id="map-family">
 <h1>Map family<a class="headerlink" href="#map-family" title="Permalink to this headline">¶</a></h1>
-<p>This section describes the different ways of interacting with a <a class="reference internal" href="../reference/index.html#mpire.WorkerPool" title="mpire.WorkerPool"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mpire.WorkerPool</span></code></a> object.</p>
+<p>This section describes the different ways of interacting with a <a class="reference internal" href="../reference/index.html#mpire.WorkerPool" title="mpire.WorkerPool"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mpire.WorkerPool</span></code></a> instance.</p>
 <div class="contents local topic" id="contents">
 <p class="topic-title">Contents</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#map-family-of-functions" id="id1">map family of functions</a></p></li>
-<li><p><a class="reference internal" href="#task-chunking" id="id2">Task chunking</a></p></li>
-<li><p><a class="reference internal" href="#numpy-arrays" id="id3">Numpy arrays</a></p>
+<li><p><a class="reference internal" href="#map-family-of-functions" id="id3">map family of functions</a></p></li>
+<li><p><a class="reference internal" href="#task-chunking" id="id4">Task chunking</a></p></li>
+<li><p><a class="reference internal" href="#numpy-arrays" id="id5">Numpy arrays</a></p>
 <ul>
-<li><p><a class="reference internal" href="#chunking" id="id4">Chunking</a></p></li>
-<li><p><a class="reference internal" href="#return-value" id="id5">Return value</a></p></li>
+<li><p><a class="reference internal" href="#chunking" id="id6">Chunking</a></p></li>
+<li><p><a class="reference internal" href="#return-value" id="id7">Return value</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#maximum-number-of-active-tasks" id="id6">Maximum number of active tasks</a></p></li>
-<li><p><a class="reference internal" href="#worker-lifespan" id="id7">Worker lifespan</a></p></li>
-<li><p><a class="reference internal" href="#progress-bar" id="id8">Progress bar</a></p></li>
-<li><p><a class="reference internal" href="#multiple-progress-bars-with-nested-workerpools" id="id9">Multiple progress bars with nested WorkerPools</a></p></li>
+<li><p><a class="reference internal" href="#maximum-number-of-active-tasks" id="id8">Maximum number of active tasks</a></p></li>
+<li><p><a class="reference internal" href="#worker-lifespan" id="id9">Worker lifespan</a></p></li>
+<li><p><a class="reference internal" href="#progress-bar" id="id10">Progress bar</a></p></li>
+<li><p><a class="reference internal" href="#multiple-progress-bars-with-nested-workerpools" id="id11">Multiple progress bars with nested WorkerPools</a></p></li>
+<li><p><a class="reference internal" href="#worker-init-and-exit" id="id12">Worker init and exit</a></p></li>
+<li><p><a class="reference internal" href="#worker-insights" id="id13">Worker insights</a></p></li>
 </ul>
 </div>
 <section id="map-family-of-functions">
-<h2><a class="toc-backref" href="#id1">map family of functions</a><a class="headerlink" href="#map-family-of-functions" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">map family of functions</a><a class="headerlink" href="#map-family-of-functions" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="../reference/index.html#mpire.WorkerPool" title="mpire.WorkerPool"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mpire.WorkerPool</span></code></a> implements four types of parallel <code class="docutils literal notranslate"><span class="pre">map</span></code> functions, being:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="../reference/index.html#mpire.WorkerPool.map" title="mpire.WorkerPool.map"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mpire.WorkerPool.map()</span></code></a>: Blocks until results are ready, results are ordered in the same way as the provided
@@ -207,13 +210,13 @@ give results back whenever new results are ready. Results are ordered in the sam
 <li><p><a class="reference internal" href="../reference/index.html#mpire.WorkerPool.imap_unordered" title="mpire.WorkerPool.imap_unordered"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mpire.WorkerPool.imap_unordered()</span></code></a>: The same as <a class="reference internal" href="../reference/index.html#mpire.WorkerPool.imap" title="mpire.WorkerPool.imap"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mpire.WorkerPool.imap()</span></code></a>, but results are ordered by task
 completion time. Usually faster than <a class="reference internal" href="../reference/index.html#mpire.WorkerPool.imap" title="mpire.WorkerPool.imap"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mpire.WorkerPool.imap()</span></code></a>.</p></li>
 </ul>
-<p>When using a single worker the unordered versions are equivalent to their ordered counterpart.</p>
+<p>When using a single worker the unordered versions are equivalent to their ordered counterparts.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>Each <code class="docutils literal notranslate"><span class="pre">map</span></code> function should receive a function pointer and an iterable of arguments, where the elements of the
-iterable are expected to be iterables that are unpacked as arguments. If the elements are not iterables, the single
-value is simply passed on as the only argument. However, if a single value is a dictionary the (key, value) pairs
-will be unpacked with the <code class="docutils literal notranslate"><span class="pre">**</span></code>-operator.</p>
+iterable can be single values or iterables that are unpacked as arguments. If an element is a dictionary, the
+(key, value) pairs will be unpacked with the <code class="docutils literal notranslate"><span class="pre">**</span></code>-operator. Look at the examples below on ways to circumvent this
+behavior.</p>
 </div>
 <p>A few examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">square</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -228,7 +231,7 @@ will be unpacked with the <code class="docutils literal notranslate"><span class
 
 <span class="k">with</span> <span class="n">WorkerPool</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
     <span class="c1"># 2. Square the numbers, results should be: [0, 1, 4, 9, 16, 25, ...]</span>
-    <span class="c1"># Note: you&#39;ll probably don&#39;t want to execute this, it will take a long time ...</span>
+    <span class="c1"># Note: don&#39;t execute this, it will take a long time ...</span>
     <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e30</span><span class="p">)),</span> <span class="n">iterable_len</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e30</span><span class="p">),</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="k">with</span> <span class="n">WorkerPool</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
@@ -245,14 +248,13 @@ will be unpacked with the <code class="docutils literal notranslate"><span class
 </pre></div>
 </div>
 <p>The first example should work as expected, the numbers are simply squared. MPIRE knows how many tasks there are because
-a <code class="docutils literal notranslate"><span class="pre">range</span></code> object implements the <code class="docutils literal notranslate"><span class="pre">__len__</span></code> method (see section below).</p>
+a <code class="docutils literal notranslate"><span class="pre">range</span></code> object implements the <code class="docutils literal notranslate"><span class="pre">__len__</span></code> method (see <a class="reference internal" href="#task-chunking">Task chunking</a>).</p>
 <p>In the second example the <code class="docutils literal notranslate"><span class="pre">1e30</span></code> number is too large for Python: try calling <code class="docutils literal notranslate"><span class="pre">len(range(int(1e30)))</span></code>, this will
-throw an <code class="docutils literal notranslate"><span class="pre">OverflowError</span></code> (I know …). Therefore, we must use the <code class="docutils literal notranslate"><span class="pre">iterable_len</span></code> parameter to let MPIRE know how
-large the tasks list is. We also have to specify a chunk size here as the chunk size should be lower than
+throw an <code class="docutils literal notranslate"><span class="pre">OverflowError</span></code> (don’t get me started …). Therefore, we must use the <code class="docutils literal notranslate"><span class="pre">iterable_len</span></code> parameter to let
+MPIRE know how large the tasks list is. We also have to specify a chunk size here as the chunk size should be lower than
 <code class="docutils literal notranslate"><span class="pre">sys.maxsize</span></code>.</p>
-<p>The third example shows an example of using multiple function arguments. Also note that we use <code class="docutils literal notranslate"><span class="pre">imap</span></code> in the third
-example, which allows us to process the results whenever they come available, not having to wait for all results to be
-ready.</p>
+<p>The third example shows an example of using multiple function arguments. Note that we use <code class="docutils literal notranslate"><span class="pre">imap</span></code> in the third example,
+which allows us to process the results whenever they come available, not having to wait for all results to be ready.</p>
 <p>The final example shows the use of an iterable of dictionaries. The (key, value) pairs are unpacked with the
 <code class="docutils literal notranslate"><span class="pre">**</span></code>-operator, as you would expect. So it doesn’t matter in what order the keys are stored. This should work for
 <code class="docutils literal notranslate"><span class="pre">collection.OrderedDict</span></code> objects as well.</p>
@@ -265,12 +267,14 @@ ready.</p>
 dictionary:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WorkerPool</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
     <span class="c1"># Multiply the numbers, results should be [0, 101, ...]</span>
-    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">pool</span><span class="o">.</span><span class="n">imap</span><span class="p">(</span><span class="n">multiply_dict</span><span class="p">,</span> <span class="p">[({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">},),</span> <span class="p">({</span><span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="mi">101</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},),</span> <span class="o">...</span><span class="p">]):</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">pool</span><span class="o">.</span><span class="n">imap</span><span class="p">(</span><span class="n">multiply_dict</span><span class="p">,</span> <span class="p">[({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">},),</span>
+                                            <span class="p">({</span><span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="mi">101</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},),</span>
+                                            <span class="o">...</span><span class="p">]):</span>
         <span class="c1"># Do something with this result</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>There is, however, a utility function that does this transformation for you:</p>
+<p>There is a utility function available that does this transformation for you:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mpire.utils</span> <span class="kn">import</span> <span class="n">make_single_arguments</span>
 
 <span class="k">with</span> <span class="n">WorkerPool</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
@@ -287,36 +291,36 @@ second argument of this function specifies if you want the function to return a 
 would like to return a generator we would need to pass on the iterable length as well.</p>
 </section>
 <section id="task-chunking">
-<h2><a class="toc-backref" href="#id2">Task chunking</a><a class="headerlink" href="#task-chunking" title="Permalink to this headline">¶</a></h2>
-<p>By default, MPIRE chunks the given tasks in to four times the number of jobs chunks. Each worker is given one chunk of
-tasks at a time before returning its results. This usually makes processing faster when you have rather small tasks
-(computation wise) and results are pickled/unpickled when they are send to a worker or main process. Chunking the tasks
-and results ensures that each process has to pickle/unpickle less often.</p>
+<span id="id1"></span><h2><a class="toc-backref" href="#id4">Task chunking</a><a class="headerlink" href="#task-chunking" title="Permalink to this headline">¶</a></h2>
+<p>By default, MPIRE chunks the given tasks in to <code class="docutils literal notranslate"><span class="pre">64</span> <span class="pre">*</span> <span class="pre">n_jobs</span></code> chunks. Each worker is given one chunk of tasks at a time
+before returning its results. This usually makes processing faster when you have rather small tasks (computation wise)
+and results are pickled/unpickled when they are send to a worker or main process. Chunking the tasks and results ensures
+that each process has to pickle/unpickle less often.</p>
 <p>However, to determine the number of tasks in the argument list the iterable should implement the <code class="docutils literal notranslate"><span class="pre">__len__</span></code> method,
 which is available in default containers like <code class="docutils literal notranslate"><span class="pre">list</span></code> or <code class="docutils literal notranslate"><span class="pre">tuple</span></code>, but isn’t available in most generator objects
 (the <code class="docutils literal notranslate"><span class="pre">range</span></code> object is one of the exceptions). To allow working with generators each <code class="docutils literal notranslate"><span class="pre">map</span></code> function has the option
 to pass the iterable length:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WorkerPool</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
     <span class="c1"># 1. This will issue a warning and sets the chunk size to 1</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="p">((</span><span class="n">x</span><span class="p">,)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="p">((</span><span class="n">x</span><span class="p">,)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)))</span>
 
     <span class="c1"># 2. This will issue a warning as well and sets the chunk size to 1</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="p">((</span><span class="n">x</span><span class="p">,)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="p">((</span><span class="n">x</span><span class="p">,)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)),</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
     <span class="c1"># 3. Square the numbers using a generator using a specific number of splits</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="p">((</span><span class="n">x</span><span class="p">,)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span> <span class="n">iterable_len</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="p">((</span><span class="n">x</span><span class="p">,)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)),</span> <span class="n">iterable_len</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
     <span class="c1"># 4. Square the numbers using a generator using automatic chunking</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="p">((</span><span class="n">x</span><span class="p">,)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span> <span class="n">iterable_len</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="p">((</span><span class="n">x</span><span class="p">,)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)),</span> <span class="n">iterable_len</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 
     <span class="c1"># 5. Square the numbers using a generator using a fixed chunk size</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="p">((</span><span class="n">x</span><span class="p">,)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="p">((</span><span class="n">x</span><span class="p">,)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)),</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In the first two examples the function call will fail because MPIRE doesn’t know how large the chunks should be as the
-total number of tasks is unknown, therefore it will fall back to a chunk size of 1. The third example should work as
-expected where 4 chunks are used. The fourth example uses 16 chunks (the default four times the number of workers). The
-last example uses a fixed chunk size of four, so MPIRE doesn’t need to know the iterable length.</p>
+<p>In the first two examples the function call will issue a warning because MPIRE doesn’t know how large the chunks should
+be as the total number of tasks is unknown, therefore it will fall back to a chunk size of 1. The third example should
+work as expected where 4 chunks are used. The fourth example uses 256 chunks (the default 64 times the number of
+workers). The last example uses a fixed chunk size of four, so MPIRE doesn’t need to know the iterable length.</p>
 <p>You can also call the chunk function manually:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mpire.utils</span> <span class="kn">import</span> <span class="n">chunk_tasks</span>
 
@@ -334,9 +338,9 @@ last example uses a fixed chunk size of four, so MPIRE doesn’t need to know th
 </div>
 </section>
 <section id="numpy-arrays">
-<h2><a class="toc-backref" href="#id3">Numpy arrays</a><a class="headerlink" href="#numpy-arrays" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">Numpy arrays</a><a class="headerlink" href="#numpy-arrays" title="Permalink to this headline">¶</a></h2>
 <section id="chunking">
-<h3><a class="toc-backref" href="#id4">Chunking</a><a class="headerlink" href="#chunking" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">Chunking</a><a class="headerlink" href="#chunking" title="Permalink to this headline">¶</a></h3>
 <p>Numpy arrays are treated a little bit differently when passed on to the <code class="docutils literal notranslate"><span class="pre">map</span></code> functions. Usually MPIRE uses
 <code class="docutils literal notranslate"><span class="pre">itertools.islice</span></code> for chunking, which depends on the <code class="docutils literal notranslate"><span class="pre">__iter__</span></code> special function of the container object. But
 applying that to numpy arrays would yield:</p>
@@ -391,7 +395,7 @@ individually. Instead, MPIRE will chunk them in to something more reasonable usi
 aren’t enough rows left.</p>
 </section>
 <section id="return-value">
-<h3><a class="toc-backref" href="#id5">Return value</a><a class="headerlink" href="#return-value" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id7">Return value</a><a class="headerlink" href="#return-value" title="Permalink to this headline">¶</a></h3>
 <p>When the user defined function returns numpy arrays and you’re applying the <a class="reference internal" href="../reference/index.html#mpire.WorkerPool.map" title="mpire.WorkerPool.map"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mpire.WorkerPool.map()</span></code></a> function MPIRE
 will concatenate the resulting numpy arrays to a single array by default. For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add_five</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -435,7 +439,7 @@ will concatenate the resulting numpy arrays to a single array by default. For ex
 </section>
 </section>
 <section id="maximum-number-of-active-tasks">
-<h2><a class="toc-backref" href="#id6">Maximum number of active tasks</a><a class="headerlink" href="#maximum-number-of-active-tasks" title="Permalink to this headline">¶</a></h2>
+<span id="max-active-tasks"></span><h2><a class="toc-backref" href="#id8">Maximum number of active tasks</a><a class="headerlink" href="#maximum-number-of-active-tasks" title="Permalink to this headline">¶</a></h2>
 <p>When you have tasks that take up a lot of memory you can limit the number of jobs or limit the number of active tasks
 (i.e., the number of tasks currently being available to the workers, tasks that are in the queue ready to be processed).
 The first option is the most obvious one to save memory when the processes themselves use up much memory. The second is
@@ -454,20 +458,24 @@ amount of active tasks.</p>
 </div>
 </section>
 <section id="worker-lifespan">
-<h2><a class="toc-backref" href="#id7">Worker lifespan</a><a class="headerlink" href="#worker-lifespan" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id9">Worker lifespan</a><a class="headerlink" href="#worker-lifespan" title="Permalink to this headline">¶</a></h2>
 <p>Occasionally, workers that process multiple, memory intensive tasks do not release their used up memory properly, which
 results in memory usage building up. This is not a bug in MPIRE, but a consequence of Python’s poor garbage collection.
-To avoid this type of problem you can set the worker lifespan: the number of tasks (well, actually the number of chunks
-of tasks) after which a worker should restart.</p>
+To avoid this type of problem you can set the worker lifespan: the number of tasks after which a worker should restart.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WorkerPool</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
     <span class="c1"># Square the numbers using a generator</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">worker_lifespan</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">worker_lifespan</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In this example each worker is restarted after finishing a single chunk of tasks.</p>
+<p>In this example each worker is restarted after finishing a single task.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When the worker lifespan has been reached, a worker will finish the current chunk of tasks before restarting. I.e.,
+based on the <code class="docutils literal notranslate"><span class="pre">chunk_size</span></code> a worker could end up completing more tasks than is allowed by the worker lifespan.</p>
+</div>
 </section>
 <section id="progress-bar">
-<h2><a class="toc-backref" href="#id8">Progress bar</a><a class="headerlink" href="#progress-bar" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id10">Progress bar</a><a class="headerlink" href="#progress-bar" title="Permalink to this headline">¶</a></h2>
 <p>Progress bar support is added through the <a class="reference external" href="https://pypi.python.org/pypi/tqdm">tqdm</a> package (installed by default when installing MPIRE). The most easy way
 to include a progress bar is by enabling the <code class="docutils literal notranslate"><span class="pre">progress_bar</span></code> flag in any of the <code class="docutils literal notranslate"><span class="pre">map</span></code> functions:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WorkerPool</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
@@ -491,7 +499,7 @@ could consume a bit of the available compute power of your machine.</p>
 </div>
 </section>
 <section id="multiple-progress-bars-with-nested-workerpools">
-<h2><a class="toc-backref" href="#id9">Multiple progress bars with nested WorkerPools</a><a class="headerlink" href="#multiple-progress-bars-with-nested-workerpools" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id11">Multiple progress bars with nested WorkerPools</a><a class="headerlink" href="#multiple-progress-bars-with-nested-workerpools" title="Permalink to this headline">¶</a></h2>
 <p>In MPIRE you can easily print a progress bar on a different position on the terminal using the <code class="docutils literal notranslate"><span class="pre">progress_bar_position</span></code>
 parameter in the map functions, which facilitates the use of multiple progress bars. Here’s an example of using multiple
 progress bars using nested WorkerPools:</p>
@@ -518,6 +526,127 @@ notebook session. It’ll work but you’ll get some additional new lines in you
 progress bar won’t update as you would expect. Note that you can always use the MPIRE dashboard.</p>
 </div>
 </section>
+<section id="worker-init-and-exit">
+<span id="worker-init-exit"></span><h2><a class="toc-backref" href="#id12">Worker init and exit</a><a class="headerlink" href="#worker-init-and-exit" title="Permalink to this headline">¶</a></h2>
+<p>When you want to initialize a worker you can make use of the <code class="docutils literal notranslate"><span class="pre">worker_init</span></code> parameter of any <code class="docutils literal notranslate"><span class="pre">map</span></code> function. This
+will call the initialization function only once per worker. Similarly, if you need to clean up the worker at the end of
+its lifecycle you can use the <code class="docutils literal notranslate"><span class="pre">worker_exit</span></code> parameter. Additionally, the exit function can return anything you like,
+which can be collected using <a class="reference internal" href="../reference/index.html#mpire.WorkerPool.get_exit_results" title="mpire.WorkerPool.get_exit_results"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mpire.WorkerPool.get_exit_results()</span></code></a> after the workers are done.</p>
+<p>For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">init_func</span><span class="p">(</span><span class="n">worker_state</span><span class="p">):</span>
+    <span class="c1"># Initialize a counter for each worker</span>
+    <span class="n">worker_state</span><span class="p">[</span><span class="s1">&#39;count_even&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">def</span> <span class="nf">square_and_count_even</span><span class="p">(</span><span class="n">worker_state</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="c1"># Count number of even numbers and return the square</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">worker_state</span><span class="p">[</span><span class="s1">&#39;count_even&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">**</span><span class="n">x</span>
+
+<span class="k">def</span> <span class="nf">exit_func</span><span class="p">(</span><span class="n">worker_state</span><span class="p">):</span>
+    <span class="c1"># Return the counter</span>
+    <span class="k">return</span> <span class="n">worker_state</span><span class="p">[</span><span class="s1">&#39;count_even&#39;</span><span class="p">]</span>
+
+<span class="k">with</span> <span class="n">WorkerPool</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">use_worker_state</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">square_and_count_even</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">worker_init</span><span class="o">=</span><span class="n">init_func</span><span class="p">,</span> <span class="n">worker_exit</span><span class="o">=</span><span class="n">exit_func</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">get_exit_results</span><span class="p">())</span>  <span class="c1"># Output, e.g.: [13, 13, 12, 12]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">get_exit_results</span><span class="p">()))</span>  <span class="c1"># Output: 50</span>
+</pre></div>
+</div>
+<p>Both init and exit functions receive the worker ID, shared objects, and worker state in the same way as the task
+function does, given they’re enabled.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>When the <code class="docutils literal notranslate"><span class="pre">worker_lifespan</span></code> option is used to restart workers during execution, the exit function will be called
+for the worker that’s shutting down and the init function will be called again for the new worker. Therefore, the
+number of elements in the list that’s returned from <a class="reference internal" href="../reference/index.html#mpire.WorkerPool.get_exit_results" title="mpire.WorkerPool.get_exit_results"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mpire.WorkerPool.get_exit_results()</span></code></a> does not always equal
+<code class="docutils literal notranslate"><span class="pre">n_jobs</span></code>.</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">keep_alive</span></code> is enabled the workers won’t be terminated after a <code class="docutils literal notranslate"><span class="pre">map</span></code> call. This means the exit function
+won’t be called until it’s time for cleaning up the entire pool. You will have to explicitly call
+<a class="reference internal" href="../reference/index.html#mpire.WorkerPool.stop_and_join" title="mpire.WorkerPool.stop_and_join"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mpire.WorkerPool.stop_and_join()</span></code></a> to receive the exit results.</p>
+</div>
+<p>One usecase for these functions is to load a big dataset or model that is needed for every task only once per worker
+(see <a class="reference internal" href="worker_pool.html#worker-state"><span class="std std-ref">Worker state</span></a> for this example). Another usecase would be to set up and close a database connection on init
+and exit.</p>
+</section>
+<section id="worker-insights">
+<span id="id2"></span><h2><a class="toc-backref" href="#id13">Worker insights</a><a class="headerlink" href="#worker-insights" title="Permalink to this headline">¶</a></h2>
+<p>Worker insights gives you insight in your multiprocessing efficiency by tracking worker start up time, waiting time and
+time spend on executing tasks. Tracking is disabled by default, but can be enabled by setting <code class="docutils literal notranslate"><span class="pre">enable_insights</span></code> in the
+map functions:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WorkerPool</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">enable_insights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The overhead is very minimal and you shouldn’t really notice it, even on very small tasks. You can view the tracking
+results using <a class="reference internal" href="../reference/index.html#mpire.WorkerPool.get_insights" title="mpire.WorkerPool.get_insights"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mpire.WorkerPool.get_insights()</span></code></a> or use <a class="reference internal" href="../reference/index.html#mpire.WorkerPool.print_insights" title="mpire.WorkerPool.print_insights"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mpire.WorkerPool.print_insights()</span></code></a> to directly print
+the insights to console:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="k">def</span> <span class="nf">sleep_and_square</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="c1"># For illustration purposes</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+
+<span class="k">with</span> <span class="n">WorkerPool</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">sleep_and_square</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">enable_insights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">insights</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">get_insights</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">insights</span><span class="p">)</span>
+
+<span class="c1"># Output:</span>
+<span class="p">{</span><span class="s1">&#39;n_completed_tasks&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">28</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">],</span>
+ <span class="s1">&#39;total_start_up_time&#39;</span><span class="p">:</span> <span class="s1">&#39;0:00:00.038&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;total_init_time&#39;</span><span class="p">:</span> <span class="s1">&#39;0:00:00&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;total_waiting_time&#39;</span><span class="p">:</span> <span class="s1">&#39;0:00:00.798&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;total_working_time&#39;</span><span class="p">:</span> <span class="s1">&#39;0:00:04.980&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;total_exit_time&#39;</span><span class="p">:</span> <span class="s1">&#39;0:00:00&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;total_time&#39;</span><span class="p">:</span> <span class="s1">&#39;0:00:05.816&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;start_up_time&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;0:00:00.010&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:00.008&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:00.008&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:00.011&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;start_up_time_mean&#39;</span><span class="p">:</span> <span class="s1">&#39;0:00:00.009&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;start_up_time_std&#39;</span><span class="p">:</span> <span class="s1">&#39;0:00:00.001&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;start_up_ratio&#39;</span><span class="p">:</span> <span class="mf">0.006610452621805033</span><span class="p">,</span>
+ <span class="s1">&#39;init_time&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;0:00:00&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:00&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:00&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:00&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;init_time_mean&#39;</span><span class="p">:</span> <span class="s1">&#39;0:00:00&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;init_time_std&#39;</span><span class="p">:</span> <span class="s1">&#39;0:00:00&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;init_ratio&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+ <span class="s1">&#39;waiting_time&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;0:00:00.309&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:00.311&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:00.165&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:00.012&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;waiting_time_mean&#39;</span><span class="p">:</span> <span class="s1">&#39;0:00:00.199&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;waiting_time_std&#39;</span><span class="p">:</span> <span class="s1">&#39;0:00:00.123&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;waiting_ratio&#39;</span><span class="p">:</span> <span class="mf">0.13722942739284952</span><span class="p">,</span>
+ <span class="s1">&#39;working_time&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;0:00:01.142&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:01.135&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:01.278&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:01.423&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;working_time_mean&#39;</span><span class="p">:</span> <span class="s1">&#39;0:00:01.245&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;working_time_std&#39;</span><span class="p">:</span> <span class="s1">&#39;0:00:00.117&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;working_ratio&#39;</span><span class="p">:</span> <span class="mf">0.8561601182661567</span><span class="p">,</span>
+ <span class="s1">&#39;exit_time&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;0:00:00&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:00&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:00&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:00&#39;</span><span class="p">]</span>
+ <span class="s1">&#39;exit_time_mean&#39;</span><span class="p">:</span> <span class="s1">&#39;0:00:00&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;exit_time_std&#39;</span><span class="p">:</span> <span class="s1">&#39;0:00:00&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;exit_ratio&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+ <span class="s1">&#39;top_5_max_task_durations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;0:00:00.099&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:00.098&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:00.097&#39;</span><span class="p">,</span> <span class="s1">&#39;0:00:00.096&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;0:00:00.095&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;top_5_max_task_args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Arg 0: 99&#39;</span><span class="p">,</span> <span class="s1">&#39;Arg 0: 98&#39;</span><span class="p">,</span> <span class="s1">&#39;Arg 0: 97&#39;</span><span class="p">,</span> <span class="s1">&#39;Arg 0: 96&#39;</span><span class="p">,</span> <span class="s1">&#39;Arg 0: 95&#39;</span><span class="p">]}</span>
+</pre></div>
+</div>
+<p>We specified 4 workers, so there are 4 entries in the <code class="docutils literal notranslate"><span class="pre">n_completed_tasks</span></code>, <code class="docutils literal notranslate"><span class="pre">start_up_time</span></code>, <code class="docutils literal notranslate"><span class="pre">init_time</span></code>,
+<code class="docutils literal notranslate"><span class="pre">waiting_time</span></code>, <code class="docutils literal notranslate"><span class="pre">working_time</span></code>, and <code class="docutils literal notranslate"><span class="pre">exit_time</span></code> containers. They show per worker the number of completed tasks,
+the total start up time, the total time spend on the <code class="docutils literal notranslate"><span class="pre">worker_init</span></code> function, the total time waiting for new tasks,
+total time spend on main function, and the total time spend on the <code class="docutils literal notranslate"><span class="pre">worker_exit</span></code> function, respectively. The insights
+also contain mean, standard deviation, and ratio of the tracked time. The ratio is the time for that part divided by the
+total time. In general, the higher the working ratio the more efficient your multiprocessing setup is. Of course, your
+setup might still not be optimal because the task itself is inefficient, but timing that is beyond the scope of MPIRE.</p>
+<p>Additionally, the insights keep track of the top 5 tasks that took the longest to run. The data is split up in two
+containers: one for the duration and one for the arguments that were passed on to the task function. Both are sorted
+based on task duration (desc), so index <code class="docutils literal notranslate"><span class="pre">0</span></code> of the args list corresponds to index <code class="docutils literal notranslate"><span class="pre">0</span></code> of the duration list, etc.</p>
+<p>When using the MPIRE <a class="reference internal" href="dashboard.html#dashboard"><span class="std std-ref">Dashboard</span></a> you can track these insights in real-time. See <a class="reference internal" href="dashboard.html#dashboard"><span class="std std-ref">Dashboard</span></a> for more
+information.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When you use <cite>imap</cite> or <cite>imap_unordered</cite> you can view the insights during execution. Simply call <code class="docutils literal notranslate"><span class="pre">get_insights()</span></code>
+or <code class="docutils literal notranslate"><span class="pre">print_insights()</span></code> inside your loop where you process the results.</p>
+</div>
+</section>
 </section>
 
 
@@ -531,7 +660,7 @@ progress bar won’t update as you would expect. Note that you can always use th
         <a href="dashboard.html" class="btn btn-neutral float-right" title="Dashboard" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="setup.html" class="btn btn-neutral float-left" title="Setup" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="worker_pool.html" class="btn btn-neutral float-left" title="WorkerPool" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -577,6 +706,7 @@ progress bar won’t update as you would expect. Note that you can always use th
             <dd><a href="../../v1.2.0/usage/map.html">v1.2.0</a></dd>
             <dd><a href="../../v1.2.1/usage/map.html">v1.2.1</a></dd>
             <dd><a href="../../v1.2.2/usage/map.html">v1.2.2</a></dd>
+            <dd><a href="../../v2.0.0/usage/map.html">v2.0.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
