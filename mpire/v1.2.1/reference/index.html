@@ -181,7 +181,7 @@
 <h2><a class="toc-backref" href="#id1">WorkerPool</a><a class="headerlink" href="#workerpool" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="mpire.WorkerPool">
-<em class="property">class </em><code class="sig-prename descclassname">mpire.</code><code class="sig-name descname">WorkerPool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">daemon</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cpu_ids</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">shared_objects</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pass_worker_id</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_worker_state</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">start_method</span><span class="o">=</span><span class="default_value">'fork'</span></em>, <em class="sig-param"><span class="n">keep_alive</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mpire/pool.html#WorkerPool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mpire.WorkerPool" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mpire.</code><code class="sig-name descname">WorkerPool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">daemon</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cpu_ids</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">shared_objects</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pass_worker_id</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_worker_state</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">start_method</span><span class="o">=</span><span class="default_value">'fork'</span></em>, <em class="sig-param"><span class="n">keep_alive</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_dill</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mpire/pool.html#WorkerPool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mpire.WorkerPool" title="Permalink to this definition">¶</a></dt>
 <dd><p>A multiprocessing worker pool which acts like a <code class="docutils literal notranslate"><span class="pre">multiprocessing.Pool</span></code>, but is faster and has more options.</p>
 <dl class="py method">
 <dt id="mpire.WorkerPool.__enter__">
@@ -207,7 +207,7 @@
 
 <dl class="py method">
 <dt id="mpire.WorkerPool.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">daemon</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cpu_ids</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">shared_objects</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pass_worker_id</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_worker_state</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">start_method</span><span class="o">=</span><span class="default_value">'fork'</span></em>, <em class="sig-param"><span class="n">keep_alive</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mpire/pool.html#WorkerPool.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mpire.WorkerPool.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">daemon</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cpu_ids</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">shared_objects</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pass_worker_id</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_worker_state</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">start_method</span><span class="o">=</span><span class="default_value">'fork'</span></em>, <em class="sig-param"><span class="n">keep_alive</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_dill</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mpire/pool.html#WorkerPool.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mpire.WorkerPool.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -231,6 +231,9 @@ Shared objects is only passed on to the user function when it’s not <code clas
 caveats when using the <code class="docutils literal notranslate"><span class="pre">'spawn'</span></code> or <code class="docutils literal notranslate"><span class="pre">'forkserver'</span></code> methods</p></li>
 <li><p><strong>keep_alive</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – When True it will keep workers alive after completing a map call, allowing to reuse workers
 when map is called with the same function and worker lifespan multiple times in a row</p></li>
+<li><p><strong>use_dill</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to use dill as serialization backend. Some exotic types (e.g., lambdas, nested
+functions) don’t work well when using <code class="docutils literal notranslate"><span class="pre">spawn</span></code> as start method. In such cased, use <code class="docutils literal notranslate"><span class="pre">dill</span></code> (can be a bit
+slower sometimes)</p></li>
 </ul>
 </dd>
 </dl>
@@ -282,7 +285,7 @@ tasks available in the queue.</p>
 function should receive the worker ID as its first argument. If shared objects are provided the function
 should receive those as the next argument. If the worker state has been enabled it should receive a state
 variable as the next argument</p></li>
-<li><p><strong>iterable_of_args</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sized</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – A numpy array or an iterable containing tuples of arguments to pass to a worker, which
+<li><p><strong>iterable_of_args</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sized</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>]) – A numpy array or an iterable containing tuples of arguments to pass to a worker, which
 passes it to the function <code class="docutils literal notranslate"><span class="pre">func</span></code></p></li>
 <li><p><strong>iterable_len</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Number of elements in the <code class="docutils literal notranslate"><span class="pre">iterable_of_args</span></code>. When chunk_size is set to <code class="docutils literal notranslate"><span class="pre">None</span></code> it needs
 to know the number of tasks. This can either be provided by implementing the <code class="docutils literal notranslate"><span class="pre">__len__</span></code> function on the
@@ -330,7 +333,7 @@ the queue.</p>
 function should receive the worker ID as its first argument. If shared objects are provided the function
 should receive those as the next argument. If the worker state has been enabled it should receive a state
 variable as the next argument</p></li>
-<li><p><strong>iterable_of_args</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sized</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – A numpy array or an iterable containing tuples of arguments to pass to a worker, which
+<li><p><strong>iterable_of_args</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sized</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>]) – A numpy array or an iterable containing tuples of arguments to pass to a worker, which
 passes it to the function <code class="docutils literal notranslate"><span class="pre">func</span></code></p></li>
 <li><p><strong>iterable_len</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Number of elements in the <code class="docutils literal notranslate"><span class="pre">iterable_of_args</span></code>. When chunk_size is set to <code class="docutils literal notranslate"><span class="pre">None</span></code> it needs
 to know the number of tasks. This can either be provided by implementing the <code class="docutils literal notranslate"><span class="pre">__len__</span></code> function on the
@@ -378,7 +381,7 @@ Note that this function can be slower than the unordered version.</p>
 function should receive the worker ID as its first argument. If shared objects are provided the function
 should receive those as the next argument. If the worker state has been enabled it should receive a state
 variable as the next argument</p></li>
-<li><p><strong>iterable_of_args</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sized</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – A numpy array or an iterable containing tuples of arguments to pass to a worker, which
+<li><p><strong>iterable_of_args</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sized</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>]) – A numpy array or an iterable containing tuples of arguments to pass to a worker, which
 passes it to the function <code class="docutils literal notranslate"><span class="pre">func</span></code></p></li>
 <li><p><strong>iterable_len</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Number of elements in the <code class="docutils literal notranslate"><span class="pre">iterable_of_args</span></code>. When chunk_size is set to <code class="docutils literal notranslate"><span class="pre">None</span></code> it needs
 to know the number of tasks. This can either be provided by implementing the <code class="docutils literal notranslate"><span class="pre">__len__</span></code> function on the
@@ -407,7 +410,7 @@ next argument. If the worker state has been enabled it should receive a state va
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>List with ordered results</p>
@@ -427,7 +430,7 @@ available in the queue.</p>
 function should receive the worker ID as its first argument. If shared objects are provided the function
 should receive those as the next argument. If the worker state has been enabled it should receive a state
 variable as the next argument</p></li>
-<li><p><strong>iterable_of_args</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sized</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – A numpy array or an iterable containing tuples of arguments to pass to a worker, which
+<li><p><strong>iterable_of_args</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sized</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>]) – A numpy array or an iterable containing tuples of arguments to pass to a worker, which
 passes it to the function <code class="docutils literal notranslate"><span class="pre">func</span></code></p></li>
 <li><p><strong>iterable_len</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Number of elements in the <code class="docutils literal notranslate"><span class="pre">iterable_of_args</span></code>. When chunk_size is set to <code class="docutils literal notranslate"><span class="pre">None</span></code> it needs
 to know the number of tasks. This can either be provided by implementing the <code class="docutils literal notranslate"><span class="pre">__len__</span></code> function on the
@@ -455,7 +458,7 @@ next argument. If the worker state has been enabled it should receive a state va
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</p>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>List with unordered results</p>
@@ -540,14 +543,22 @@ shared between the workers.</p>
 
 <dl class="py method">
 <dt id="mpire.WorkerPool.stop_and_join">
-<code class="sig-name descname">stop_and_join</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mpire/pool.html#WorkerPool.stop_and_join"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mpire.WorkerPool.stop_and_join" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inserts a poison pill, grabs the exit results, and waits until all workers are finished.</p>
+<code class="sig-name descname">stop_and_join</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">progress_bar_handler</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keep_alive</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mpire/pool.html#WorkerPool.stop_and_join"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mpire.WorkerPool.stop_and_join" title="Permalink to this definition">¶</a></dt>
+<dd><p>When <code class="docutils literal notranslate"><span class="pre">keep_alive=False</span></code>: inserts a poison pill, grabs the exit results, waits until the tasks/results queues
+are done, and wait until all workers are finished.
+When <code class="docutils literal notranslate"><span class="pre">keep_alive=True</span></code>: inserts a non-lethal poison pill, and waits until the tasks/results queues are done.</p>
 <p>Note that the results queue should be drained first before joining the workers, otherwise we can get a deadlock.
 For more information, see the warnings at:
 <a class="reference external" href="https://docs.python.org/3.4/library/multiprocessing.html#pipes-and-queues">https://docs.python.org/3.4/library/multiprocessing.html#pipes-and-queues</a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>progress_bar_handler</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ProgressBarHandler</span></code>]) – Progress bar handler</p></li>
+<li><p><strong>keep_alive</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to keep the workers alive</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -577,7 +588,7 @@ speed up processing drastically.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>iterable_of_args</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – A numpy array or an iterable containing tuples of arguments to pass to a worker, which
+<li><p><strong>iterable_of_args</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>) – A numpy array or an iterable containing tuples of arguments to pass to a worker, which
 passes it to the function</p></li>
 <li><p><strong>iterable_len</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Number of tasks available in <code class="docutils literal notranslate"><span class="pre">iterable_of_args</span></code>. Only needed when <code class="docutils literal notranslate"><span class="pre">iterable_of_args</span></code> is a
 generator</p></li>
@@ -587,7 +598,7 @@ the chunk size</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>], <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>]</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Generator of chunked task arguments</p>
@@ -605,7 +616,7 @@ the chunk size</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>iterable_of_args</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – A numpy array or an iterable containing tuples of arguments to pass to a worker, which
+<li><p><strong>iterable_of_args</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>) – A numpy array or an iterable containing tuples of arguments to pass to a worker, which
 passes it to the function</p></li>
 <li><p><strong>generator</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether or not to return a generator, otherwise a materialized list will be returned</p></li>
 </ul>
@@ -647,7 +658,7 @@ passes it to the function</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>manager_port_nr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Port to use when connecting to a manager</p></li>
-<li><p><strong>manager_host</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Host to use when connecting to a manager. If <code class="docutils literal notranslate"><span class="pre">None</span></code> it will use localhost</p></li>
+<li><p><strong>manager_host</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>]) – Host to use when connecting to a manager. If <code class="docutils literal notranslate"><span class="pre">None</span></code> it will use localhost</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -717,10 +728,12 @@ passes it to the function</p></li>
             <dd><a href="index.html">v1.2.1</a></dd>
             <dd><a href="../../v1.2.2/reference/index.html">v1.2.2</a></dd>
             <dd><a href="../../v2.0.0/reference/index.html">v2.0.0</a></dd>
+            <dd><a href="../../v2.1.0/reference/index.html">v2.1.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
             <dd><a href="../../master/reference/index.html">master</a></dd>
+            <dd><a href="../../multi_task_queue/reference/index.html">multi_task_queue</a></dd>
         </dl>
     </div>
 </div>

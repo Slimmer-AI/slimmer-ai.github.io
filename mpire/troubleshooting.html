@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Troubleshooting &mdash; mpire 2.0.0 documentation</title>
+  <title>Troubleshooting &mdash; mpire 2.1.0 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.0.0
+                2.1.0
               </div>
             
           
@@ -177,6 +177,7 @@
 <li><p><a class="reference internal" href="#unit-tests" id="id1">Unit tests</a></p></li>
 <li><p><a class="reference internal" href="#shutting-down-takes-a-long-time-on-error" id="id2">Shutting down takes a long time on error</a></p></li>
 <li><p><a class="reference internal" href="#unpicklable-tasks-results" id="id3">Unpicklable tasks/results</a></p></li>
+<li><p><a class="reference internal" href="#windows" id="id4">Windows</a></p></li>
 </ul>
 </div>
 <section id="unit-tests">
@@ -234,10 +235,21 @@ draining it will take a longer time.</p>
 <p>Sometimes you can encounter deadlocks in your code when using MPIRE. When you encounter this, chances are some tasks or
 results from your script can’t be pickled. MPIRE makes use of multiprocessing queues for inter-process communication and
 if your function returns unpicklable results the queue will unfortunately deadlock.</p>
-<p>The only way I could remedy this problem in MPIRE would be to manually pickle objects before sending it to a queue and
-quit gracefully when encountering a pickle error. However, this would mean objects would always be pickled twice. This
-would add a heavy performance penalty and is therefore not an acceptable solution. Instead, the user should make sure
-their tasks and results are always picklable (which in most cases won’t be a problem).</p>
+<p>The only way to remedy this problem in MPIRE would be to manually pickle objects before sending it to a queue and quit
+gracefully when encountering a pickle error. However, this would mean objects would always be pickled twice. This would
+add a heavy performance penalty and is therefore not an acceptable solution.</p>
+<p>Instead, the user should make sure their tasks and results are always picklable (which in most cases won’t be a
+problem), or resort to setting <code class="docutils literal notranslate"><span class="pre">use_dill=True</span></code>. The latter is capable of pickling a lot more exotic types. See
+<a class="reference internal" href="usage/worker_pool.html#use-dill"><span class="std std-ref">Dill</span></a> for more information.</p>
+</section>
+<section id="windows">
+<h2><a class="toc-backref" href="#id4">Windows</a><a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h2>
+<p>This package has been tested only on Linux-based systems. So I’m not sure if everything works on Windows. You can submit
+an issue on GitHub if you encounter issues.</p>
+<p>Windows doesn’t support forking, so you will need to manually switch to spawn as start method. See <a class="reference internal" href="usage/worker_pool.html#start-methods"><span class="std std-ref">Process start method</span></a>
+for more information on start methods.</p>
+<p>Disclaimer: it could be that MPIRE can’t be imported on systems without fork. If so, let me know by submitting an issue
+on GitHub.</p>
 </section>
 </section>
 
@@ -299,10 +311,12 @@ their tasks and results are always picklable (which in most cases won’t be a p
             <dd><a href="v1.2.1/index.html">v1.2.1</a></dd>
             <dd><a href="v1.2.2/index.html">v1.2.2</a></dd>
             <dd><a href="v2.0.0/troubleshooting.html">v2.0.0</a></dd>
+            <dd><a href="v2.1.0/troubleshooting.html">v2.1.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
             <dd><a href="master/troubleshooting.html">master</a></dd>
+            <dd><a href="multi_task_queue/troubleshooting.html">multi_task_queue</a></dd>
         </dl>
     </div>
 </div>
