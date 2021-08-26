@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to the MPIRE documentation! &mdash; mpire 2.1.0 documentation</title>
+  <title>Welcome to the MPIRE documentation! &mdash; mpire 2.1.1 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.1.0
+                2.1.1
               </div>
             
           
@@ -173,27 +173,33 @@
 user-friendly than the default multiprocessing package. It combines the convenient map like functions of
 <code class="docutils literal notranslate"><span class="pre">multiprocessing.Pool</span></code> with the benefits of using copy-on-write shared objects of <code class="docutils literal notranslate"><span class="pre">multiprocessing.Process</span></code>,
 together with easy-to-use worker state, worker insights, and progress bar functionality.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>MPIRE currently only supports Linux based operating systems that support ‘fork’ as start method. Support for
+Windows is coming soon.</p>
+</div>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Multiprocessing with map/map_unordered/imap/imap_unordered functions</p></li>
+<li><p>Faster execution than other multiprocessing libraries. See <a class="reference external" href="https://towardsdatascience.com/mpire-for-python-multiprocessing-is-really-easy-d2ae7999a3e9">benchmarks</a>.</p></li>
+<li><p>Intuitive, Pythonic syntax</p></li>
+<li><p>Multiprocessing with <code class="docutils literal notranslate"><span class="pre">map</span></code>/<code class="docutils literal notranslate"><span class="pre">map_unordered</span></code>/<code class="docutils literal notranslate"><span class="pre">imap</span></code>/<code class="docutils literal notranslate"><span class="pre">imap_unordered</span></code> functions</p></li>
 <li><p>Easy use of copy-on-write shared objects with a pool of workers</p></li>
 <li><p>Each worker can have its own state and with convenient worker init and exit functionality this state can be easily
 manipulated (e.g., to load a memory-intensive model only once for each worker without the need of sending it through a
 queue)</p></li>
 <li><p>Progress bar support using <a class="reference external" href="https://tqdm.github.io/">tqdm</a></p></li>
 <li><p>Progress dashboard support</p></li>
+<li><p>Worker insights to provide insight into your multiprocessing efficiency</p></li>
 <li><p>Graceful and user-friendly exception handling</p></li>
-<li><p>Worker insights gives you insight in your multiprocessing efficiency</p></li>
 <li><p>Automatic task chunking for all available map functions to speed up processing of small task queues (including numpy
 arrays)</p></li>
 <li><p>Adjustable maximum number of active tasks to avoid memory problems</p></li>
 <li><p>Automatic restarting of workers after a specified number of tasks to reduce memory footprint</p></li>
 <li><p>Nested pool of workers are allowed when setting the <code class="docutils literal notranslate"><span class="pre">daemon</span></code> option</p></li>
 <li><p>Child processes can be pinned to specific or a range of CPUs</p></li>
-<li><p>Multiple process start methods available, including: <code class="docutils literal notranslate"><span class="pre">fork</span></code> (default), <code class="docutils literal notranslate"><span class="pre">forkserver</span></code>, <code class="docutils literal notranslate"><span class="pre">spawn</span></code>, and <code class="docutils literal notranslate"><span class="pre">threading</span></code></p></li>
-<li><p>Optionally uses <a class="reference external" href="https://pypi.org/project/dill/">dill</a> as serialization backend through <a class="reference external" href="https://github.com/uqfoundation/multiprocess">multiprocess</a>, enabling parallelizing more exotic functions
-and objects</p></li>
+<li><p>Optionally utilizes <a class="reference external" href="https://pypi.org/project/dill/">dill</a> as serialization backend through <a class="reference external" href="https://github.com/uqfoundation/multiprocess">multiprocess</a>, enabling parallelizing more exotic objects,
+lambdas, and functions in iPython and Jupyter notebooks.</p></li>
 </ul>
 </section>
 <section id="contents">
@@ -275,11 +281,12 @@ and objects</p></li>
             <dd><a href="v1.2.2/index.html">v1.2.2</a></dd>
             <dd><a href="v2.0.0/index.html">v2.0.0</a></dd>
             <dd><a href="v2.1.0/index.html">v2.1.0</a></dd>
+            <dd><a href="v2.1.1/index.html">v2.1.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
+            <dd><a href="bugfix_progress_bar_dashboard/index.html">bugfix/progress_bar_dashboard</a></dd>
             <dd><a href="master/index.html">master</a></dd>
-            <dd><a href="multi_task_queue/index.html">multi_task_queue</a></dd>
         </dl>
     </div>
 </div>
