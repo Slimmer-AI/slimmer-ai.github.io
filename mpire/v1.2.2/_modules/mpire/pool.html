@@ -179,13 +179,14 @@
     <span class="n">NUMPY_INSTALLED</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="kn">from</span> <span class="nn">mpire.comms</span> <span class="kn">import</span> <span class="n">WorkerComms</span>
+<span class="kn">from</span> <span class="nn">mpire.context</span> <span class="kn">import</span> <span class="n">DEFAULT_START_METHOD</span><span class="p">,</span> <span class="n">RUNNING_WINDOWS</span>
 <span class="kn">from</span> <span class="nn">mpire.dashboard.connection_utils</span> <span class="kn">import</span> <span class="n">get_dashboard_connection_details</span>
 <span class="kn">from</span> <span class="nn">mpire.insights</span> <span class="kn">import</span> <span class="n">WorkerInsights</span>
 <span class="kn">from</span> <span class="nn">mpire.params</span> <span class="kn">import</span> <span class="n">CPUList</span><span class="p">,</span> <span class="n">WorkerPoolParams</span>
 <span class="kn">from</span> <span class="nn">mpire.progress_bar</span> <span class="kn">import</span> <span class="n">ProgressBarHandler</span>
 <span class="kn">from</span> <span class="nn">mpire.signal</span> <span class="kn">import</span> <span class="n">DisableKeyboardInterruptSignal</span>
 <span class="kn">from</span> <span class="nn">mpire.tqdm_utils</span> <span class="kn">import</span> <span class="n">TqdmManager</span>
-<span class="kn">from</span> <span class="nn">mpire.utils</span> <span class="kn">import</span> <span class="n">apply_numpy_chunking</span><span class="p">,</span> <span class="n">chunk_tasks</span>
+<span class="kn">from</span> <span class="nn">mpire.utils</span> <span class="kn">import</span> <span class="n">apply_numpy_chunking</span><span class="p">,</span> <span class="n">chunk_tasks</span><span class="p">,</span> <span class="n">set_cpu_affinity</span>
 <span class="kn">from</span> <span class="nn">mpire.worker</span> <span class="kn">import</span> <span class="n">MP_CONTEXTS</span><span class="p">,</span> <span class="n">worker_factory</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -198,7 +199,7 @@
 
 <div class="viewcode-block" id="WorkerPool.__init__"><a class="viewcode-back" href="../../reference/index.html#mpire.WorkerPool.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">daemon</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cpu_ids</span><span class="p">:</span> <span class="n">CPUList</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">shared_objects</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pass_worker_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">use_worker_state</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-                 <span class="n">start_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;fork&#39;</span><span class="p">,</span> <span class="n">keep_alive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">use_dill</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+                 <span class="n">start_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_START_METHOD</span><span class="p">,</span> <span class="n">keep_alive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">use_dill</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param n_jobs: Number of workers to spawn. If ``None``, will use ``cpu_count()``</span>
 <span class="sd">        :param daemon: Whether to start the child processes as daemon</span>
@@ -213,9 +214,10 @@
 <span class="sd">            Shared objects is only passed on to the user function when it&#39;s not ``None``</span>
 <span class="sd">        :param pass_worker_id: Whether to pass on a worker ID to the user function or not</span>
 <span class="sd">        :param use_worker_state: Whether to let a worker have a worker state or not</span>
-<span class="sd">        :param start_method: What process start method to use. Options for multiprocessing: ``&#39;fork&#39;`` (default),</span>
-<span class="sd">            ``&#39;forkserver&#39;`` and ``&#39;spawn&#39;``. For multithreading use ``&#39;threading&#39;``. See</span>
-<span class="sd">            https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods for more information and</span>
+<span class="sd">        :param start_method: What process start method to use. Options for multiprocessing: ``&#39;fork&#39;`` (default, if</span>
+<span class="sd">            available), ``&#39;forkserver&#39;`` and ``&#39;spawn&#39;`` (default, if ``&#39;fork&#39;`` isn&#39;t available). For multithreading</span>
+<span class="sd">            use ``&#39;threading&#39;``. See https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods</span>
+<span class="sd">            for more information and</span>
 <span class="sd">            https://docs.python.org/3/library/multiprocessing.html#the-spawn-and-forkserver-start-methods for some</span>
 <span class="sd">            caveats when using the ``&#39;spawn&#39;`` or ``&#39;forkserver&#39;`` methods</span>
 <span class="sd">        :param keep_alive: When True it will keep workers alive after completing a map call, allowing to reuse workers</span>
@@ -339,7 +341,7 @@
 
             <span class="c1"># Pin CPU if desired</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">cpu_ids</span><span class="p">:</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">sched_setaffinity</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">cpu_ids</span><span class="p">[</span><span class="n">worker_id</span><span class="p">])</span>
+                <span class="n">set_cpu_affinity</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">cpu_ids</span><span class="p">[</span><span class="n">worker_id</span><span class="p">])</span>
 
             <span class="k">return</span> <span class="n">w</span>
 
@@ -864,10 +866,13 @@
         <span class="c1"># patience runs out we terminate them.</span>
         <span class="n">try_count</span> <span class="o">=</span> <span class="mi">10</span>
         <span class="k">while</span> <span class="n">try_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">worker_process</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGUSR1</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">ProcessLookupError</span><span class="p">:</span>
-                <span class="k">pass</span>
+            <span class="c1"># Signal handling in Windows is cumbersome, to say the least. Therefore, it handles error handling</span>
+            <span class="c1"># differently. See Worker::_exit_gracefully_windows for more information.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">RUNNING_WINDOWS</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">worker_process</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGUSR1</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ProcessLookupError</span><span class="p">:</span>
+                    <span class="k">pass</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">wait_for_dead_worker</span><span class="p">(</span><span class="n">worker_id</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">is_worker_alive</span><span class="p">(</span><span class="n">worker_id</span><span class="p">):</span>
@@ -883,9 +888,13 @@
         <span class="c1"># Join the worker process</span>
         <span class="n">try_count</span> <span class="o">=</span> <span class="mi">10</span>
         <span class="k">while</span> <span class="n">try_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">worker_process</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">worker_process</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
-                <span class="k">break</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">worker_process</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">worker_process</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+                    <span class="k">break</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="c1"># For Windows compatibility</span>
+                <span class="k">pass</span>
 
             <span class="c1"># For properly joining, it can help if we try to get some results here. Workers can still be busy putting</span>
             <span class="c1"># items in queues under the hood, even at this point.</span>
@@ -896,9 +905,13 @@
 
         <span class="c1"># If, after all this, the worker is still alive, we terminate it with a brutal kill signal. This shouldn&#39;t</span>
         <span class="c1"># really happen. But, better safe than sorry</span>
-        <span class="k">if</span> <span class="n">worker_process</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
-            <span class="n">worker_process</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
-            <span class="n">worker_process</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">worker_process</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+                <span class="n">worker_process</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+                <span class="n">worker_process</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># For Windows compatibility</span>
+            <span class="k">pass</span>
 
         <span class="c1"># Added since Python 3.7</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">worker_process</span><span class="p">,</span> <span class="s1">&#39;close&#39;</span><span class="p">):</span>
@@ -969,10 +982,10 @@
             <dd><a href="../../../v2.0.0/index.html">v2.0.0</a></dd>
             <dd><a href="../../../v2.1.0/index.html">v2.1.0</a></dd>
             <dd><a href="../../../v2.1.1/index.html">v2.1.1</a></dd>
+            <dd><a href="../../../v2.2.0/index.html">v2.2.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
-            <dd><a href="../../../bugfix_progress_bar_dashboard/index.html">bugfix/progress_bar_dashboard</a></dd>
             <dd><a href="../../../master/index.html">master</a></dd>
         </dl>
     </div>

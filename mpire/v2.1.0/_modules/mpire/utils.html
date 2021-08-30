@@ -167,9 +167,9 @@
 <span></span><span class="kn">import</span> <span class="nn">heapq</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Array</span><span class="p">,</span> <span class="n">cpu_count</span>
-
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -178,6 +178,50 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">np</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">NUMPY_INSTALLED</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="kn">from</span> <span class="nn">mpire.context</span> <span class="kn">import</span> <span class="n">RUNNING_WINDOWS</span>
+
+<span class="c1"># Needed for setting CPU affinity</span>
+<span class="k">if</span> <span class="n">RUNNING_WINDOWS</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">win32api</span>
+        <span class="kn">import</span> <span class="nn">win32con</span>
+        <span class="kn">import</span> <span class="nn">win32process</span>
+        <span class="n">WIN32API_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">WIN32API_ERROR</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">WIN32API_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">WIN32API_ERROR</span> <span class="o">=</span> <span class="n">e</span>
+        <span class="n">WIN32API_ERROR</span><span class="o">.</span><span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; If you&#39;re using Conda, you can run `conda install pywin32` to install the missing &quot;</span> \
+                              <span class="s2">&quot;module.&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">set_cpu_affinity</span><span class="p">(</span><span class="n">pid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">mask</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets the CPU affinity for a given process.</span>
+
+<span class="sd">    On Windows-based systems with more than 64 processors, I&#39;m not sure if this will work. See</span>
+<span class="sd">    https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-setprocessaffinitymask#parameters.</span>
+
+<span class="sd">    :param pid: Process ID</span>
+<span class="sd">    :param mask: List of CPU IDs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">RUNNING_WINDOWS</span><span class="p">:</span>
+        <span class="c1"># On Conda systems simply install pywin32 doesn&#39;t always work. In those cases, you need to run</span>
+        <span class="c1"># `conda install pywin32`.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">WIN32API_AVAILABLE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">WIN32API_ERROR</span>
+
+        <span class="c1"># Convert mask to something Windows understands</span>
+        <span class="n">windows_mask</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">cpu_id</span> <span class="ow">in</span> <span class="n">mask</span><span class="p">:</span>
+            <span class="n">windows_mask</span> <span class="o">^=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">cpu_id</span>
+
+        <span class="c1"># Get handle and set affinity</span>
+        <span class="n">handle</span> <span class="o">=</span> <span class="n">win32api</span><span class="o">.</span><span class="n">OpenProcess</span><span class="p">(</span><span class="n">win32con</span><span class="o">.</span><span class="n">PROCESS_ALL_ACCESS</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">pid</span><span class="p">)</span>
+        <span class="n">win32process</span><span class="o">.</span><span class="n">SetProcessAffinityMask</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">windows_mask</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">sched_setaffinity</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="chunk_tasks"><a class="viewcode-back" href="../../reference/index.html#mpire.utils.chunk_tasks">[docs]</a><span class="k">def</span> <span class="nf">chunk_tasks</span><span class="p">(</span><span class="n">iterable_of_args</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">iterable_len</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -415,10 +459,10 @@
             <dd><a href="../../../v2.0.0/index.html">v2.0.0</a></dd>
             <dd><a href="utils.html">v2.1.0</a></dd>
             <dd><a href="../../../v2.1.1/index.html">v2.1.1</a></dd>
+            <dd><a href="../../../v2.2.0/index.html">v2.2.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
-            <dd><a href="../../../bugfix_progress_bar_dashboard/index.html">bugfix/progress_bar_dashboard</a></dd>
             <dd><a href="../../../master/index.html">master</a></dd>
         </dl>
     </div>

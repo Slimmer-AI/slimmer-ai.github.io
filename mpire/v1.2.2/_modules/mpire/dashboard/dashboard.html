@@ -175,11 +175,13 @@
 <span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">escape</span><span class="p">,</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span>
 <span class="kn">from</span> <span class="nn">werkzeug.serving</span> <span class="kn">import</span> <span class="n">make_server</span>
 
-<span class="kn">from</span> <span class="nn">mpire.signal</span> <span class="kn">import</span> <span class="n">DisableKeyboardInterruptSignal</span>
+<span class="kn">from</span> <span class="nn">mpire.signal</span> <span class="kn">import</span> <span class="n">DisableKeyboardInterruptSignal</span><span class="p">,</span> <span class="n">ignore_keyboard_interrupt</span>
 <span class="kn">from</span> <span class="nn">mpire.dashboard.manager</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DASHBOARD_MANAGER_HOST</span><span class="p">,</span> <span class="n">DASHBOARD_MANAGER_PORT</span><span class="p">,</span>
                                      <span class="n">get_manager_client_dicts</span><span class="p">,</span> <span class="n">start_manager_server</span><span class="p">)</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">logger_werkzeug</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;werkzeug&#39;</span><span class="p">)</span>
+<span class="n">logger_werkzeug</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
 <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">_server</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="n">_progress_bar_html</span> <span class="o">=</span> <span class="n">resource_string</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;templates/progress_bar.html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
@@ -282,7 +284,8 @@
             <span class="c1"># Start flask server</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;werkzeug&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARN</span><span class="p">)</span>
             <span class="n">dashboard_port_nr</span> <span class="o">=</span> <span class="n">Value</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">_run</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">DASHBOARD_STARTED_EVENT</span><span class="p">,</span> <span class="n">dashboard_port_nr</span><span class="p">,</span> <span class="n">port_range</span><span class="p">),</span>
+            <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">_run</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">DASHBOARD_STARTED_EVENT</span><span class="p">,</span> <span class="n">DASHBOARD_MANAGER_HOST</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                       <span class="n">DASHBOARD_MANAGER_PORT</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">dashboard_port_nr</span><span class="p">,</span> <span class="n">port_range</span><span class="p">),</span>
                     <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;dashboard-process&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
             <span class="n">DASHBOARD_STARTED_EVENT</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
 
@@ -306,21 +309,33 @@
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">DASHBOARD_STARTED_EVENT</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
         <span class="c1"># Set connection variables so we can connect to the right manager</span>
-        <span class="n">DASHBOARD_MANAGER_HOST</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">manager_host</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+        <span class="n">manager_host</span> <span class="o">=</span> <span class="n">manager_host</span> <span class="ow">or</span> <span class="s2">&quot;127.0.0.1&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">manager_host</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">manager_host</span> <span class="o">=</span> <span class="n">manager_host</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+        <span class="n">DASHBOARD_MANAGER_HOST</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">manager_host</span>
         <span class="n">DASHBOARD_MANAGER_PORT</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">manager_port_nr</span>
         <span class="n">DASHBOARD_STARTED_EVENT</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;You&#39;re already connected to a running dashboard&quot;</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="n">started</span><span class="p">:</span> <span class="n">Event</span><span class="p">,</span> <span class="n">dashboard_port_nr</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">port_range</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="n">started</span><span class="p">:</span> <span class="n">Event</span><span class="p">,</span> <span class="n">manager_host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">manager_port_nr</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dashboard_port_nr</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span>
+         <span class="n">port_range</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Starts a dashboard server</span>
 
 <span class="sd">    :param started: Event that signals the dashboard server has started</span>
+<span class="sd">    :param manager_host: Dashboard manager host</span>
+<span class="sd">    :param manager_port_nr: Dashboard manager port number</span>
 <span class="sd">    :param dashboard_port_nr: Value object for storing the dashboad port number that is used</span>
 <span class="sd">    :param port_range: Port range to try.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ignore_keyboard_interrupt</span><span class="p">()</span>  <span class="c1"># For Windows compatibility</span>
+
+    <span class="c1"># Set dashboard connection details. This is needed when spawn is the default start method</span>
+    <span class="n">DASHBOARD_MANAGER_HOST</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">manager_host</span>
+    <span class="n">DASHBOARD_MANAGER_PORT</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">manager_port_nr</span>
+
     <span class="c1"># Connect to manager from this process</span>
     <span class="k">global</span> <span class="n">_DASHBOARD_TQDM_DICT</span><span class="p">,</span> <span class="n">_DASHBOARD_TQDM_DETAILS_DICT</span><span class="p">,</span> <span class="n">_server</span>
     <span class="n">_DASHBOARD_TQDM_DICT</span><span class="p">,</span> <span class="n">_DASHBOARD_TQDM_DETAILS_DICT</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_manager_client_dicts</span><span class="p">()</span>
@@ -405,10 +420,10 @@
             <dd><a href="../../../../v2.0.0/index.html">v2.0.0</a></dd>
             <dd><a href="../../../../v2.1.0/index.html">v2.1.0</a></dd>
             <dd><a href="../../../../v2.1.1/index.html">v2.1.1</a></dd>
+            <dd><a href="../../../../v2.2.0/index.html">v2.2.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
-            <dd><a href="../../../../bugfix_progress_bar_dashboard/index.html">bugfix/progress_bar_dashboard</a></dd>
             <dd><a href="../../../../master/index.html">master</a></dd>
         </dl>
     </div>

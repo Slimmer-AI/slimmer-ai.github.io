@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to the MPIRE documentation! &mdash; mpire 2.1.1 documentation</title>
+  <title>Welcome to the MPIRE documentation! &mdash; mpire 2.2.0 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.1.1
+                2.2.0
               </div>
             
           
@@ -173,18 +173,14 @@
 user-friendly than the default multiprocessing package. It combines the convenient map like functions of
 <code class="docutils literal notranslate"><span class="pre">multiprocessing.Pool</span></code> with the benefits of using copy-on-write shared objects of <code class="docutils literal notranslate"><span class="pre">multiprocessing.Process</span></code>,
 together with easy-to-use worker state, worker insights, and progress bar functionality.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>MPIRE currently only supports Linux based operating systems that support ‘fork’ as start method. Support for
-Windows is coming soon.</p>
-</div>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Faster execution than other multiprocessing libraries. See <a class="reference external" href="https://towardsdatascience.com/mpire-for-python-multiprocessing-is-really-easy-d2ae7999a3e9">benchmarks</a>.</p></li>
 <li><p>Intuitive, Pythonic syntax</p></li>
 <li><p>Multiprocessing with <code class="docutils literal notranslate"><span class="pre">map</span></code>/<code class="docutils literal notranslate"><span class="pre">map_unordered</span></code>/<code class="docutils literal notranslate"><span class="pre">imap</span></code>/<code class="docutils literal notranslate"><span class="pre">imap_unordered</span></code> functions</p></li>
-<li><p>Easy use of copy-on-write shared objects with a pool of workers</p></li>
+<li><p>Easy use of copy-on-write shared objects with a pool of workers (copy-on-write is only available for start methods
+<code class="docutils literal notranslate"><span class="pre">fork</span></code> and <code class="docutils literal notranslate"><span class="pre">threading</span></code>)</p></li>
 <li><p>Each worker can have its own state and with convenient worker init and exit functionality this state can be easily
 manipulated (e.g., to load a memory-intensive model only once for each worker without the need of sending it through a
 queue)</p></li>
@@ -201,6 +197,8 @@ arrays)</p></li>
 <li><p>Optionally utilizes <a class="reference external" href="https://pypi.org/project/dill/">dill</a> as serialization backend through <a class="reference external" href="https://github.com/uqfoundation/multiprocess">multiprocess</a>, enabling parallelizing more exotic objects,
 lambdas, and functions in iPython and Jupyter notebooks.</p></li>
 </ul>
+<p>MPIRE has been tested on both Linux and Windows. There are a few minor known caveats for Windows users, which can be
+found at <a class="reference internal" href="troubleshooting.html#troubleshooting-windows"><span class="std std-ref">Windows</span></a>.</p>
 </section>
 <section id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
@@ -282,10 +280,10 @@ lambdas, and functions in iPython and Jupyter notebooks.</p></li>
             <dd><a href="v2.0.0/index.html">v2.0.0</a></dd>
             <dd><a href="v2.1.0/index.html">v2.1.0</a></dd>
             <dd><a href="v2.1.1/index.html">v2.1.1</a></dd>
+            <dd><a href="v2.2.0/index.html">v2.2.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
-            <dd><a href="bugfix_progress_bar_dashboard/index.html">bugfix/progress_bar_dashboard</a></dd>
             <dd><a href="master/index.html">master</a></dd>
         </dl>
     </div>

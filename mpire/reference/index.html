@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; mpire 2.1.1 documentation</title>
+  <title>API Reference &mdash; mpire 2.2.0 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.1.1
+                2.2.0
               </div>
             
           
@@ -226,9 +226,10 @@ Note that CPU pinning may only work on Linux based systems</p></li>
 Shared objects is only passed on to the user function when it’s not <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
 <li><p><strong>pass_worker_id</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to pass on a worker ID to the user function or not</p></li>
 <li><p><strong>use_worker_state</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to let a worker have a worker state or not</p></li>
-<li><p><strong>start_method</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – What process start method to use. Options for multiprocessing: <code class="docutils literal notranslate"><span class="pre">'fork'</span></code> (default),
-<code class="docutils literal notranslate"><span class="pre">'forkserver'</span></code> and <code class="docutils literal notranslate"><span class="pre">'spawn'</span></code>. For multithreading use <code class="docutils literal notranslate"><span class="pre">'threading'</span></code>. See
-<a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods">https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods</a> for more information and
+<li><p><strong>start_method</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – What process start method to use. Options for multiprocessing: <code class="docutils literal notranslate"><span class="pre">'fork'</span></code> (default, if
+available), <code class="docutils literal notranslate"><span class="pre">'forkserver'</span></code> and <code class="docutils literal notranslate"><span class="pre">'spawn'</span></code> (default, if <code class="docutils literal notranslate"><span class="pre">'fork'</span></code> isn’t available). For multithreading
+use <code class="docutils literal notranslate"><span class="pre">'threading'</span></code>. See <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods">https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods</a>
+for more information and
 <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html#the-spawn-and-forkserver-start-methods">https://docs.python.org/3/library/multiprocessing.html#the-spawn-and-forkserver-start-methods</a> for some
 caveats when using the <code class="docutils literal notranslate"><span class="pre">'spawn'</span></code> or <code class="docutils literal notranslate"><span class="pre">'forkserver'</span></code> methods</p></li>
 <li><p><strong>keep_alive</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – When True it will keep workers alive after completing a map call, allowing to reuse workers
@@ -732,10 +733,10 @@ passes it to the function</p></li>
             <dd><a href="../v2.0.0/reference/index.html">v2.0.0</a></dd>
             <dd><a href="../v2.1.0/reference/index.html">v2.1.0</a></dd>
             <dd><a href="../v2.1.1/reference/index.html">v2.1.1</a></dd>
+            <dd><a href="../v2.2.0/reference/index.html">v2.2.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
-            <dd><a href="../bugfix_progress_bar_dashboard/reference/index.html">bugfix/progress_bar_dashboard</a></dd>
             <dd><a href="../master/reference/index.html">master</a></dd>
         </dl>
     </div>
