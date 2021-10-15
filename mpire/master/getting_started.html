@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Getting started &mdash; mpire 2.2.1 documentation</title>
+  <title>Getting started &mdash; mpire 2.3.0 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.2.1
+                2.3.0
               </div>
             
           
@@ -182,8 +182,8 @@ following:</p>
 </pre></div>
 </div>
 <p>Running this function takes about 10 seconds to complete.</p>
-<p>Functions like these are known as <a class="reference external" href="https://en.wikipedia.org/wiki/Embarrassingly_parallel">embarrassingly parellel</a> problems, functions that require little to no effort to
-turn into a parellel task. Parallelizing a simple function as this can be as easy as importing <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code> and
+<p>Functions like these are known as <a class="reference external" href="https://en.wikipedia.org/wiki/Embarrassingly_parallel">embarrassingly parallel</a> problems, functions that require little to no effort to
+turn into a parallel task. Parallelizing a simple function as this can be as easy as importing <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code> and
 using the <code class="docutils literal notranslate"><span class="pre">multiprocessing.Pool</span></code> class:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
 
@@ -221,18 +221,22 @@ automatically switch to a widget.</p>
 <h2>Shared objects<a class="headerlink" href="#shared-objects" title="Permalink to this headline">¶</a></h2>
 <p>If you have one or more objects that you want to share between all workers you can make use of the copy-on-write
 <code class="docutils literal notranslate"><span class="pre">shared_objects</span></code> option of MPIRE. MPIRE will pass on these objects only once for each worker without
-copying/serialization. Only when you alter the object in the worker function it will start copying it for that worker.</p>
+copying/serialization. Only when the object is altered in the worker function it will start copying it for that worker.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Copy-on-write is not available on Windows, as it requires the start method <code class="docutils literal notranslate"><span class="pre">fork</span></code>.</p>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">time_consuming_function</span><span class="p">(</span><span class="n">some_object</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
     <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Simulate that this function takes long to complete</span>
     <span class="k">return</span> <span class="o">...</span>
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
     <span class="n">some_object</span> <span class="o">=</span> <span class="o">...</span>
-    <span class="k">with</span> <span class="n">WorkerPool</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">shared_objects</span><span class="o">=</span><span class="n">some_object</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">WorkerPool</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">shared_objects</span><span class="o">=</span><span class="n">some_object</span><span class="p">,</span> <span class="n">start_method</span><span class="o">=</span><span class="s1">&#39;fork&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
         <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">time_consuming_function</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">progress_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>See <a class="reference internal" href="usage/worker_pool.html#shared-objects"><span class="std std-ref">Shared objects</span></a> for more details.</p>
+<p>See <a class="reference internal" href="usage/workerpool/shared_objects.html#shared-objects"><span class="std std-ref">Shared objects</span></a> for more details.</p>
 </section>
 <section id="worker-initialization">
 <h2>Worker initialization<a class="headerlink" href="#worker-initialization" title="Permalink to this headline">¶</a></h2>
@@ -252,7 +256,7 @@ functionality:</p>
 </pre></div>
 </div>
 <p>Similarly, you can use the <code class="docutils literal notranslate"><span class="pre">worker_exit</span></code> parameter to let MPIRE call a function whenever a worker terminates. You can
-even let this exit function return results, which can be obtained later on. See the <a class="reference internal" href="usage/map.html#worker-init-exit"><span class="std std-ref">Worker init and exit</span></a> section for
+even let this exit function return results, which can be obtained later on. See the <a class="reference internal" href="usage/map/worker_init_exit.html#worker-init-exit"><span class="std std-ref">Worker init and exit</span></a> section for
 more information.</p>
 </section>
 <section id="worker-insights">
@@ -269,7 +273,7 @@ respectively:</p>
     <span class="n">insights</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">get_insights</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>See <a class="reference internal" href="usage/map.html#worker-insights"><span class="std std-ref">Worker insights</span></a> for a more detailed example and expected output.</p>
+<p>See <a class="reference internal" href="usage/workerpool/worker_insights.html#worker-insights"><span class="std std-ref">Worker insights</span></a> for a more detailed example and expected output.</p>
 </section>
 </section>
 
@@ -335,6 +339,7 @@ respectively:</p>
             <dd><a href="../v2.1.1/getting_started.html">v2.1.1</a></dd>
             <dd><a href="../v2.2.0/getting_started.html">v2.2.0</a></dd>
             <dd><a href="../v2.2.1/getting_started.html">v2.2.1</a></dd>
+            <dd><a href="../v2.3.0/getting_started.html">v2.3.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

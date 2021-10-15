@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage &mdash; mpire 2.2.1 documentation</title>
+  <title>Usage &mdash; mpire 2.3.0 documentation</title>
   
 
   
@@ -43,7 +43,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="WorkerPool" href="worker_pool.html" />
+    <link rel="next" title="WorkerPool" href="workerpool/index.html" />
     <link rel="prev" title="Getting started" href="../getting_started.html" /> 
 </head>
 
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.2.1
+                2.3.0
               </div>
             
           
@@ -100,8 +100,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="worker_pool.html">WorkerPool</a></li>
-<li class="toctree-l2"><a class="reference internal" href="map.html">Map family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workerpool/index.html">WorkerPool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="map/index.html">Map family</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dashboard.html">Dashboard</a></li>
 </ul>
 </li>
@@ -177,9 +177,34 @@
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="worker_pool.html">WorkerPool</a></li>
-<li class="toctree-l1"><a class="reference internal" href="map.html">Map family</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dashboard.html">Dashboard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workerpool/index.html">WorkerPool</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="workerpool/setup.html">Starting a WorkerPool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workerpool/start_method.html">Process start method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workerpool/cpu_pinning.html">CPU pinning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workerpool/worker_id.html">Accessing the worker ID</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workerpool/shared_objects.html">Shared objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workerpool/worker_state.html">Worker state</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workerpool/keep_alive.html">Keep alive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workerpool/worker_insights.html">Worker insights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workerpool/dill.html">Dill</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="map/index.html">Map family</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="map/map.html">map family of functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="map/progress_bar.html">Progress bar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="map/worker_init_exit.html">Worker init and exit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="map/task_chunking.html">Task chunking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="map/max_tasks_active.html">Maximum number of active tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="map/worker_lifespan.html">Worker lifespan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="map/numpy.html">Numpy arrays</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dashboard.html">Dashboard</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html#starting-the-dashboard">Starting the dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html#connecting-to-an-existing-dashboard">Connecting to an existing dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html#using-the-dashboard">Using the dashboard</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>
@@ -192,7 +217,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="worker_pool.html" class="btn btn-neutral float-right" title="WorkerPool" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="workerpool/index.html" class="btn btn-neutral float-right" title="WorkerPool" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="../getting_started.html" class="btn btn-neutral float-left" title="Getting started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -246,6 +271,7 @@
             <dd><a href="../v2.1.1/usage/index.html">v2.1.1</a></dd>
             <dd><a href="../v2.2.0/usage/index.html">v2.2.0</a></dd>
             <dd><a href="../v2.2.1/usage/index.html">v2.2.1</a></dd>
+            <dd><a href="../v2.3.0/usage/index.html">v2.3.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

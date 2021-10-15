@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Troubleshooting &mdash; mpire 2.2.1 documentation</title>
+  <title>Troubleshooting &mdash; mpire 2.3.0 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.2.1
+                2.3.0
               </div>
             
           
@@ -177,7 +177,8 @@
 <li><p><a class="reference internal" href="#unit-tests" id="id1">Unit tests</a></p></li>
 <li><p><a class="reference internal" href="#shutting-down-takes-a-long-time-on-error" id="id2">Shutting down takes a long time on error</a></p></li>
 <li><p><a class="reference internal" href="#unpicklable-tasks-results" id="id3">Unpicklable tasks/results</a></p></li>
-<li><p><a class="reference internal" href="#windows" id="id4">Windows</a></p></li>
+<li><p><a class="reference internal" href="#attributeerror-can-t-get-attribute-some-function-on-module-main-built-in" id="id4">AttributeError: Can’t get attribute ‘&lt;some_function&gt;’ on &lt;module ‘__main__’ (built-in)&gt;</a></p></li>
+<li><p><a class="reference internal" href="#windows" id="id5">Windows</a></p></li>
 </ul>
 </div>
 <section id="unit-tests">
@@ -226,12 +227,12 @@ the task or results queue can be quite full, still. MPIRE drains these queues un
 properly shutdown and clean up every communication channel.</p>
 <p>To remedy this issue you can use the <code class="docutils literal notranslate"><span class="pre">max_tasks_active</span></code> parameter and set it to <code class="docutils literal notranslate"><span class="pre">n_jobs</span> <span class="pre">*</span> <span class="pre">2</span></code>, or similar. Aside
 from the added benefit that the workers can start more quickly, the queues won’t get that full anymore and shutting down
-will be much quicker. See <a class="reference internal" href="usage/map.html#max-active-tasks"><span class="std std-ref">Maximum number of active tasks</span></a> for more information.</p>
+will be much quicker. See <a class="reference internal" href="usage/map/max_tasks_active.html#max-active-tasks"><span class="std std-ref">Maximum number of active tasks</span></a> for more information.</p>
 <p>When you’re using a lazy map function also be sure to iterate through the results, otherwise that queue will be full and
 draining it will take a longer time.</p>
 </section>
 <section id="unpicklable-tasks-results">
-<h2><a class="toc-backref" href="#id3">Unpicklable tasks/results</a><a class="headerlink" href="#unpicklable-tasks-results" title="Permalink to this headline">¶</a></h2>
+<span id="unpickable-tasks"></span><h2><a class="toc-backref" href="#id3">Unpicklable tasks/results</a><a class="headerlink" href="#unpicklable-tasks-results" title="Permalink to this headline">¶</a></h2>
 <p>Sometimes you can encounter deadlocks in your code when using MPIRE. When you encounter this, chances are some tasks or
 results from your script can’t be pickled. MPIRE makes use of multiprocessing queues for inter-process communication and
 if your function returns unpicklable results the queue will unfortunately deadlock.</p>
@@ -240,10 +241,19 @@ gracefully when encountering a pickle error. However, this would mean objects wo
 add a heavy performance penalty and is therefore not an acceptable solution.</p>
 <p>Instead, the user should make sure their tasks and results are always picklable (which in most cases won’t be a
 problem), or resort to setting <code class="docutils literal notranslate"><span class="pre">use_dill=True</span></code>. The latter is capable of pickling a lot more exotic types. See
-<a class="reference internal" href="usage/worker_pool.html#use-dill"><span class="std std-ref">Dill</span></a> for more information.</p>
+<a class="reference internal" href="usage/workerpool/dill.html#use-dill"><span class="std std-ref">Dill</span></a> for more information.</p>
+</section>
+<section id="attributeerror-can-t-get-attribute-some-function-on-module-main-built-in">
+<h2><a class="toc-backref" href="#id4">AttributeError: Can’t get attribute ‘&lt;some_function&gt;’ on &lt;module ‘__main__’ (built-in)&gt;</a><a class="headerlink" href="#attributeerror-can-t-get-attribute-some-function-on-module-main-built-in" title="Permalink to this headline">¶</a></h2>
+<p>This error can occur when inside an iPython or Jupyter notebook session and the function to parallelize is defined in
+that session. This is often the result of using <code class="docutils literal notranslate"><span class="pre">spawn</span></code> as start method (the default on Windows), which starts a new
+process without copying the function in question.</p>
+<p>This error is actually related to the <a class="reference internal" href="#unpickable-tasks"><span class="std std-ref">Unpicklable tasks/results</span></a> problem and can be solved in a similar way. I.e., you can
+define your function in a file that can be imported by the child process, or you can resort to using <code class="docutils literal notranslate"><span class="pre">dill</span></code> by setting
+<code class="docutils literal notranslate"><span class="pre">use_dill=True</span></code>. See <a class="reference internal" href="usage/workerpool/dill.html#use-dill"><span class="std std-ref">Dill</span></a> for more information.</p>
 </section>
 <section id="windows">
-<span id="troubleshooting-windows"></span><h2><a class="toc-backref" href="#id4">Windows</a><a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h2>
+<span id="troubleshooting-windows"></span><h2><a class="toc-backref" href="#id5">Windows</a><a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h2>
 <p>Windows support has some caveats:</p>
 <ul class="simple">
 <li><p>When using worker insights the arguments of the top 5 longest tasks are not available;</p></li>
@@ -316,6 +326,7 @@ problem), or resort to setting <code class="docutils literal notranslate"><span 
             <dd><a href="../v2.1.1/troubleshooting.html">v2.1.1</a></dd>
             <dd><a href="../v2.2.0/troubleshooting.html">v2.2.0</a></dd>
             <dd><a href="../v2.2.1/troubleshooting.html">v2.2.1</a></dd>
+            <dd><a href="../v2.3.0/troubleshooting.html">v2.3.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
