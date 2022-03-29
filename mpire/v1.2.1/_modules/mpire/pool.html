@@ -312,10 +312,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_worker</span><span class="p">(</span><span class="n">worker_id</span><span class="p">))</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Workers created&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_restart_workers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_restart_workers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Restarts workers that need to be restarted.</span>
+
+<span class="sd">        :return: List of unordered results produces by workers</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obtained_results</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">worker_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">get_worker_restarts</span><span class="p">():</span>
             <span class="c1"># Obtain results from exit results queue (should be done before joining the worker)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_params</span><span class="o">.</span><span class="n">worker_exit</span><span class="p">:</span>
@@ -323,10 +326,23 @@
 
             <span class="c1"># Join worker</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">reset_worker_restart</span><span class="p">(</span><span class="n">worker_id</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span><span class="p">[</span><span class="n">worker_id</span><span class="p">]</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span><span class="p">[</span><span class="n">worker_id</span><span class="p">]</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+
+            <span class="c1"># If we time-out, it means the worker still has data that needs to be send over. Note that on Windows, this</span>
+            <span class="c1"># is not necessarily the case. Windows is just a bit slow and thinks it cannot join yet, while in fact</span>
+            <span class="c1"># nothing is stoping it from joining. So, we just try it a few times ...</span>
+            <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span><span class="p">[</span><span class="n">worker_id</span><span class="p">]</span><span class="o">.</span><span class="n">exitcode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">obtained_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">get_results</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">0.01</span><span class="p">))</span>
+                <span class="k">except</span> <span class="n">queue</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span><span class="p">[</span><span class="n">worker_id</span><span class="p">]</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 
             <span class="c1"># Start new worker</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span><span class="p">[</span><span class="n">worker_id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_worker</span><span class="p">(</span><span class="n">worker_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">obtained_results</span>
 
     <span class="k">def</span> <span class="nf">_start_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">worker_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -695,8 +711,10 @@
                         <span class="k">except</span> <span class="n">queue</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span>
                             <span class="k">pass</span>
 
-                        <span class="c1"># Restart workers if necessary</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_restart_workers</span><span class="p">()</span>
+                        <span class="c1"># Restart workers if necessary. This can yield intermediate results</span>
+                        <span class="k">for</span> <span class="n">results</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restart_workers</span><span class="p">():</span>
+                            <span class="k">yield from</span> <span class="n">results</span>
+                            <span class="n">n_active</span> <span class="o">-=</span> <span class="mi">1</span>
 
                     <span class="c1"># Obtain the results not yet obtained</span>
                     <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">exception_thrown</span><span class="p">()</span> <span class="ow">and</span> <span class="n">n_active</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
@@ -706,8 +724,10 @@
                         <span class="k">except</span> <span class="n">queue</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span>
                             <span class="k">pass</span>
 
-                        <span class="c1"># Restart workers if necessary</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_restart_workers</span><span class="p">()</span>
+                        <span class="c1"># Restart workers if necessary. This can yield intermediate results</span>
+                        <span class="k">for</span> <span class="n">results</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restart_workers</span><span class="p">():</span>
+                            <span class="k">yield from</span> <span class="n">results</span>
+                            <span class="n">n_active</span> <span class="o">-=</span> <span class="mi">1</span>
 
                     <span class="c1"># Terminate if exception has been thrown at this point</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">exception_thrown</span><span class="p">():</span>
@@ -976,7 +996,7 @@
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2021, Slimmer AI
+        &copy; Copyright 2022, Slimmer AI
 
     </p>
   </div>
@@ -1021,9 +1041,11 @@
             <dd><a href="../../../v2.3.1/index.html">v2.3.1</a></dd>
             <dd><a href="../../../v2.3.2/index.html">v2.3.2</a></dd>
             <dd><a href="../../../v2.3.3/index.html">v2.3.3</a></dd>
+            <dd><a href="../../../v2.3.4/index.html">v2.3.4</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
+            <dd><a href="../../../dependencies_and_hanging_mpire/index.html">dependencies_and_hanging_mpire</a></dd>
             <dd><a href="../../../master/index.html">master</a></dd>
         </dl>
     </div>
