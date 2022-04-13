@@ -1,0 +1,677 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>text_scrubber.geo.geo &mdash; text-scrubber 0.3.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/banner.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> text-scrubber
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">text-scrubber documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Basic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Change log</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">text-scrubber</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>text_scrubber.geo.geo</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for text_scrubber.geo.geo</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">text_scrubber</span> <span class="kn">import</span> <span class="n">TextScrubber</span>
+<span class="kn">from</span> <span class="nn">text_scrubber.io</span> <span class="kn">import</span> <span class="n">read_resource_file</span><span class="p">,</span> <span class="n">read_resource_json_file</span>
+<span class="kn">from</span> <span class="nn">text_scrubber.string_distance</span> <span class="kn">import</span> <span class="n">find_closest_string</span><span class="p">,</span> <span class="n">get_trigram_tokens</span><span class="p">,</span> <span class="n">pattern_match</span>
+
+
+<div class="viewcode-block" id="normalize_country"><a class="viewcode-back" href="../../../reference.html#text_scrubber.geo.normalize_country">[docs]</a><span class="k">def</span> <span class="nf">normalize_country</span><span class="p">(</span><span class="n">country</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cleans up a country by string cleaning and performs some basic country lookups to get the canonical name.</span>
+
+<span class="sd">    Note: when countries are officially part of another country, we return the latter. E.g., Greenland is normalized</span>
+<span class="sd">    to Denmark.</span>
+
+<span class="sd">    :param country: Country string to clean.</span>
+<span class="sd">    :return: List of (country, score) candidates in canonical form, sorted by score (desc)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Clean country</span>
+    <span class="n">cleaned_country</span> <span class="o">=</span> <span class="n">clean_country</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
+
+    <span class="c1"># When have no input after cleaning it should return the original</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cleaned_country</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="c1"># Check if country is part of the known countries list</span>
+    <span class="k">if</span> <span class="n">cleaned_country</span> <span class="ow">in</span> <span class="n">_COUNTRY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;cleaned_to_capitilized&#39;</span><span class="p">]:</span>
+        <span class="n">candidate</span> <span class="o">=</span> <span class="n">_COUNTRY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;cleaned_to_capitilized&#39;</span><span class="p">][</span><span class="n">cleaned_country</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">candidate</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span>
+
+    <span class="c1"># There&#39;s a number of known expansions/translations which can be applied. Check if we can find anything with that</span>
+    <span class="k">if</span> <span class="n">cleaned_country</span> <span class="ow">in</span> <span class="n">_COUNTRY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;replacements&#39;</span><span class="p">]:</span>
+        <span class="n">candidate</span> <span class="o">=</span> <span class="n">_COUNTRY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;cleaned_to_capitilized&#39;</span><span class="p">][</span><span class="n">_COUNTRY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;replacements&#39;</span><span class="p">][</span><span class="n">cleaned_country</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">candidate</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span>
+
+    <span class="c1"># Check if the country follows a certain country pattern</span>
+    <span class="n">known_country</span> <span class="o">=</span> <span class="n">pattern_match</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">_COUNTRY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;replacement_patterns&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">known_country</span><span class="p">:</span>
+        <span class="n">candidate</span> <span class="o">=</span> <span class="n">_COUNTRY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;cleaned_to_capitilized&#39;</span><span class="p">][</span><span class="n">known_country</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">candidate</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span>
+
+    <span class="c1"># Check if we can find a close match (using default threshold of 0.8 (magic number))</span>
+    <span class="n">country_match</span> <span class="o">=</span> <span class="n">find_closest_string</span><span class="p">(</span><span class="n">cleaned_country</span><span class="p">,</span> <span class="n">_COUNTRY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;cleaned_trigrams&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">country_match</span><span class="p">:</span>
+        <span class="n">best_matches</span><span class="p">,</span> <span class="n">score</span> <span class="o">=</span> <span class="n">country_match</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="p">(</span><span class="n">_COUNTRY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;cleaned_to_capitilized&#39;</span><span class="p">][</span><span class="n">country</span><span class="p">]</span> <span class="k">for</span> <span class="n">country</span> <span class="ow">in</span> <span class="n">best_matches</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">candidate</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span> <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">]</span>
+
+    <span class="c1"># No match found</span>
+    <span class="k">return</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="normalize_region"><a class="viewcode-back" href="../../../reference.html#text_scrubber.geo.normalize_region">[docs]</a><span class="k">def</span> <span class="nf">normalize_region</span><span class="p">(</span><span class="n">region</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">restrict_countries</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cleans up a region by string cleaning and performs region lookups to get the canonical name</span>
+
+<span class="sd">    :param restrict_countries: A set of countries and/or country codes to restrict the search space</span>
+<span class="sd">    :param region: City name</span>
+<span class="sd">    :return: List of (city, country, score) candidates in canonical form, sorted by score (desc)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Clean region</span>
+    <span class="n">cleaned_region</span> <span class="o">=</span> <span class="n">clean_region</span><span class="p">(</span><span class="n">region</span><span class="p">)</span>
+
+    <span class="c1"># If the cleaned_region is empty return an empty list</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cleaned_region</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="c1"># Add region resources for countries to search in</span>
+    <span class="n">add_region_resources</span><span class="p">(</span><span class="n">restrict_countries</span><span class="p">)</span>
+    <span class="n">country_codes</span> <span class="o">=</span> <span class="p">(</span><span class="n">_REGION_RESOURCES</span><span class="p">[</span><span class="s1">&#39;all_country_codes&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">restrict_countries</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span>
+                     <span class="n">_normalize_country_to_country_codes</span><span class="p">(</span><span class="n">restrict_countries</span><span class="p">))</span>
+
+    <span class="c1"># Check if region is part of the known region list</span>
+    <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">not_found</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">country_code</span> <span class="ow">in</span> <span class="n">country_codes</span><span class="p">:</span>
+        <span class="n">regions_in_country</span> <span class="o">=</span> <span class="n">_REGION_RESOURCES</span><span class="p">[</span><span class="s1">&#39;regions_per_country_code_map&#39;</span><span class="p">][</span><span class="n">country_code</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">cleaned_region</span> <span class="ow">in</span> <span class="n">regions_in_country</span><span class="p">:</span>
+            <span class="c1"># Return the exact name of the region</span>
+            <span class="n">capitalized_region</span> <span class="o">=</span> <span class="n">regions_in_country</span><span class="p">[</span><span class="n">cleaned_region</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">capitalize_country</span> <span class="o">=</span> <span class="n">_REGION_RESOURCES</span><span class="p">[</span><span class="s1">&#39;country_to_normalized_country_map&#39;</span><span class="p">][</span><span class="n">country_code</span><span class="p">]</span>
+            <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">capitalized_region</span><span class="p">,</span> <span class="n">capitalize_country</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+            <span class="n">not_found</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># Check if we can find a close match (using default threshold of 0.8 (magic number))</span>
+    <span class="k">if</span> <span class="n">not_found</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">country_code</span> <span class="ow">in</span> <span class="n">country_codes</span><span class="p">:</span>
+            <span class="n">regions_in_country</span> <span class="o">=</span> <span class="n">_REGION_RESOURCES</span><span class="p">[</span><span class="s1">&#39;regions_per_country_code_map&#39;</span><span class="p">][</span><span class="n">country_code</span><span class="p">]</span>
+
+            <span class="c1"># Provide the input that find_closest_string expects to see</span>
+            <span class="n">region_to_region_name</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">region_country</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">region_name</span><span class="p">,</span> <span class="n">region_value</span> <span class="ow">in</span> <span class="n">regions_in_country</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">region_to_region_name</span><span class="p">[</span><span class="n">region_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">region_value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">region_country</span><span class="p">[</span><span class="n">region_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">region_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">region_match</span> <span class="o">=</span> <span class="n">find_closest_string</span><span class="p">(</span><span class="n">cleaned_region</span><span class="p">,</span> <span class="n">region_country</span><span class="p">)</span>  <span class="c1"># region_country is {region: trigram}</span>
+
+            <span class="k">if</span> <span class="n">region_match</span><span class="p">:</span>
+                <span class="n">best_matches</span><span class="p">,</span> <span class="n">score</span> <span class="o">=</span> <span class="n">region_match</span>
+                <span class="n">best_matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">region_to_region_name</span><span class="p">[</span><span class="n">best_match</span><span class="p">]</span> <span class="k">for</span> <span class="n">best_match</span> <span class="ow">in</span> <span class="n">best_matches</span><span class="p">]</span>
+                <span class="n">capitalize_country</span> <span class="o">=</span> <span class="n">_REGION_RESOURCES</span><span class="p">[</span><span class="s1">&#39;country_to_normalized_country_map&#39;</span><span class="p">][</span><span class="n">country_code</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">best_match</span> <span class="ow">in</span> <span class="n">best_matches</span><span class="p">:</span>
+                    <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">best_match</span><span class="p">,</span> <span class="n">capitalize_country</span><span class="p">,</span> <span class="n">score</span><span class="p">))</span>
+
+    <span class="c1"># Remove duplicates. Regions are also considered duplicates if the cleaned version is equal.</span>
+    <span class="n">deduped_candidates</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">region</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+        <span class="n">deduped_candidates</span><span class="p">[(</span><span class="n">clean_region</span><span class="p">(</span><span class="n">region</span><span class="p">),</span> <span class="n">country</span><span class="p">,</span> <span class="n">score</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">region</span><span class="p">)</span>
+    <span class="n">candidates</span> <span class="o">=</span> <span class="p">[(</span><span class="n">process_multiple_names</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">country</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+                  <span class="k">for</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">score</span><span class="p">),</span> <span class="n">names</span> <span class="ow">in</span> <span class="n">deduped_candidates</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="normalize_city"><a class="viewcode-back" href="../../../reference.html#text_scrubber.geo.normalize_city">[docs]</a><span class="k">def</span> <span class="nf">normalize_city</span><span class="p">(</span><span class="n">city</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">restrict_countries</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cleans up a city by string cleaning and performs city lookups to get the canonical name</span>
+
+<span class="sd">    :param restrict_countries: A set of countries and/or country codes to restrict the search space</span>
+<span class="sd">    :param city: City name</span>
+<span class="sd">    :return: List of (city, country, score) candidates in canonical form, sorted by score (desc)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Clean city</span>
+    <span class="n">cleaned_city</span> <span class="o">=</span> <span class="n">clean_city</span><span class="p">(</span><span class="n">city</span><span class="p">)</span>
+
+    <span class="c1"># If the cleaned_city is empty return an empty list</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cleaned_city</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="c1"># Add city resources for countries to search in</span>
+    <span class="n">add_city_resources</span><span class="p">(</span><span class="n">restrict_countries</span><span class="p">)</span>
+    <span class="n">country_codes</span> <span class="o">=</span> <span class="p">(</span><span class="n">_CITY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;all_country_codes&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">restrict_countries</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span>
+                     <span class="n">_normalize_country_to_country_codes</span><span class="p">(</span><span class="n">restrict_countries</span><span class="p">))</span>
+
+    <span class="c1"># Check if city is part of the known cities list</span>
+    <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">not_found</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">country_code</span> <span class="ow">in</span> <span class="n">country_codes</span><span class="p">:</span>
+        <span class="n">cities_in_country</span> <span class="o">=</span> <span class="n">_CITY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;cities_per_country_code_map&#39;</span><span class="p">][</span><span class="n">country_code</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">cleaned_city</span> <span class="ow">in</span> <span class="n">cities_in_country</span><span class="p">:</span>
+            <span class="c1"># Return the exact name of the city</span>
+            <span class="n">capitalized_city</span> <span class="o">=</span> <span class="n">cities_in_country</span><span class="p">[</span><span class="n">cleaned_city</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">capitalize_country</span> <span class="o">=</span> <span class="n">_CITY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;country_to_normalized_country_map&#39;</span><span class="p">][</span><span class="n">country_code</span><span class="p">]</span>
+            <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">capitalized_city</span><span class="p">,</span> <span class="n">capitalize_country</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+            <span class="n">not_found</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># Check if we can find a close match (using default threshold of 0.8 (magic number))</span>
+    <span class="k">if</span> <span class="n">not_found</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">country_code</span> <span class="ow">in</span> <span class="n">country_codes</span><span class="p">:</span>
+            <span class="n">cities_in_country</span> <span class="o">=</span> <span class="n">_CITY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;cities_per_country_code_map&#39;</span><span class="p">][</span><span class="n">country_code</span><span class="p">]</span>
+
+            <span class="c1"># Provide the input that find_closest_string expects to see</span>
+            <span class="n">city_to_city_name</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">city_country</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">city_name</span><span class="p">,</span> <span class="n">city_value</span> <span class="ow">in</span> <span class="n">cities_in_country</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">city_to_city_name</span><span class="p">[</span><span class="n">city_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">city_value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">city_country</span><span class="p">[</span><span class="n">city_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">city_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">city_match</span> <span class="o">=</span> <span class="n">find_closest_string</span><span class="p">(</span><span class="n">cleaned_city</span><span class="p">,</span> <span class="n">city_country</span><span class="p">)</span>  <span class="c1"># city_country is {city: trigram}</span>
+
+            <span class="k">if</span> <span class="n">city_match</span><span class="p">:</span>
+                <span class="n">best_matches</span><span class="p">,</span> <span class="n">score</span> <span class="o">=</span> <span class="n">city_match</span>
+                <span class="n">best_matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">city_to_city_name</span><span class="p">[</span><span class="n">best_match</span><span class="p">]</span> <span class="k">for</span> <span class="n">best_match</span> <span class="ow">in</span> <span class="n">best_matches</span><span class="p">]</span>
+                <span class="n">capitalize_country</span> <span class="o">=</span> <span class="n">_CITY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;country_to_normalized_country_map&#39;</span><span class="p">][</span><span class="n">country_code</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">best_match</span> <span class="ow">in</span> <span class="n">best_matches</span><span class="p">:</span>
+                    <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">best_match</span><span class="p">,</span> <span class="n">capitalize_country</span><span class="p">,</span> <span class="n">score</span><span class="p">))</span>
+
+    <span class="c1"># Remove duplicates such as San Jose (US and Porto Rico). Both of them returns (&#39;San Jose&#39;, &#39;United States&#39;, 1.0).</span>
+    <span class="c1"># Cities are also considered duplicates if the cleaned version is equal.</span>
+    <span class="n">deduped_candidates</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">city</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+        <span class="n">deduped_candidates</span><span class="p">[(</span><span class="n">clean_city</span><span class="p">(</span><span class="n">city</span><span class="p">),</span> <span class="n">country</span><span class="p">,</span> <span class="n">score</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">city</span><span class="p">)</span>
+    <span class="n">candidates</span> <span class="o">=</span> <span class="p">[(</span><span class="n">process_multiple_names</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">country</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+                  <span class="k">for</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">score</span><span class="p">),</span> <span class="n">names</span> <span class="ow">in</span> <span class="n">deduped_candidates</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span></div>
+
+
+<span class="k">def</span> <span class="nf">process_multiple_names</span><span class="p">(</span><span class="n">names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Does nothing if the name is already a string. However, in the other case where it&#39;s a list of strings we</span>
+<span class="sd">    determine which variant has the most non-ascii characters and return that one. E.g., [Chenet, Chênet] -&gt; Chênet.</span>
+<span class="sd">    If there&#39;s a tie, we select the longest one. E.g. [Etten, Etten-Leur] -&gt; Etten-Leur. If there&#39;s still a tie,</span>
+<span class="sd">    sort and return the first one. The other name is added to the alternate names. If they are similar after `</span>
+<span class="sd">    clean_city`, they will be removed when saving the names to file.</span>
+
+<span class="sd">    :param names: List of city/region names</span>
+<span class="sd">    :return: Single unified name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(((</span><span class="nb">len</span><span class="p">(</span><span class="n">RE_ALPHA</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)),</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">),</span>
+                   <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">tup</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">tup</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+
+
+<span class="n">RE_ALPHA</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[a-zA-Z]&#39;</span><span class="p">)</span>
+
+<span class="c1"># Some common token replacements</span>
+<span class="n">_GEO_TOKEN_MAP</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;afr&#39;</span><span class="p">:</span> <span class="s1">&#39;african&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;brit&#39;</span><span class="p">:</span> <span class="s1">&#39;brittish&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;cent&#39;</span><span class="p">:</span> <span class="s1">&#39;central&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;dem&#39;</span><span class="p">:</span> <span class="s1">&#39;democratic&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;equat&#39;</span><span class="p">:</span> <span class="s1">&#39;equatorial&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;is&#39;</span><span class="p">:</span> <span class="s1">&#39;islands&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;isl&#39;</span><span class="p">:</span> <span class="s1">&#39;islands&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;isla&#39;</span><span class="p">:</span> <span class="s1">&#39;islands&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;island&#39;</span><span class="p">:</span> <span class="s1">&#39;islands&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;monteneg&#39;</span><span class="p">:</span> <span class="s1">&#39;montenegro&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;neth&#39;</span><span class="p">:</span> <span class="s1">&#39;netherlands&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;rep&#39;</span><span class="p">:</span> <span class="s1">&#39;republic&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;republ&#39;</span><span class="p">:</span> <span class="s1">&#39;republic&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;republik&#39;</span><span class="p">:</span> <span class="s1">&#39;republic&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;sint&#39;</span><span class="p">:</span> <span class="s1">&#39;saint&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;st&#39;</span><span class="p">:</span> <span class="s1">&#39;saint&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;ter&#39;</span><span class="p">:</span> <span class="s1">&#39;territory&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;territories&#39;</span><span class="p">:</span> <span class="s1">&#39;territory&#39;</span><span class="p">}</span>
+
+<span class="c1"># We define the scrubber once so the regex objects will be compiled only once</span>
+<span class="n">_GEO_STRING_SCRUBBER</span> <span class="o">=</span> <span class="p">(</span><span class="n">TextScrubber</span><span class="p">()</span><span class="o">.</span><span class="n">to_ascii</span><span class="p">()</span>
+                                      <span class="o">.</span><span class="n">remove_digits</span><span class="p">()</span>
+                                      <span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;-|/|&amp;|,&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+                                      <span class="o">.</span><span class="n">remove_punctuation</span><span class="p">()</span>
+                                      <span class="o">.</span><span class="n">tokenize</span><span class="p">()</span>
+                                      <span class="o">.</span><span class="n">remove_stop_words</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;an&#39;</span><span class="p">,</span> <span class="s1">&#39;and&#39;</span><span class="p">,</span> <span class="s1">&#39;der&#39;</span><span class="p">,</span> <span class="s1">&#39;da&#39;</span><span class="p">,</span> <span class="s1">&#39;di&#39;</span><span class="p">,</span> <span class="s1">&#39;do&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;le&#39;</span><span class="p">,</span> <span class="s1">&#39;im&#39;</span><span class="p">,</span>
+                                                          <span class="s1">&#39;mail&#39;</span><span class="p">},</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                                      <span class="o">.</span><span class="n">lowercase</span><span class="p">(</span><span class="n">on_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                                      <span class="o">.</span><span class="n">filter_tokens</span><span class="p">()</span>
+                                      <span class="o">.</span><span class="n">sub_tokens</span><span class="p">(</span><span class="k">lambda</span> <span class="n">token</span><span class="p">:</span> <span class="n">_GEO_TOKEN_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">token</span><span class="p">))</span>
+                                      <span class="o">.</span><span class="n">remove_stop_words</span><span class="p">({</span><span class="s1">&#39;cedex&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;of&#39;</span><span class="p">,</span> <span class="s1">&#39;the&#39;</span><span class="p">})</span>
+                                      <span class="o">.</span><span class="n">join</span><span class="p">())</span>
+
+
+<span class="k">def</span> <span class="nf">_clean_geo_string</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cleans a strings with geographical information (e.g., countries/regions/cities).</span>
+
+<span class="sd">    :param string: Input string to clean.</span>
+<span class="sd">    :return: Cleaned string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_GEO_STRING_SCRUBBER</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+
+<span class="c1"># Same cleaning is used for countries, regions, and cities</span>
+<span class="n">clean_country</span> <span class="o">=</span> <span class="n">clean_region</span> <span class="o">=</span> <span class="n">clean_city</span> <span class="o">=</span> <span class="n">_clean_geo_string</span>
+
+
+<span class="k">def</span> <span class="nf">capitalize_geo_string</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Capitalizes the first letter of each word in the geo string (excluding the terms &#39;and&#39; and &#39;of&#39;).</span>
+
+<span class="sd">    :param string: The string to capitalize.</span>
+<span class="sd">    :return: The capitalized string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">token</span> <span class="k">if</span> <span class="n">token</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;and&#39;</span><span class="p">,</span> <span class="s1">&#39;of&#39;</span><span class="p">}</span> <span class="k">else</span> <span class="n">token</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+
+<span class="k">def</span> <span class="nf">_get_country_resources</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads and parses country resource files.</span>
+
+<span class="sd">    :return: Dictionary containing resources used for country normalization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resources</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="c1"># Get a map of cleaned country name to capitalized country name</span>
+    <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;cleaned_to_capitilized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">clean_country</span><span class="p">(</span><span class="n">country</span><span class="p">):</span> <span class="n">country</span> <span class="k">for</span> <span class="n">country</span> <span class="ow">in</span> <span class="n">read_resource_json_file</span><span class="p">(</span>
+        <span class="vm">__file__</span><span class="p">,</span> <span class="s2">&quot;resources/norm_country_country_codes_map.json&quot;</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+
+    <span class="c1"># Read in a map of common country name replacements</span>
+    <span class="n">replacements_file</span> <span class="o">=</span> <span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">read_resource_file</span><span class="p">(</span><span class="vm">__file__</span><span class="p">,</span> <span class="s1">&#39;resources/country_map.txt&#39;</span><span class="p">))</span>
+    <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;replacements&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">clean_country</span><span class="p">(</span><span class="n">country</span><span class="p">):</span> <span class="n">clean_country</span><span class="p">(</span><span class="n">canonical_country</span><span class="p">)</span>
+                                 <span class="k">for</span> <span class="n">country</span><span class="p">,</span> <span class="n">canonical_country</span> <span class="ow">in</span> <span class="n">replacements_file</span><span class="p">}</span>
+
+    <span class="c1"># Replacement patterns additional to the other replacements (mainly filters zipcodes)</span>
+    <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;replacement_patterns&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">clean_country</span><span class="p">(</span><span class="n">canonical_country</span><span class="p">))</span> <span class="k">for</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">canonical_country</span> <span class="ow">in</span>
+                                         <span class="p">((</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+[a-z]+\d+ canada [a-z]+\d+[a-z]+&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">),</span> <span class="s1">&#39;canada&#39;</span><span class="p">),</span>
+                                          <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+ russia&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">),</span> <span class="s1">&#39;russia&#39;</span><span class="p">))]</span>
+
+    <span class="c1"># Generate trigrams for the cleaned countries</span>
+    <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;cleaned_trigrams&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">cleaned_country</span><span class="p">:</span> <span class="n">get_trigram_tokens</span><span class="p">(</span><span class="n">cleaned_country</span><span class="p">)</span>
+                                     <span class="k">for</span> <span class="n">cleaned_country</span> <span class="ow">in</span> <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;cleaned_to_capitilized&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+
+    <span class="k">return</span> <span class="n">resources</span>
+
+
+<span class="n">_COUNTRY_RESOURCES</span> <span class="o">=</span> <span class="n">_get_country_resources</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_get_initial_region_resources</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads and parses region resource files</span>
+
+<span class="sd">    :return: Dictionary containing resources used for region normalization</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resources</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;country_to_normalized_country_map&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_resource_json_file</span><span class="p">(</span>
+        <span class="vm">__file__</span><span class="p">,</span> <span class="s2">&quot;resources/country_norm_country_map.json&quot;</span>
+    <span class="p">)</span>
+    <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;normalized_country_to_country_codes_map&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_resource_json_file</span><span class="p">(</span>
+        <span class="vm">__file__</span><span class="p">,</span> <span class="s2">&quot;resources/norm_country_country_codes_map.json&quot;</span>
+    <span class="p">)</span>
+    <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;all_country_codes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">country_code</span> <span class="k">for</span> <span class="n">country_codes</span> <span class="ow">in</span> <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;normalized_country_to_country_codes_map&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">country_code</span> <span class="ow">in</span> <span class="n">country_codes</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Placeholder</span>
+    <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;regions_per_country_code_map&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">resources</span>
+
+
+<span class="n">_REGION_RESOURCES</span> <span class="o">=</span> <span class="n">_get_initial_region_resources</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_get_initial_city_resources</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads and parses city resource files</span>
+
+<span class="sd">    :return: Dictionary containing resources used for city normalization</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resources</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;country_to_normalized_country_map&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_resource_json_file</span><span class="p">(</span>
+        <span class="vm">__file__</span><span class="p">,</span> <span class="s2">&quot;resources/country_norm_country_map.json&quot;</span>
+    <span class="p">)</span>
+    <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;normalized_country_to_country_codes_map&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_resource_json_file</span><span class="p">(</span>
+        <span class="vm">__file__</span><span class="p">,</span> <span class="s2">&quot;resources/norm_country_country_codes_map.json&quot;</span>
+    <span class="p">)</span>
+    <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;all_country_codes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">country_code</span> <span class="k">for</span> <span class="n">country_codes</span> <span class="ow">in</span> <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;normalized_country_to_country_codes_map&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">country_code</span> <span class="ow">in</span> <span class="n">country_codes</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Placeholder</span>
+    <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;cities_per_country_code_map&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">resources</span>
+
+
+<span class="n">_CITY_RESOURCES</span> <span class="o">=</span> <span class="n">_get_initial_city_resources</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_normalize_country_to_country_codes</span><span class="p">(</span><span class="n">countries</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalizes countries or country codes to the set of corresponding country codes. E.g., &#39;Denmark&#39; will result in</span>
+<span class="sd">    {&#39;DK&#39;, &#39;FO&#39;, &#39;GL&#39;} for Denmark, Faroe Islands, and Greenland</span>
+
+<span class="sd">    :param countries: Set of countries or country codes</span>
+<span class="sd">    :return: Set of corresponding country codes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Obtain country codes</span>
+    <span class="n">country_codes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">countries_not_found</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">countries</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">country_codes</span> <span class="o">=</span> <span class="n">_CITY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;all_country_codes&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">country</span> <span class="ow">in</span> <span class="n">countries</span><span class="p">:</span>
+            <span class="c1"># Check country code</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">country</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">country</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="n">_CITY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;country_to_normalized_country_map&#39;</span><span class="p">]:</span>
+                <span class="n">normalized_country</span> <span class="o">=</span> <span class="n">_CITY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;country_to_normalized_country_map&#39;</span><span class="p">][</span><span class="n">country</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">normalized_country</span> <span class="o">=</span> <span class="n">normalize_country</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
+                <span class="n">normalized_country</span> <span class="o">=</span> <span class="n">normalized_country</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">normalized_country</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">normalized_country</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_CITY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;normalized_country_to_country_codes_map&#39;</span><span class="p">]:</span>
+                <span class="n">countries_not_found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">country_codes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_CITY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;normalized_country_to_country_codes_map&#39;</span><span class="p">][</span><span class="n">normalized_country</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">countries_not_found</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The following strings are not country names or codes: </span><span class="si">{</span><span class="n">countries_not_found</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">country_codes</span>
+
+
+<span class="k">def</span> <span class="nf">add_region_resources</span><span class="p">(</span><span class="n">countries</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">progress_bar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read and parse region resources for new countries</span>
+
+<span class="sd">    :param countries: Only load the list of countries or country codes provided</span>
+<span class="sd">    :param progress_bar: disable or enable progressbar. Default is no progressbar (False)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_REGION_RESOURCES</span>
+
+    <span class="c1"># Obtain corresponding country codes</span>
+    <span class="n">country_codes</span> <span class="o">=</span> <span class="n">_normalize_country_to_country_codes</span><span class="p">(</span><span class="n">countries</span><span class="p">)</span>
+
+    <span class="c1"># Load resources for each country code and update the global resources</span>
+    <span class="k">for</span> <span class="n">country_code</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">country_codes</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">progress_bar</span><span class="p">):</span>
+
+        <span class="c1"># Skip countries that are already loaded</span>
+        <span class="k">if</span> <span class="n">country_code</span> <span class="ow">in</span> <span class="n">_REGION_RESOURCES</span><span class="p">[</span><span class="s1">&#39;regions_per_country_code_map&#39;</span><span class="p">]:</span>
+            <span class="k">continue</span>
+
+        <span class="n">regions</span> <span class="o">=</span> <span class="n">read_resource_file</span><span class="p">(</span><span class="vm">__file__</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;resources/regions_per_country/</span><span class="si">{</span><span class="n">country_code</span><span class="si">}</span><span class="s2">.txt&quot;</span><span class="p">)</span>
+        <span class="n">_REGION_RESOURCES</span><span class="p">[</span><span class="s2">&quot;regions_per_country_code_map&quot;</span><span class="p">][</span><span class="n">country_code</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">region_list</span> <span class="ow">in</span> <span class="n">regions</span><span class="p">:</span>
+            <span class="c1"># A single line can have multiple alternative spellings of the same city. The first spelling is the</span>
+            <span class="c1"># canonical one and all versions will point to that</span>
+            <span class="n">region_list</span> <span class="o">=</span> <span class="n">region_list</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span>
+            <span class="n">canonical_region_name</span> <span class="o">=</span> <span class="n">region_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">cleaned_region</span> <span class="ow">in</span> <span class="n">clean_region</span><span class="p">(</span><span class="n">region_list</span><span class="p">):</span>
+                <span class="c1"># Sometimes clean_region removes the whole string</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">cleaned_region</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">_REGION_RESOURCES</span><span class="p">[</span><span class="s2">&quot;regions_per_country_code_map&quot;</span><span class="p">][</span><span class="n">country_code</span><span class="p">][</span><span class="n">cleaned_region</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">get_trigram_tokens</span><span class="p">(</span><span class="n">cleaned_region</span><span class="p">),</span> <span class="n">canonical_region_name</span>
+                <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">add_city_resources</span><span class="p">(</span><span class="n">countries</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">progress_bar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read and parse city resources for new countries</span>
+
+<span class="sd">    :param countries: Only load the list of countries or country codes provided</span>
+<span class="sd">    :param progress_bar: disable or enable progressbar. Default is no progressbar (False)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_CITY_RESOURCES</span>
+
+    <span class="c1"># Obtain corresponding country codes</span>
+    <span class="n">country_codes</span> <span class="o">=</span> <span class="n">_normalize_country_to_country_codes</span><span class="p">(</span><span class="n">countries</span><span class="p">)</span>
+
+    <span class="c1"># Load resources for each country code and update the global resources</span>
+    <span class="k">for</span> <span class="n">country_code</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">country_codes</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">progress_bar</span><span class="p">):</span>
+
+        <span class="c1"># Skip countries that are already loaded</span>
+        <span class="k">if</span> <span class="n">country_code</span> <span class="ow">in</span> <span class="n">_CITY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;cities_per_country_code_map&#39;</span><span class="p">]:</span>
+            <span class="k">continue</span>
+
+        <span class="n">cities</span> <span class="o">=</span> <span class="n">read_resource_file</span><span class="p">(</span><span class="vm">__file__</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;resources/cities_per_country/</span><span class="si">{</span><span class="n">country_code</span><span class="si">}</span><span class="s2">.txt&quot;</span><span class="p">)</span>
+        <span class="n">_CITY_RESOURCES</span><span class="p">[</span><span class="s2">&quot;cities_per_country_code_map&quot;</span><span class="p">][</span><span class="n">country_code</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">city_list</span> <span class="ow">in</span> <span class="n">cities</span><span class="p">:</span>
+            <span class="c1"># A single line can have multiple alternative spellings of the same city. The first spelling is the</span>
+            <span class="c1"># canonical one and all versions will point to that</span>
+            <span class="n">city_list</span> <span class="o">=</span> <span class="n">city_list</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span>
+            <span class="n">canonical_city_name</span> <span class="o">=</span> <span class="n">city_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">cleaned_city</span> <span class="ow">in</span> <span class="n">clean_city</span><span class="p">(</span><span class="n">city_list</span><span class="p">):</span>
+                <span class="c1"># Sometimes clean_city removes the whole string</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">cleaned_city</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">_CITY_RESOURCES</span><span class="p">[</span><span class="s2">&quot;cities_per_country_code_map&quot;</span><span class="p">][</span><span class="n">country_code</span><span class="p">][</span><span class="n">cleaned_city</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">get_trigram_tokens</span><span class="p">(</span><span class="n">cleaned_city</span><span class="p">),</span> <span class="n">canonical_city_name</span>
+                <span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2022, Slimmer AI
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> Other Versions</span>
+        v: master
+        <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        <dl>
+            <dt>Tags</dt>
+            <dd><a href="../../../v0.1/index.html">v0.1</a></dd>
+            <dd><a href="../../../v0.1.1/index.html">v0.1.1</a></dd>
+            <dd><a href="../../../v0.2.0/index.html">v0.2.0</a></dd>
+            <dd><a href="../../../v0.3.0/index.html">v0.3.0</a></dd>
+        </dl>
+        <dl>
+            <dt>Branches</dt>
+            <dd><a href="../../../master/_modules/text_scrubber/geo/geo.html">master</a></dd>
+        </dl>
+    </div>
+</div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

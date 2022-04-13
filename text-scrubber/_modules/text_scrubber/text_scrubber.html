@@ -7,13 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>text_scrubber.text_scrubber &mdash; text-scrubber 0.2.0 documentation</title>
+  <title>text_scrubber.text_scrubber &mdash; text-scrubber 0.3.0 documentation</title>
   
 
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/banner.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
 
   
   
@@ -60,7 +61,7 @@
             
             
               <div class="version">
-                0.2.0
+                0.3.0
               </div>
             
           
@@ -437,15 +438,20 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_step</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">RE_STRIP_QUOTES</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">),</span> <span class="n">on_tokens</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TextScrubber.remove_stop_words"><a class="viewcode-back" href="../../reference.html#text_scrubber.text_scrubber.TextScrubber.remove_stop_words">[docs]</a>    <span class="k">def</span> <span class="nf">remove_stop_words</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_words</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;remove_stop_words&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;TextScrubber&#39;</span><span class="p">:</span>
+<div class="viewcode-block" id="TextScrubber.remove_stop_words"><a class="viewcode-back" href="../../reference.html#text_scrubber.text_scrubber.TextScrubber.remove_stop_words">[docs]</a>    <span class="k">def</span> <span class="nf">remove_stop_words</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_words</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;remove_stop_words&#39;</span><span class="p">,</span>
+                          <span class="n">case_sensitive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;TextScrubber&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes stop words. All-caps tokens are considered to be abbreviations and are retained.</span>
 
+<span class="sd">        :param case_sensitive: should the stopword removal be case_sensitive or not</span>
 <span class="sd">        :param stop_words: Iterable of stop words to remove. If not provided it will use a default list of stop words.</span>
 <span class="sd">        :param name: Name to give to the pipeline step.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">stop_words_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stop_words</span><span class="p">)</span> <span class="k">if</span> <span class="n">stop_words</span> <span class="k">else</span> <span class="n">STOP_WORDS</span>
-        <span class="n">remove_func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="ow">or</span> <span class="n">t</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop_words_set</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">case_sensitive</span><span class="p">:</span>
+            <span class="n">remove_func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="ow">or</span> <span class="n">t</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop_words_set</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">remove_func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="ow">or</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop_words_set</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_step</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">remove_func</span><span class="p">,</span> <span class="n">on_tokens</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TextScrubber.remove_suffixes"><a class="viewcode-back" href="../../reference.html#text_scrubber.text_scrubber.TextScrubber.remove_suffixes">[docs]</a>    <span class="k">def</span> <span class="nf">remove_suffixes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">suffixes</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">on_tokens</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -586,7 +592,7 @@
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2021, Slimmer AI
+        &copy; Copyright 2022, Slimmer AI
 
     </p>
   </div>
@@ -620,6 +626,7 @@
             <dd><a href="../../v0.1/index.html">v0.1</a></dd>
             <dd><a href="../../v0.1.1/index.html">v0.1.1</a></dd>
             <dd><a href="../../v0.2.0/index.html">v0.2.0</a></dd>
+            <dd><a href="../../v0.3.0/index.html">v0.3.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
