@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>mpire.pool &mdash; mpire 2.3.4 documentation</title>
+  <title>mpire.pool &mdash; mpire 2.3.5 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.3.4
+                2.3.5
               </div>
             
           
@@ -314,12 +314,15 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_worker</span><span class="p">(</span><span class="n">worker_id</span><span class="p">))</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Workers created&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_restart_workers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_check_worker_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Restarts workers that need to be restarted.</span>
+<span class="sd">        Checks the worker status:</span>
+<span class="sd">        - If the worker is supposed to be alive, but isn&#39;t, terminate.</span>
+<span class="sd">        - Restarts workers that need to be restarted.</span>
 
 <span class="sd">        :return: List of unordered results produces by workers</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check restarts</span>
         <span class="n">obtained_results</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">worker_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">get_worker_restarts</span><span class="p">():</span>
             <span class="c1"># Obtain results from exit results queue (should be done before joining the worker)</span>
@@ -343,6 +346,20 @@
 
             <span class="c1"># Start new worker</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span><span class="p">[</span><span class="n">worker_id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_worker</span><span class="p">(</span><span class="n">worker_id</span><span class="p">)</span>
+
+        <span class="c1"># Check that workers that are supposed to be alive, are actually alive. If not, then a worker died unexpectedly.</span>
+        <span class="c1"># Note that a worker can be alive, but their alive status is still False. This doesn&#39;t really matter, because we</span>
+        <span class="c1"># know the worker is alive according to the OS. The only way we know that something bad happened is when a</span>
+        <span class="c1"># worker is supposed to be alive but according to the OS it&#39;s not.</span>
+        <span class="k">for</span> <span class="n">worker_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pool_params</span><span class="o">.</span><span class="n">n_jobs</span><span class="p">):</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">get_worker_dead_lock</span><span class="p">(</span><span class="n">worker_id</span><span class="p">):</span>
+                <span class="n">worker_died</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">is_worker_alive</span><span class="p">(</span><span class="n">worker_id</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span><span class="p">[</span><span class="n">worker_id</span><span class="p">]</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">worker_died</span><span class="p">:</span>
+                <span class="c1"># We need to add an exception if we&#39;re using the progress bar handler</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">has_progress_bar</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">add_exception</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Worker-</span><span class="si">{</span><span class="n">worker_id</span><span class="si">}</span><span class="s2"> died unexpectedly&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Worker-</span><span class="si">{</span><span class="n">worker_id</span><span class="si">}</span><span class="s2"> died unexpectedly&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">obtained_results</span>
 
@@ -713,8 +730,8 @@
                         <span class="k">except</span> <span class="n">queue</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span>
                             <span class="k">pass</span>
 
-                        <span class="c1"># Restart workers if necessary. This can yield intermediate results</span>
-                        <span class="k">for</span> <span class="n">results</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restart_workers</span><span class="p">():</span>
+                        <span class="c1"># Check worker status (e.g., restarts). This can yield intermediate results</span>
+                        <span class="k">for</span> <span class="n">results</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_worker_status</span><span class="p">():</span>
                             <span class="k">yield from</span> <span class="n">results</span>
                             <span class="n">n_active</span> <span class="o">-=</span> <span class="mi">1</span>
 
@@ -726,8 +743,8 @@
                         <span class="k">except</span> <span class="n">queue</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span>
                             <span class="k">pass</span>
 
-                        <span class="c1"># Restart workers if necessary. This can yield intermediate results</span>
-                        <span class="k">for</span> <span class="n">results</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restart_workers</span><span class="p">():</span>
+                        <span class="c1"># Check worker status (e.g., restarts). This can yield intermediate results</span>
+                        <span class="k">for</span> <span class="n">results</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_worker_status</span><span class="p">():</span>
                             <span class="k">yield from</span> <span class="n">results</span>
                             <span class="n">n_active</span> <span class="o">-=</span> <span class="mi">1</span>
 
@@ -834,7 +851,7 @@
                 <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
                     <span class="k">break</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_restart_workers</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_check_worker_status</span><span class="p">()</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done joining task queues&quot;</span><span class="p">)</span>
 
             <span class="c1"># When an exception occurred in the above process (i.e., the worker init function raises), we need to handle</span>
@@ -1044,9 +1061,11 @@
             <dd><a href="../../../v2.3.2/index.html">v2.3.2</a></dd>
             <dd><a href="../../../v2.3.3/index.html">v2.3.3</a></dd>
             <dd><a href="../../../v2.3.4/index.html">v2.3.4</a></dd>
+            <dd><a href="../../../v2.3.5/index.html">v2.3.5</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
+            <dd><a href="../../../defunct_processes/index.html">defunct_processes</a></dd>
             <dd><a href="../../../dependencies_and_hanging_mpire/index.html">dependencies_and_hanging_mpire</a></dd>
             <dd><a href="pool.html">master</a></dd>
         </dl>
