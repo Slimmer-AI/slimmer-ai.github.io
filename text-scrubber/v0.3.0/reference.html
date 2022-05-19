@@ -716,6 +716,204 @@
 </section>
 <section id="geo">
 <h2><a class="toc-backref" href="#toc-entry-2" role="doc-backlink">Geo</a><a class="headerlink" href="#geo" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="text_scrubber.geo.normalize_country">
+<code class="sig-prename descclassname">text_scrubber.geo.</code><code class="sig-name descname">normalize_country</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">min_score_levenshtein</span><span class="o">=</span><span class="default_value">0.8</span></em>, <em class="sig-param"><span class="n">min_score_trigram</span><span class="o">=</span><span class="default_value">0.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/text_scrubber/geo/normalize.html#normalize_country"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#text_scrubber.geo.normalize_country" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleans up a country by string cleaning and performs some basic country lookups to get the canonical name.</p>
+<p>Note: when countries are officially part of another country, we return the latter. E.g., Greenland is normalized
+to Denmark.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Country string to clean.</p></li>
+<li><p><strong>min_score_levenshtein</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – minimum score to use for Levenshtein similarity</p></li>
+<li><p><strong>min_score_trigram</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – minimum score to use for trigram similarity</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of (country, score) candidates in canonical form, sorted by score (desc)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="text_scrubber.geo.normalize_region">
+<code class="sig-prename descclassname">text_scrubber.geo.</code><code class="sig-name descname">normalize_region</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">region</span></em>, <em class="sig-param"><span class="n">restrict_countries</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_score_levenshtein</span><span class="o">=</span><span class="default_value">0.8</span></em>, <em class="sig-param"><span class="n">min_score_trigram</span><span class="o">=</span><span class="default_value">0.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/text_scrubber/geo/normalize.html#normalize_region"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#text_scrubber.geo.normalize_region" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleans up a region by string cleaning and performs region lookups to get the canonical name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>restrict_countries</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code>]) – A set of countries and/or country codes to restrict the search space</p></li>
+<li><p><strong>region</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – City name</p></li>
+<li><p><strong>min_score_levenshtein</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – minimum score to use for Levenshtein similarity</p></li>
+<li><p><strong>min_score_trigram</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – minimum score to use for trigram similarity</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of (city, country, score) candidates in canonical form, sorted by score (desc)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="text_scrubber.geo.normalize_city">
+<code class="sig-prename descclassname">text_scrubber.geo.</code><code class="sig-name descname">normalize_city</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">city</span></em>, <em class="sig-param"><span class="n">restrict_countries</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_score_levenshtein</span><span class="o">=</span><span class="default_value">0.8</span></em>, <em class="sig-param"><span class="n">min_score_trigram</span><span class="o">=</span><span class="default_value">0.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/text_scrubber/geo/normalize.html#normalize_city"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#text_scrubber.geo.normalize_city" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleans up a city by string cleaning and performs city lookups to get the canonical name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>city</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – City name</p></li>
+<li><p><strong>restrict_countries</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code>]) – A set of countries and/or country codes to restrict the search space</p></li>
+<li><p><strong>min_score_levenshtein</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – minimum score to use for Levenshtein similarity</p></li>
+<li><p><strong>min_score_trigram</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – minimum score to use for trigram similarity</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of (city, country, score) candidates in canonical form, sorted by score (desc)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="text_scrubber.geo.clean_country">
+<code class="sig-prename descclassname">text_scrubber.geo.</code><code class="sig-name descname">clean_country</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em><span class="sig-paren">)</span><a class="headerlink" href="#text_scrubber.geo.clean_country" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleans a strings with geographical information (e.g., countries/regions/cities).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>string</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – Input string to clean.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Cleaned string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="text_scrubber.geo.clean_region">
+<code class="sig-prename descclassname">text_scrubber.geo.</code><code class="sig-name descname">clean_region</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em><span class="sig-paren">)</span><a class="headerlink" href="#text_scrubber.geo.clean_region" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleans a strings with geographical information (e.g., countries/regions/cities).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>string</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – Input string to clean.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Cleaned string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="text_scrubber.geo.clean_city">
+<code class="sig-prename descclassname">text_scrubber.geo.</code><code class="sig-name descname">clean_city</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em><span class="sig-paren">)</span><a class="headerlink" href="#text_scrubber.geo.clean_city" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleans a strings with geographical information (e.g., countries/regions/cities).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>string</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – Input string to clean.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Cleaned string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="text_scrubber.geo.find_country_in_string">
+<code class="sig-prename descclassname">text_scrubber.geo.</code><code class="sig-name descname">find_country_in_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample</span></em>, <em class="sig-param"><span class="n">match_threshold</span><span class="o">=</span><span class="default_value">0.84</span></em>, <em class="sig-param"><span class="n">match_threshold_small</span><span class="o">=</span><span class="default_value">0.9</span></em>, <em class="sig-param"><span class="n">threshold_small</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">max_tokens_to_consider</span><span class="o">=</span><span class="default_value">4</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/text_scrubber/geo/find_in_string.html#find_country_in_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#text_scrubber.geo.find_country_in_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts countries from a sample text.</p>
+<p>Thresholds were derived empirically based on one of our usecases. Change them when needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – text sample</p></li>
+<li><p><strong>match_threshold</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – threshold for considering a substring a match</p></li>
+<li><p><strong>match_threshold_small</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – threshold for considering a substring a match, applied to smaller normalized countries</p></li>
+<li><p><strong>threshold_small</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – if the length of a candidate string is &lt;= <code class="docutils literal notranslate"><span class="pre">threshold_small</span></code> it will use the
+<code class="docutils literal notranslate"><span class="pre">match_threshold_small</span></code>, otherwise <code class="docutils literal notranslate"><span class="pre">match_threshold</span></code></p></li>
+<li><p><strong>max_tokens_to_consider</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – maximum amount of tokens to consider as a combination for comparing to normalized
+countries</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Match</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of possible matches</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="text_scrubber.geo.find_region_in_string">
+<code class="sig-prename descclassname">text_scrubber.geo.</code><code class="sig-name descname">find_region_in_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample</span></em>, <em class="sig-param"><span class="n">country_set</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">match_threshold</span><span class="o">=</span><span class="default_value">0.84</span></em>, <em class="sig-param"><span class="n">match_threshold_small</span><span class="o">=</span><span class="default_value">0.9</span></em>, <em class="sig-param"><span class="n">threshold_small</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">max_tokens_to_consider</span><span class="o">=</span><span class="default_value">6</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/text_scrubber/geo/find_in_string.html#find_region_in_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#text_scrubber.geo.find_region_in_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts regions from a sample text.</p>
+<p>Thresholds were derived empirically based on one of our usecases. Change them when needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – text sample</p></li>
+<li><p><strong>country_set</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>]) – Restrict the search to this set of countries</p></li>
+<li><p><strong>match_threshold</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – threshold for considering a substring a match</p></li>
+<li><p><strong>match_threshold_small</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – threshold for considering a substring a match, applied to smaller normalized countries</p></li>
+<li><p><strong>threshold_small</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – if the length of a candidate string is &lt;= <code class="docutils literal notranslate"><span class="pre">threshold_small</span></code> it will use the
+<code class="docutils literal notranslate"><span class="pre">match_threshold_small</span></code>, otherwise <code class="docutils literal notranslate"><span class="pre">match_threshold</span></code></p></li>
+<li><p><strong>max_tokens_to_consider</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – maximum amount of tokens to consider as a combination for comparing to normalized
+countries</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Match</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of possible matches</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="text_scrubber.geo.find_city_in_string">
+<code class="sig-prename descclassname">text_scrubber.geo.</code><code class="sig-name descname">find_city_in_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample</span></em>, <em class="sig-param"><span class="n">country_set</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">match_threshold</span><span class="o">=</span><span class="default_value">0.84</span></em>, <em class="sig-param"><span class="n">match_threshold_small</span><span class="o">=</span><span class="default_value">0.9</span></em>, <em class="sig-param"><span class="n">threshold_small</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">max_tokens_to_consider</span><span class="o">=</span><span class="default_value">6</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/text_scrubber/geo/find_in_string.html#find_city_in_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#text_scrubber.geo.find_city_in_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts cities from a sample text.</p>
+<p>Thresholds were derived empirically based on one of our usecases. Change them when needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – text sample</p></li>
+<li><p><strong>country_set</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>]) – Restrict the search to this set of countries</p></li>
+<li><p><strong>match_threshold</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – threshold for considering a substring a match</p></li>
+<li><p><strong>match_threshold_small</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – threshold for considering a substring a match, applied to smaller normalized countries</p></li>
+<li><p><strong>threshold_small</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – if the length of a candidate string is &lt;= <code class="docutils literal notranslate"><span class="pre">threshold_small</span></code> it will use the
+<code class="docutils literal notranslate"><span class="pre">match_threshold_small</span></code>, otherwise <code class="docutils literal notranslate"><span class="pre">match_threshold</span></code></p></li>
+<li><p><strong>max_tokens_to_consider</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – maximum amount of tokens to consider as a combination for comparing to normalized
+countries</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Match</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of possible matches</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -776,6 +974,7 @@
             <dd><a href="../v0.2.0/reference.html">v0.2.0</a></dd>
             <dd><a href="reference.html">v0.3.0</a></dd>
             <dd><a href="../v0.3.1/reference.html">v0.3.1</a></dd>
+            <dd><a href="../v0.3.2/reference.html">v0.3.2</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
