@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>text_scrubber.geo.find_in_string &mdash; text-scrubber 0.3.2 documentation</title>
+  <title>text_scrubber.geo.find_in_string &mdash; text-scrubber 0.4.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.3.2
+                0.4.0
               </div>
             
           
@@ -159,36 +159,41 @@
             
   <h1>Source code for text_scrubber.geo.find_in_string</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span>
 
 <span class="kn">from</span> <span class="nn">text_scrubber.geo.clean</span> <span class="kn">import</span> <span class="n">clean_city</span><span class="p">,</span> <span class="n">clean_country</span><span class="p">,</span> <span class="n">clean_region</span>
-<span class="kn">from</span> <span class="nn">text_scrubber.geo.normalize</span> <span class="kn">import</span> <span class="n">normalize_city</span><span class="p">,</span> <span class="n">normalize_country</span><span class="p">,</span> <span class="n">normalize_region</span>
+<span class="kn">from</span> <span class="nn">text_scrubber.geo.normalize</span> <span class="kn">import</span> <span class="n">Location</span><span class="p">,</span> <span class="n">normalize_city</span><span class="p">,</span> <span class="n">normalize_country</span><span class="p">,</span> <span class="n">normalize_region</span>
 <span class="kn">from</span> <span class="nn">text_scrubber.geo.resources</span> <span class="kn">import</span> <span class="n">_COUNTRY_RESOURCES</span>
 <span class="kn">from</span> <span class="nn">text_scrubber.geo.string_distance_levenshtein</span> <span class="kn">import</span> <span class="n">find_levenshtein_bounds</span>
 <span class="kn">from</span> <span class="nn">text_scrubber.geo.string_distance_trigrams</span> <span class="kn">import</span> <span class="n">find_trigram_bounds</span>
 
-<span class="c1"># Tuple containing start and end idx</span>
-<span class="n">Range</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
 
-<span class="c1"># Match object. &#39;substring_range&#39; is a tuple denoting the start and end idx of the substring in the original string.</span>
-<span class="n">Match</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Match&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;substring_range&#39;</span><span class="p">,</span> <span class="s1">&#39;substring&#39;</span><span class="p">,</span> <span class="s1">&#39;normalized&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">])</span>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Range</span><span class="p">:</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">end</span><span class="p">:</span> <span class="nb">int</span>
 
 
-<span class="k">def</span> <span class="nf">_range_has_overlap</span><span class="p">(</span><span class="n">range_1</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Range</span><span class="p">],</span> <span class="n">range_2</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Range</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="ExtractedLocation"><a class="viewcode-back" href="../../../reference.html#text_scrubber.geo.ExtractedLocation">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">ExtractedLocation</span><span class="p">:</span>
+    <span class="n">location</span><span class="p">:</span> <span class="n">Location</span>
+    <span class="n">substring</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">substring_range</span><span class="p">:</span> <span class="n">Range</span></div>
+
+
+<span class="k">def</span> <span class="nf">range_has_overlap</span><span class="p">(</span><span class="n">range_1</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Range</span><span class="p">],</span> <span class="n">range_2</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Range</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checks if two ranges overlap based on start_idx and end_idx</span>
 
-<span class="sd">    :param range_1: (start, end) range tuple</span>
-<span class="sd">    :param range_2: (start, end) range tuple</span>
+<span class="sd">    :param range_1: Range object</span>
+<span class="sd">    :param range_2: Range object</span>
 <span class="sd">    :return: Boolean indicating whether there is overlap</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">range_1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">range_2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
-    <span class="n">start_1</span><span class="p">,</span> <span class="n">end_1</span> <span class="o">=</span> <span class="n">range_1</span>
-    <span class="n">start_2</span><span class="p">,</span> <span class="n">end_2</span> <span class="o">=</span> <span class="n">range_2</span>
-    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">start_1</span><span class="p">,</span> <span class="n">start_2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">(</span><span class="n">end_1</span><span class="p">,</span> <span class="n">end_2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">range_1</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">range_2</span><span class="o">.</span><span class="n">start</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">(</span><span class="n">range_1</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">range_2</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">cumsum</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
@@ -210,7 +215,7 @@
 <span class="k">def</span> <span class="nf">_find_in_string</span><span class="p">(</span><span class="n">sample</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">clean_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">normalize_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">blacklist</span><span class="p">:</span> <span class="n">Set</span><span class="p">,</span>
                     <span class="n">whitelist_last_resort</span><span class="p">:</span> <span class="n">Set</span><span class="p">,</span> <span class="n">match_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.84</span><span class="p">,</span> <span class="n">match_threshold_small</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.90</span><span class="p">,</span>
                     <span class="n">threshold_small</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">max_tokens_to_consider</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-                    <span class="n">restrict_countries</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Match</span><span class="p">]:</span>
+                    <span class="n">restrict_countries</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ExtractedLocation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extracts countries from a sample.</span>
 
@@ -280,7 +285,7 @@
                 <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
 
     <span class="c1"># Sort desc by score</span>
-    <span class="n">matches</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">matches</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="o">-</span><span class="n">c</span><span class="o">.</span><span class="n">score</span><span class="p">)</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">matches</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="o">-</span><span class="n">c</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">score</span><span class="p">)</span>
 
     <span class="c1"># Determine which matches to keep and which ones to dismiss when there&#39;s overlap in substrings.</span>
     <span class="c1"># The values in this array are as follows: 0=completely dismissed, 1=uncertain, 2=accepted</span>
@@ -300,20 +305,16 @@
             <span class="c1"># original string that lead to it (e.g., &#39;New York 1234&#39; vs &#39;New York&#39;).</span>
             <span class="n">skip_match</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">for</span> <span class="n">idx_2</span><span class="p">,</span> <span class="n">match_2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="n">idx_1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:],</span> <span class="n">start</span><span class="o">=</span><span class="n">idx_1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">keep_matches</span><span class="p">[</span><span class="n">idx_2</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">_range_has_overlap</span><span class="p">(</span><span class="n">match_1</span><span class="o">.</span><span class="n">substring_range</span><span class="p">,</span> <span class="n">match_2</span><span class="o">.</span><span class="n">substring_range</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">match_1</span><span class="o">.</span><span class="n">score</span> <span class="o">&gt;</span> <span class="n">match_2</span><span class="o">.</span><span class="n">score</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">keep_matches</span><span class="p">[</span><span class="n">idx_2</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">range_has_overlap</span><span class="p">(</span><span class="n">match_1</span><span class="o">.</span><span class="n">substring_range</span><span class="p">,</span> <span class="n">match_2</span><span class="o">.</span><span class="n">substring_range</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">match_1</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">score</span> <span class="o">&gt;</span> <span class="n">match_2</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">score</span><span class="p">:</span>
                         <span class="k">continue</span>
-                    <span class="k">elif</span> <span class="n">match_1</span><span class="o">.</span><span class="n">score</span> <span class="o">&lt;</span> <span class="n">match_2</span><span class="o">.</span><span class="n">score</span><span class="p">:</span>
+                    <span class="k">elif</span> <span class="n">match_1</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">score</span> <span class="o">&lt;</span> <span class="n">match_2</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">score</span><span class="p">:</span>
                         <span class="n">skip_match</span> <span class="o">=</span> <span class="kc">True</span>
                         <span class="k">break</span>
 
-                    <span class="c1"># For city/region it returns a tuple, for countries just a string</span>
-                    <span class="n">normalized_1</span><span class="p">,</span> <span class="n">normalized_2</span> <span class="o">=</span> <span class="n">match_1</span><span class="o">.</span><span class="n">normalized</span><span class="p">,</span> <span class="n">match_2</span><span class="o">.</span><span class="n">normalized</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">match_1</span><span class="o">.</span><span class="n">normalized</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-                        <span class="n">normalized_1</span><span class="p">,</span> <span class="n">normalized_2</span> <span class="o">=</span> <span class="n">normalized_1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">normalized_2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">normalized_1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">normalized_2</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">match_1</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">canonical_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">match_2</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">canonical_name</span><span class="p">):</span>
                         <span class="k">continue</span>
-                    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">normalized_1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">normalized_2</span><span class="p">):</span>
+                    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">match_1</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">canonical_name</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">match_2</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">canonical_name</span><span class="p">):</span>
                         <span class="n">skip_match</span> <span class="o">=</span> <span class="kc">True</span>
                         <span class="k">break</span>
 
@@ -327,7 +328,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_match</span><span class="p">:</span>
                 <span class="n">keep_matches</span><span class="p">[</span><span class="n">idx_1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
                 <span class="k">for</span> <span class="n">idx_2</span><span class="p">,</span> <span class="n">match_2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">matches</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">idx_1</span> <span class="o">!=</span> <span class="n">idx_2</span> <span class="ow">and</span> <span class="n">_range_has_overlap</span><span class="p">(</span><span class="n">match_1</span><span class="o">.</span><span class="n">substring_range</span><span class="p">,</span> <span class="n">match_2</span><span class="o">.</span><span class="n">substring_range</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">idx_1</span> <span class="o">!=</span> <span class="n">idx_2</span> <span class="ow">and</span> <span class="n">range_has_overlap</span><span class="p">(</span><span class="n">match_1</span><span class="o">.</span><span class="n">substring_range</span><span class="p">,</span> <span class="n">match_2</span><span class="o">.</span><span class="n">substring_range</span><span class="p">):</span>
                         <span class="n">keep_matches</span><span class="p">[</span><span class="n">idx_2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="c1"># Fail-safe to avoid infinite loops. I don&#39;t expect there to be any, but just to be safe</span>
@@ -340,7 +341,7 @@
 
 <span class="k">def</span> <span class="nf">_get_matches</span><span class="p">(</span><span class="n">combination</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token_start_idx</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">start_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">normalize_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
                  <span class="n">match_threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">match_threshold_small</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">threshold_small</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                 <span class="n">restrict_countries</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Match</span><span class="p">]:</span>
+                 <span class="n">restrict_countries</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExtractedLocation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Try to find a matching location using the normalization function. If we find any matches, we store the one with the</span>
 <span class="sd">    highest score and additionally store the start and end idx of the substring. Note that we add start_idx, to</span>
@@ -361,22 +362,19 @@
     <span class="k">if</span> <span class="n">restrict_countries</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">matches_found</span> <span class="o">=</span> <span class="n">normalize_func</span><span class="p">(</span><span class="n">combination</span><span class="p">,</span> <span class="n">restrict_countries</span><span class="p">,</span> <span class="n">min_score_levenshtein</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
                                        <span class="n">min_score_trigram</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span>
-        <span class="n">matches_found</span> <span class="o">=</span> <span class="p">[((</span><span class="n">locality</span><span class="p">,</span> <span class="n">country</span><span class="p">),</span> <span class="n">score</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">locality</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span> <span class="ow">in</span> <span class="n">matches_found</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">matches_found</span> <span class="o">=</span> <span class="n">normalize_func</span><span class="p">(</span><span class="n">combination</span><span class="p">,</span> <span class="n">min_score_levenshtein</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
                                        <span class="n">min_score_trigram</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">matches_found</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches_found</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">matches_found</span> <span class="o">=</span> <span class="p">[((</span><span class="n">locality</span><span class="p">,</span> <span class="n">country</span><span class="p">),</span> <span class="n">score</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">locality</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span> <span class="ow">in</span> <span class="n">matches_found</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">matches_found</span><span class="p">:</span>
-        <span class="n">normalized_match</span><span class="p">,</span> <span class="n">score</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">matches_found</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">tup</span><span class="p">:</span> <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">matches_found</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">match_</span><span class="p">:</span> <span class="n">match_</span><span class="o">.</span><span class="n">score</span><span class="p">)</span>
         <span class="n">str_start_idx</span> <span class="o">=</span> <span class="n">token_start_idx</span><span class="p">[</span><span class="n">start_idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">start_idx</span>
         <span class="n">str_end_idx</span> <span class="o">=</span> <span class="n">str_start_idx</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">combination</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Match</span><span class="p">(</span><span class="n">substring_range</span><span class="o">=</span><span class="p">(</span><span class="n">str_start_idx</span><span class="p">,</span> <span class="n">str_end_idx</span><span class="p">),</span> <span class="n">substring</span><span class="o">=</span><span class="n">combination</span><span class="p">,</span>
-                     <span class="n">normalized</span><span class="o">=</span><span class="n">normalized_match</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="n">score</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ExtractedLocation</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">match</span><span class="p">,</span> <span class="n">substring</span><span class="o">=</span><span class="n">combination</span><span class="p">,</span>
+                                 <span class="n">substring_range</span><span class="o">=</span><span class="n">Range</span><span class="p">(</span><span class="n">str_start_idx</span><span class="p">,</span> <span class="n">str_end_idx</span><span class="p">))</span>
 
 
 <div class="viewcode-block" id="find_country_in_string"><a class="viewcode-back" href="../../../reference.html#text_scrubber.geo.find_country_in_string">[docs]</a><span class="k">def</span> <span class="nf">find_country_in_string</span><span class="p">(</span><span class="n">sample</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">match_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.84</span><span class="p">,</span> <span class="n">match_threshold_small</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.90</span><span class="p">,</span>
-                           <span class="n">threshold_small</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">max_tokens_to_consider</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Match</span><span class="p">]:</span>
+                           <span class="n">threshold_small</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">max_tokens_to_consider</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ExtractedLocation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extracts countries from a sample text.</span>
 
@@ -389,7 +387,7 @@
 <span class="sd">        ``match_threshold_small``, otherwise ``match_threshold``</span>
 <span class="sd">    :param max_tokens_to_consider: maximum amount of tokens to consider as a combination for comparing to normalized</span>
 <span class="sd">        countries</span>
-<span class="sd">    :return: list of possible matches</span>
+<span class="sd">    :return: list of matches</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># We skip certain tokens, as they are too confusing. The whitelist_last_resort is used for when no countries could</span>
     <span class="c1"># be found. In that case we do allow to find those strings, if they&#39;re uppercase.</span>
@@ -397,13 +395,13 @@
     <span class="n">blacklist</span> <span class="o">=</span> <span class="n">_COUNTRY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;all_country_codes&#39;</span><span class="p">]</span> <span class="o">|</span> <span class="n">all_country_codes_lower</span> <span class="o">|</span> <span class="p">{</span><span class="s1">&#39;u&#39;</span><span class="p">}</span>
     <span class="n">whitelist_last_resort</span> <span class="o">=</span> <span class="n">_COUNTRY_RESOURCES</span><span class="p">[</span><span class="s1">&#39;all_country_codes&#39;</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">_find_in_string</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">clean_country</span><span class="p">,</span> <span class="n">normalize_country</span><span class="p">,</span> <span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist_last_resort</span><span class="p">,</span> <span class="n">match_threshold</span><span class="p">,</span>
-                           <span class="n">match_threshold_small</span><span class="p">,</span> <span class="n">threshold_small</span><span class="p">,</span> <span class="n">max_tokens_to_consider</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_find_in_string</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">clean_country</span><span class="p">,</span> <span class="n">normalize_country</span><span class="p">,</span> <span class="n">blacklist</span><span class="p">,</span> <span class="n">whitelist_last_resort</span><span class="p">,</span>
+                           <span class="n">match_threshold</span><span class="p">,</span> <span class="n">match_threshold_small</span><span class="p">,</span> <span class="n">threshold_small</span><span class="p">,</span> <span class="n">max_tokens_to_consider</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="find_city_in_string"><a class="viewcode-back" href="../../../reference.html#text_scrubber.geo.find_city_in_string">[docs]</a><span class="k">def</span> <span class="nf">find_city_in_string</span><span class="p">(</span><span class="n">sample</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">country_set</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">set</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">match_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.84</span><span class="p">,</span>
                         <span class="n">match_threshold_small</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.90</span><span class="p">,</span> <span class="n">threshold_small</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-                        <span class="n">max_tokens_to_consider</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Match</span><span class="p">]:</span>
+                        <span class="n">max_tokens_to_consider</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ExtractedLocation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extracts cities from a sample text.</span>
 
@@ -417,7 +415,7 @@
 <span class="sd">        ``match_threshold_small``, otherwise ``match_threshold``</span>
 <span class="sd">    :param max_tokens_to_consider: maximum amount of tokens to consider as a combination for comparing to normalized</span>
 <span class="sd">        countries</span>
-<span class="sd">    :return: list of possible matches</span>
+<span class="sd">    :return: list of matches</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># We skip certain tokens, as they are too confusing. The whitelist_last_resort is used for when no cities could be</span>
     <span class="c1"># found. In that case we do allow to find those strings.</span>
@@ -430,7 +428,7 @@
 
 <div class="viewcode-block" id="find_region_in_string"><a class="viewcode-back" href="../../../reference.html#text_scrubber.geo.find_region_in_string">[docs]</a><span class="k">def</span> <span class="nf">find_region_in_string</span><span class="p">(</span><span class="n">sample</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">country_set</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">set</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">match_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.84</span><span class="p">,</span>
                           <span class="n">match_threshold_small</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.90</span><span class="p">,</span> <span class="n">threshold_small</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-                          <span class="n">max_tokens_to_consider</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Match</span><span class="p">]:</span>
+                          <span class="n">max_tokens_to_consider</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ExtractedLocation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extracts regions from a sample text.</span>
 
@@ -444,7 +442,7 @@
 <span class="sd">        ``match_threshold_small``, otherwise ``match_threshold``</span>
 <span class="sd">    :param max_tokens_to_consider: maximum amount of tokens to consider as a combination for comparing to normalized</span>
 <span class="sd">        countries</span>
-<span class="sd">    :return: list of possible matches</span>
+<span class="sd">    :return: list of matches</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># We skip certain tokens, as they are too confusing. The whitelist_last_resort is used for when no regions could be</span>
     <span class="c1"># found. In that case we do allow to find those strings.</span>
@@ -524,11 +522,11 @@
             <dd><a href="../../../v0.3.0/index.html">v0.3.0</a></dd>
             <dd><a href="../../../v0.3.1/index.html">v0.3.1</a></dd>
             <dd><a href="../../../v0.3.2/index.html">v0.3.2</a></dd>
+            <dd><a href="../../../v0.4.0/index.html">v0.4.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
             <dd><a href="../../../master/_modules/text_scrubber/geo/find_in_string.html">master</a></dd>
-            <dd><a href="../../../optimize_find_in_string/index.html">optimize_find_in_string</a></dd>
         </dl>
     </div>
 </div>

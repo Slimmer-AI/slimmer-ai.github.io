@@ -734,15 +734,15 @@ to Denmark.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>country</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Country string to clean.</p></li>
-<li><p><strong>min_score_levenshtein</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – minimum score to use for Levenshtein similarity</p></li>
-<li><p><strong>min_score_trigram</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – minimum score to use for trigram similarity</p></li>
+<li><p><strong>min_score_levenshtein</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Minimum score to use for Levenshtein similarity</p></li>
+<li><p><strong>min_score_trigram</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Minimum score to use for trigram similarity</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Location</span></code>]</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List of (country, score) candidates in canonical form, sorted by score (desc)</p>
+<dd class="field-odd"><p>List of LocationMatch candidates sorted by score (desc)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -754,17 +754,17 @@ to Denmark.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Region name</p></li>
 <li><p><strong>restrict_countries</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code>]) – A set of countries and/or country codes to restrict the search space</p></li>
-<li><p><strong>region</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – City name</p></li>
-<li><p><strong>min_score_levenshtein</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – minimum score to use for Levenshtein similarity</p></li>
-<li><p><strong>min_score_trigram</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – minimum score to use for trigram similarity</p></li>
+<li><p><strong>min_score_levenshtein</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Minimum score to use for Levenshtein similarity</p></li>
+<li><p><strong>min_score_trigram</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Minimum score to use for trigram similarity</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Location</span></code>]</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List of (city, country, score) candidates in canonical form, sorted by score (desc)</p>
+<dd class="field-odd"><p>List of Location candidates sorted by score (desc)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -783,10 +783,10 @@ to Denmark.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Location</span></code>]</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List of (city, country, score) candidates in canonical form, sorted by score (desc)</p>
+<dd class="field-odd"><p>List of Location candidates sorted by score (desc)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -884,10 +884,10 @@ countries</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Match</span></code>]</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractedLocation</span></code>]</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list of possible matches</p>
+<dd class="field-odd"><p>list of matches</p>
 </dd>
 </dl>
 </dd></dl>
@@ -911,10 +911,10 @@ countries</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Match</span></code>]</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractedLocation</span></code>]</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list of possible matches</p>
+<dd class="field-odd"><p>list of matches</p>
 </dd>
 </dl>
 </dd></dl>
@@ -938,10 +938,10 @@ countries</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Match</span></code>]</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractedLocation</span></code>]</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list of possible matches</p>
+<dd class="field-odd"><p>list of matches</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1045,11 +1045,11 @@ countries</p></li>
             <dd><a href="../v0.3.0/reference.html">v0.3.0</a></dd>
             <dd><a href="../v0.3.1/reference.html">v0.3.1</a></dd>
             <dd><a href="reference.html">v0.3.2</a></dd>
+            <dd><a href="../v0.4.0/reference.html">v0.4.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
             <dd><a href="../master/reference.html">master</a></dd>
-            <dd><a href="../optimize_find_in_string/reference.html">optimize_find_in_string</a></dd>
         </dl>
     </div>
 </div>

@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API reference &mdash; text-scrubber 0.3.2 documentation</title>
+  <title>API reference &mdash; text-scrubber 0.4.0 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.3.2
+                0.4.0
               </div>
             
           
@@ -734,15 +734,15 @@ to Denmark.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>country</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Country string to clean.</p></li>
-<li><p><strong>min_score_levenshtein</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – minimum score to use for Levenshtein similarity</p></li>
-<li><p><strong>min_score_trigram</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – minimum score to use for trigram similarity</p></li>
+<li><p><strong>min_score_levenshtein</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Minimum score to use for Levenshtein similarity</p></li>
+<li><p><strong>min_score_trigram</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Minimum score to use for trigram similarity</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#text_scrubber.geo.normalize.Location" title="text_scrubber.geo.normalize.Location"><code class="xref py py-class docutils literal notranslate"><span class="pre">Location</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List of (country, score) candidates in canonical form, sorted by score (desc)</p>
+<dd class="field-odd"><p>List of LocationMatch candidates sorted by score (desc)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -754,17 +754,17 @@ to Denmark.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Region name</p></li>
 <li><p><strong>restrict_countries</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code>]) – A set of countries and/or country codes to restrict the search space</p></li>
-<li><p><strong>region</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – City name</p></li>
-<li><p><strong>min_score_levenshtein</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – minimum score to use for Levenshtein similarity</p></li>
-<li><p><strong>min_score_trigram</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – minimum score to use for trigram similarity</p></li>
+<li><p><strong>min_score_levenshtein</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Minimum score to use for Levenshtein similarity</p></li>
+<li><p><strong>min_score_trigram</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Minimum score to use for trigram similarity</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#text_scrubber.geo.normalize.Location" title="text_scrubber.geo.normalize.Location"><code class="xref py py-class docutils literal notranslate"><span class="pre">Location</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List of (city, country, score) candidates in canonical form, sorted by score (desc)</p>
+<dd class="field-odd"><p>List of Location candidates sorted by score (desc)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -783,10 +783,10 @@ to Denmark.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#text_scrubber.geo.normalize.Location" title="text_scrubber.geo.normalize.Location"><code class="xref py py-class docutils literal notranslate"><span class="pre">Location</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List of (city, country, score) candidates in canonical form, sorted by score (desc)</p>
+<dd class="field-odd"><p>List of Location candidates sorted by score (desc)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -808,6 +808,11 @@ to Denmark.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py class">
+<dt id="text_scrubber.geo.normalize.Location">
+<em class="property">class </em><code class="sig-prename descclassname">text_scrubber.geo.normalize.</code><code class="sig-name descname">Location</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">canonical_name</span></em>, <em class="sig-param"><span class="n">matched_name</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">score</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/text_scrubber/geo/normalize.html#Location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#text_scrubber.geo.normalize.Location" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </section>
 <section id="cleaning">
@@ -884,10 +889,10 @@ countries</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Match</span></code>]</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#text_scrubber.geo.find_in_string.ExtractedLocation" title="text_scrubber.geo.find_in_string.ExtractedLocation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractedLocation</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list of possible matches</p>
+<dd class="field-odd"><p>list of matches</p>
 </dd>
 </dl>
 </dd></dl>
@@ -911,10 +916,10 @@ countries</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Match</span></code>]</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#text_scrubber.geo.find_in_string.ExtractedLocation" title="text_scrubber.geo.find_in_string.ExtractedLocation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractedLocation</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list of possible matches</p>
+<dd class="field-odd"><p>list of matches</p>
 </dd>
 </dl>
 </dd></dl>
@@ -938,13 +943,18 @@ countries</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Match</span></code>]</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#text_scrubber.geo.find_in_string.ExtractedLocation" title="text_scrubber.geo.find_in_string.ExtractedLocation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractedLocation</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list of possible matches</p>
+<dd class="field-odd"><p>list of matches</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py class">
+<dt id="text_scrubber.geo.find_in_string.ExtractedLocation">
+<em class="property">class </em><code class="sig-prename descclassname">text_scrubber.geo.find_in_string.</code><code class="sig-name descname">ExtractedLocation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">location</span></em>, <em class="sig-param"><span class="n">substring</span></em>, <em class="sig-param"><span class="n">substring_range</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/text_scrubber/geo/find_in_string.html#ExtractedLocation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#text_scrubber.geo.find_in_string.ExtractedLocation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </section>
 <section id="resources">
@@ -1045,11 +1055,11 @@ countries</p></li>
             <dd><a href="../v0.3.0/reference.html">v0.3.0</a></dd>
             <dd><a href="../v0.3.1/reference.html">v0.3.1</a></dd>
             <dd><a href="../v0.3.2/reference.html">v0.3.2</a></dd>
+            <dd><a href="../v0.4.0/reference.html">v0.4.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
             <dd><a href="reference.html">master</a></dd>
-            <dd><a href="../optimize_find_in_string/reference.html">optimize_find_in_string</a></dd>
         </dl>
     </div>
 </div>

@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Basic usage &mdash; text-scrubber 0.3.2 documentation</title>
+  <title>Basic usage &mdash; text-scrubber 0.4.0 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.3.2
+                0.4.0
               </div>
             
           
@@ -214,81 +214,154 @@ reference.</p>
 country name variations, etc.:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">text_scrubber.geo</span> <span class="kn">import</span> <span class="n">normalize_country</span><span class="p">,</span> <span class="n">normalize_region</span><span class="p">,</span> <span class="n">normalize_city</span>
 
-<span class="c1"># Countries</span>
-<span class="n">normalize_country</span><span class="p">(</span><span class="s1">&#39;Peoples rep. of China&#39;</span><span class="p">)</span>  <span class="c1"># [(&#39;China&#39;, 1.0)]</span>
-<span class="n">normalize_country</span><span class="p">(</span><span class="s1">&#39;Deutschland&#39;</span><span class="p">)</span>            <span class="c1"># [(&#39;Germany&#39;, 1.0)]</span>
-<span class="n">normalize_country</span><span class="p">(</span><span class="s1">&#39;st Nevis and Kitties&#39;</span><span class="p">)</span>   <span class="c1"># [(&#39;Saint Kitts and Nevis&#39;, 0.75)]</span>
-<span class="n">normalize_country</span><span class="p">(</span><span class="s1">&#39;ira&#39;</span><span class="p">)</span>                    <span class="c1"># [(&#39;Iran&#39;, 0.857), (&#39;Iraq&#39;, 0.857)]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Countries</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
-<span class="c1"># Cities</span>
-<span class="n">normalize_city</span><span class="p">(</span><span class="s1">&#39;Leibnitz&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Austria&#39;</span><span class="p">])</span>    <span class="c1"># [(&#39;Leibnitz&#39;, &#39;Austria&#39;, 1.0)]</span>
-<span class="n">normalize_city</span><span class="p">(</span><span class="s1">&#39;heidelberg&#39;</span><span class="p">)</span>  <span class="c1"># [(&#39;Heidelberg&#39;, &#39;Germany&#39;, 1.0),</span>
-                              <span class="c1">#  (&#39;Heidelberg&#39;, &#39;South Africa&#39;, 1.0),</span>
-                              <span class="c1">#  (&#39;Heidelberg&#39;, &#39;United States&#39;, 1.0)]</span>
-<span class="n">normalize_city</span><span class="p">(</span><span class="s1">&#39;ohioo&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;US&#39;</span><span class="p">])</span>  <span class="c1"># [(&#39;Ohio&#39;, &#39;United States&#39;, 0.889)]</span>
-<span class="n">normalize_city</span><span class="p">(</span><span class="s1">&#39;Madri&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Spain&#39;</span><span class="p">,</span> <span class="s1">&#39;US&#39;</span><span class="p">,</span> <span class="s1">&#39;Brazil&#39;</span><span class="p">])</span>  <span class="c1"># [(&#39;Madrid&#39;, &#39;Spain&#39;, 0.909),</span>
-                                                    <span class="c1">#  (&#39;Madrid&#39;, &#39;United States&#39;, 0.909),</span>
-                                                    <span class="c1">#  (&#39;Mari&#39;, &#39;Brazil&#39;, 0.889)]</span>
+<span class="n">normalize_country</span><span class="p">(</span><span class="s1">&#39;Peoples rep. of China&#39;</span><span class="p">)</span>
+<span class="c1"># [Location(canonical_name=&#39;China&#39;, matched_name=&#39;Peoples Republic of China&#39;, country=None,</span>
+<span class="c1">#           score=1.0)]</span>
 
-<span class="c1"># Regions</span>
-<span class="n">normalize_region</span><span class="p">(</span><span class="s1">&#39;triangle park&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;US&#39;</span><span class="p">])</span>   <span class="c1"># [(&#39;The Triangle Park&#39;, &#39;United States&#39;, 1.0)]</span>
-<span class="n">normalize_region</span><span class="p">(</span><span class="s1">&#39;Fur&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Denmark&#39;</span><span class="p">])</span>        <span class="c1"># [(&#39;Fur&#39;, &#39;Denmark&#39;, 1.0)]</span>
-<span class="n">normalize_region</span><span class="p">(</span><span class="s1">&#39;texel&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;NL&#39;</span><span class="p">])</span>            <span class="c1"># [(&#39;Texel&#39;, &#39;Netherlands&#39;, 1.0)]</span>
+<span class="n">normalize_country</span><span class="p">(</span><span class="s1">&#39;Deutschland&#39;</span><span class="p">)</span>
+<span class="c1"># [Location(canonical_name=&#39;Germany&#39;, matched_name=&#39;Deutschland&#39;, country=None, score=1.0)]</span>
+
+<span class="n">normalize_country</span><span class="p">(</span><span class="s1">&#39;st Nevis and Kitties&#39;</span><span class="p">)</span>
+<span class="c1"># [Location(canonical_name=&#39;Saint Kitts and Nevis&#39;, matched_name=&#39;Saint Kitts and Nevis&#39;,</span>
+<span class="c1">#           country=None, score=0.75)]</span>
+
+<span class="n">normalize_country</span><span class="p">(</span><span class="s1">&#39;ira&#39;</span><span class="p">)</span>
+<span class="c1"># [Location(canonical_name=&#39;Iran&#39;, matched_name=&#39;Iran&#39;, country=None, score=0.857...),</span>
+<span class="c1">#  Location(canonical_name=&#39;Iraq&#39;, matched_name=&#39;Iraq&#39;, country=None, score=0.857...)]</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Cities</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">normalize_city</span><span class="p">(</span><span class="s1">&#39;Leibnitz&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Austria&#39;</span><span class="p">])</span>
+<span class="c1"># [Location(canonical_name=&#39;Leibnitz&#39;, matched_name=&#39;Leibnitz&#39;, country=&#39;Austria&#39;, score=1.0)]</span>
+
+<span class="n">normalize_city</span><span class="p">(</span><span class="s1">&#39;heidelberg&#39;</span><span class="p">)</span>
+<span class="c1"># [Location(canonical_name=&#39;Heidelberg&#39;, matched_name=&#39;Heidelberg&#39;, country=&#39;Germany&#39;,</span>
+<span class="c1">#           score=1.0),</span>
+<span class="c1">#  Location(canonical_name=&#39;Heidelberg&#39;, matched_name=&#39;Heidelberg&#39;, country=&#39;South Africa&#39;,</span>
+<span class="c1">#           score=1.0),</span>
+<span class="c1">#  Location(canonical_name=&#39;Heidelberg&#39;, matched_name=&#39;Heidelberg&#39;, country=&#39;United States&#39;,</span>
+<span class="c1">#           score=1.0)]</span>
+
+<span class="n">normalize_city</span><span class="p">(</span><span class="s1">&#39;ohioo&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;US&#39;</span><span class="p">])</span>
+<span class="c1"># [Location(canonical_name=&#39;Ohio&#39;, matched_name=&#39;Ohio&#39;, country=&#39;United States&#39;,</span>
+<span class="c1">#           score=0.888...)]</span>
+
+<span class="n">normalize_city</span><span class="p">(</span><span class="s1">&#39;Madri&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Spain&#39;</span><span class="p">,</span> <span class="s1">&#39;US&#39;</span><span class="p">,</span> <span class="s1">&#39;Brazil&#39;</span><span class="p">])</span>
+<span class="c1"># [Location(canonical_name=&#39;Madrid&#39;, matched_name=&#39;Madrid&#39;, country=&#39;Spain&#39;,</span>
+<span class="c1">#           score=0.909...),</span>
+<span class="c1">#  Location(canonical_name=&#39;Madrid&#39;, matched_name=&#39;Madrid&#39;, country=&#39;United States&#39;,</span>
+<span class="c1">#           score=0.909...),</span>
+<span class="c1">#  Location(canonical_name=&#39;Mari&#39;, matched_name=&#39;Mari&#39;, country=&#39;Brazil&#39;,</span>
+<span class="c1">#           score=0.888...)]</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Regions</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">normalize_region</span><span class="p">(</span><span class="s1">&#39;triangle park&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;US&#39;</span><span class="p">])</span>
+<span class="c1"># [Location(canonical_name=&#39;The Triangle Park&#39;, matched_name=&#39;The Triangle Park&#39;,</span>
+<span class="c1">#           country=&#39;United States&#39;, score=1.0)]</span>
+
+<span class="n">normalize_region</span><span class="p">(</span><span class="s1">&#39;Fur&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Denmark&#39;</span><span class="p">])</span>
+<span class="c1"># [Location(canonical_name=&#39;Fur&#39;, matched_name=&#39;Fur&#39;, country=&#39;Denmark&#39;, score=1.0)]</span>
+
+<span class="n">normalize_region</span><span class="p">(</span><span class="s1">&#39;texel&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;NL&#39;</span><span class="p">])</span>
+<span class="c1"># [Location(canonical_name=&#39;Texel&#39;, matched_name=&#39;Texel&#39;, country=&#39;Netherlands&#39;, score=1.0)]</span>
 </pre></div>
 </div>
-<p>Each of the above normalization functions will return the match score as last entry in the tuple. These scores are
-always between 0.0 and 1.0, where 1.0 is a perfect match. If a known mapping exists, like <code class="docutils literal notranslate"><span class="pre">Deutschland</span></code> to
-<code class="docutils literal notranslate"><span class="pre">Germany</span></code>, then the match score will be 1.0.</p>
+<p>Each of the above normalization functions return the canonical name, matched name, the match score, and when normalizing
+cities or regions it will also contain the corresponding country. The difference between canonical and matched name
+stems from the fact that some countries, cities, or regions can have alternative names. E.g., <code class="docutils literal notranslate"><span class="pre">NYC</span></code> maps to
+<code class="docutils literal notranslate"><span class="pre">New</span> <span class="pre">York</span> <span class="pre">City</span></code>. When the query was <code class="docutils literal notranslate"><span class="pre">NYCC</span></code> the canonical name will be <code class="docutils literal notranslate"><span class="pre">New</span> <span class="pre">York</span> <span class="pre">City</span></code>, but the matched name
+<code class="docutils literal notranslate"><span class="pre">NYC</span></code>. The match scores are always between 0.0 and 1.0, where 1.0 is a perfect match. If a known mapping exists, like
+<code class="docutils literal notranslate"><span class="pre">Deutschland</span></code> to <code class="docutils literal notranslate"><span class="pre">Germany</span></code>, then the match score will be 1.0.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When normalizing a country or finding countries in a string, the <code class="docutils literal notranslate"><span class="pre">country</span></code> attribute of a <code class="docutils literal notranslate"><span class="pre">LocationMatch</span></code> object
+is always <code class="docutils literal notranslate"><span class="pre">None</span></code>. The normalized name can be found using the <code class="docutils literal notranslate"><span class="pre">canonical_name</span></code> attribute.</p>
+</aside>
 <p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">text_scrubber.geo</span></code> module also contains functions to find the name of places (country, region, and city) in
 text dealing with spelling errors, country name variations, etc.:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">text_scrubber.geo</span> <span class="kn">import</span> <span class="p">(</span><span class="n">find_city_in_string</span><span class="p">,</span> <span class="n">find_country_in_string</span><span class="p">,</span>
                                <span class="n">find_region_in_string</span><span class="p">)</span>
 
-<span class="c1"># Countries</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Countries</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="n">find_country_in_string</span><span class="p">(</span><span class="s2">&quot;Institute of German study, Accra, Ghana&quot;</span><span class="p">)</span>
-<span class="c1"># Returns: [Match(substring_range=(34, 39), substring=&#39;Ghana&#39;,</span>
-<span class="c1">#                 normalized=&#39;Ghana&#39;, score=1.0),</span>
-<span class="c1">#           Match(substring_range=(13, 19), substring=&#39;German&#39;,</span>
-<span class="c1">#                 normalized=&#39;Germany&#39;, score=0.923)]</span>
+<span class="c1"># [ExtractedLocation(location=Location(canonical_name=&#39;Ghana&#39;, matched_name=&#39;Ghana&#39;,</span>
+<span class="c1">#                                      country=None, score=1.0),</span>
+<span class="c1">#                    substring=&#39;Ghana&#39;, substring_range=Range(start=34, end=39)),</span>
+<span class="c1">#  ExtractedLocation(location=Location(canonical_name=&#39;Germany&#39;, matched_name=&#39;Germany&#39;,</span>
+<span class="c1">#                                      country=None, score=0.923...),</span>
+<span class="c1">#                    substring=&#39;German&#39;, substring_range=Range(start=13, end=19))]</span>
 
 <span class="n">find_country_in_string</span><span class="p">(</span><span class="s2">&quot;Peking University, 5 Yiheyuan Rd, &quot;</span>
                        <span class="s2">&quot;Haidian District, Beijing, CH, 100871&quot;</span><span class="p">)</span>
-<span class="c1"># Returns: [Match(substring_range=(61, 63), substring=&quot;CH&quot;,</span>
-<span class="c1">#                 normalized=&quot;China&quot;, score=1.0)]</span>
+<span class="c1"># This was a trick question though, as CH=Switzerland. China is CN</span>
+<span class="c1"># [ExtractedLocation(location=Location(canonical_name=&#39;Switzerland&#39;, matched_name=&#39;CH&#39;,</span>
+<span class="c1">#                                      country=None, score=1.0),</span>
+<span class="c1">#                    substring=&#39;CH&#39;, substring_range=Range(start=61, end=63))]</span>
 
-<span class="c1"># Cities</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Cities</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="n">find_city_in_string</span><span class="p">(</span><span class="s2">&quot;Météorage Pau France&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;France&quot;</span><span class="p">})</span>
-<span class="c1"># Returns: [Match(substring_range=(10, 13), substring=&quot;Pau&quot;,</span>
-<span class="c1">#                 normalized=(&quot;Pau&quot;, &quot;France&quot;), score=1.0),</span>
-<span class="c1">#           Match(substring_range=(14, 20), substring=&quot;France&quot;,</span>
-<span class="c1">#                 normalized=(&quot;La Frasnée&quot;, &quot;France&quot;), score=0.909)]</span>
+<span class="c1"># [ExtractedLocation(location=Location(canonical_name=&#39;Pau&#39;, matched_name=&#39;Pau&#39;,</span>
+<span class="c1">#                                      country=&#39;France&#39;, score=1.0),</span>
+<span class="c1">#                    substring=&#39;Pau&#39;, substring_range=Range(start=10, end=13)),</span>
+<span class="c1">#  ExtractedLocation(location=Location(canonical_name=&#39;La Frasnée&#39;, matched_name=&#39;Фране&#39;,</span>
+<span class="c1">#                                      country=&#39;France&#39;, score=0.909...),</span>
+<span class="c1">#                    substring=&#39;France&#39;, substring_range=Range(start=14, end=20))]</span>
 
 <span class="n">find_city_in_string</span><span class="p">(</span><span class="s2">&quot;Bavarian Environment Agency, Hans Högn Straße 12, &quot;</span>
                     <span class="s2">&quot;95030 Hof Saale, Bavaria, Germany&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;Germany&quot;</span><span class="p">})</span>
-<span class="c1"># Returns: [Match(substring_range=(56, 59), substring=&#39;Hof&#39;,</span>
-<span class="c1">#                 normalized=(&#39;Hof&#39;, &#39;Germany&#39;), score=1.0),</span>
-<span class="c1">#           Match(substring_range=(60, 65), substring=&#39;Saale&#39;,</span>
-<span class="c1">#                 normalized=(&#39;Saal&#39;, &#39;Germany&#39;), score=0.889),</span>
-<span class="c1">#           Match(substring_range=(39, 45), substring=&quot;Straße&quot;,</span>
-<span class="c1">#                 normalized=(&quot;Trassem&quot;, &quot;Germany&quot;), score=0.857)]</span>
+<span class="c1"># [ExtractedLocation(location=Location(canonical_name=&#39;Hof&#39;, matched_name=&#39;Hof&#39;,</span>
+<span class="c1">#                                      country=&#39;Germany&#39;, score=1.0),</span>
+<span class="c1">#                    substring=&#39;Hof&#39;, substring_range=Range(start=56, end=59)),</span>
+<span class="c1">#  ExtractedLocation(location=Location(canonical_name=&#39;Saal&#39;, matched_name=&#39;Saal&#39;,</span>
+<span class="c1">#                                      country=&#39;Germany&#39;, score=0.888...),</span>
+<span class="c1">#                    substring=&#39;Saale&#39;, substring_range=Range(start=60, end=65)),</span>
+<span class="c1">#  ExtractedLocation(location=Location(canonical_name=&#39;Trassem&#39;, matched_name=&#39;Trassem&#39;,</span>
+<span class="c1">#                                      country=&#39;Germany&#39;, score=0.857...),</span>
+<span class="c1">#                    substring=&#39;Straße&#39;, substring_range=Range(start=39, end=45))]</span>
 
-<span class="c1"># Regions</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Regions</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="n">find_region_in_string</span><span class="p">(</span><span class="s2">&quot;Fur Museum, 7884 Fur, Denmark.&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;Denmark&quot;</span><span class="p">})</span>
-<span class="c1"># Returns: [Match(substring_range=(0, 3), substring=&#39;Fur&#39;,</span>
-<span class="c1">#                 normalized=(&#39;Fur&#39;, &#39;Denmark&#39;), score=1.0),</span>
-<span class="c1">#           Match(substring_range=(17, 20), substring=&#39;Fur&#39;,</span>
-<span class="c1">#                 normalized=(&#39;Fur&#39;, &#39;Denmark&#39;), score=1.0),</span>
-<span class="c1">#           Match(substring_range=(22, 29), substring=&#39;Denmark&#39;,</span>
-<span class="c1">#                 normalized=(&#39;Kingdom of Denmark&#39;, &#39;Denmark&#39;), score=1.0)]</span>
+<span class="c1"># [ExtractedLocation(location=Location(canonical_name=&#39;Fur&#39;, matched_name=&#39;Fur&#39;,</span>
+<span class="c1">#                                      country=&#39;Denmark&#39;, score=1.0),</span>
+<span class="c1">#                    substring=&#39;Fur&#39;, substring_range=Range(start=0, end=3)),</span>
+<span class="c1">#  ExtractedLocation(location=Location(canonical_name=&#39;Fur&#39;, matched_name=&#39;Fur&#39;,</span>
+<span class="c1">#                                      country=&#39;Denmark&#39;, score=1.0),</span>
+<span class="c1">#                    substring=&#39;Fur&#39;, substring_range=Range(start=17, end=20)),</span>
+<span class="c1">#  ExtractedLocation(location=Location(canonical_name=&#39;Kingdom of Denmark&#39;,</span>
+<span class="c1">#                                      matched_name=&#39;Denmark&#39;, country=&#39;Denmark&#39;, score=1.0),</span>
+<span class="c1">#                    substring=&#39;Denmark&#39;, substring_range=Range(start=22, end=29))]</span>
 
 <span class="n">find_region_in_string</span><span class="p">(</span><span class="s2">&quot;Department of Biological Oceanography, Royal Netherlands Institute &quot;</span>
                       <span class="s2">&quot;for Sea Research (NIOZ), Texel, The Netherlands&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;Netherlands&quot;</span><span class="p">})</span>
-<span class="c1"># Returns: [Match(substring_range=(45, 56), substring=&#39;Netherlands&#39;,</span>
-<span class="c1">#                 normalized=(&#39;Kingdom of the Netherlands&#39;, &#39;Netherlands&#39;), score=1.0),</span>
-<span class="c1">#           Match(substring_range=(92, 97), substring=&#39;Texel&#39;,</span>
-<span class="c1">#                 normalized=(&#39;Texel&#39;, &#39;Netherlands&#39;), score=1.0),</span>
-<span class="c1">#           Match(substring_range=(103, 114), substring=&#39;Netherlands&#39;,</span>
-<span class="c1">#                 normalized=(&#39;Kingdom of the Netherlands&#39;, &#39;Netherlands&#39;), score=1.0)]</span>
+<span class="c1"># [ExtractedLocation(location=Location(canonical_name=&#39;Kingdom of the Netherlands&#39;,</span>
+<span class="c1">#                                      matched_name=&#39;Netherlands&#39;, country=&#39;Netherlands&#39;,</span>
+<span class="c1">#                                      score=1.0),</span>
+<span class="c1">#                    substring=&#39;Netherlands&#39;, substring_range=Range(start=45, end=56)),</span>
+<span class="c1">#  ExtractedLocation(location=Location(canonical_name=&#39;Texel&#39;, matched_name=&#39;Texel&#39;,</span>
+<span class="c1">#                                      country=&#39;Netherlands&#39;, score=1.0),</span>
+<span class="c1">#                    substring=&#39;Texel&#39;, substring_range=Range(start=92, end=97)),</span>
+<span class="c1">#  ExtractedLocation(location=Location(canonical_name=&#39;Kingdom of the Netherlands&#39;,</span>
+<span class="c1">#                                      matched_name=&#39;Netherlands&#39;, country=&#39;Netherlands&#39;,</span>
+<span class="c1">#                                      score=1.0),</span>
+<span class="c1">#                    substring=&#39;Netherlands&#39;, substring_range=Range(start=103, end=114))]</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -388,11 +461,11 @@ advance by using:</p>
             <dd><a href="../v0.3.0/usage.html">v0.3.0</a></dd>
             <dd><a href="../v0.3.1/usage.html">v0.3.1</a></dd>
             <dd><a href="../v0.3.2/usage.html">v0.3.2</a></dd>
+            <dd><a href="../v0.4.0/usage.html">v0.4.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
             <dd><a href="usage.html">master</a></dd>
-            <dd><a href="../optimize_find_in_string/usage.html">optimize_find_in_string</a></dd>
         </dl>
     </div>
 </div>

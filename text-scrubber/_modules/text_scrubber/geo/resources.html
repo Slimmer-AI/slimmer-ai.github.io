@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>text_scrubber.geo.resources &mdash; text-scrubber 0.3.2 documentation</title>
+  <title>text_scrubber.geo.resources &mdash; text-scrubber 0.4.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.3.2
+                0.4.0
               </div>
             
           
@@ -192,29 +192,51 @@
         <span class="k">for</span> <span class="n">country_code</span> <span class="ow">in</span> <span class="n">country_codes</span>
     <span class="p">}</span>
 
-    <span class="c1"># Read in a map of common country name replacements</span>
-    <span class="n">replacements_file</span> <span class="o">=</span> <span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">read_resource_file</span><span class="p">(</span><span class="vm">__file__</span><span class="p">,</span> <span class="s1">&#39;resources/country_map.txt&#39;</span><span class="p">))</span>
-    <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;replacements&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">clean_country</span><span class="p">(</span><span class="n">country</span><span class="p">):</span> <span class="n">clean_country</span><span class="p">(</span><span class="n">canonical_country</span><span class="p">)</span>
-                                 <span class="k">for</span> <span class="n">country</span><span class="p">,</span> <span class="n">canonical_country</span> <span class="ow">in</span> <span class="n">replacements_file</span><span class="p">}</span>
-
     <span class="c1"># Replacement patterns additional to the other replacements (mainly filters zipcodes)</span>
     <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;replacement_patterns&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">clean_country</span><span class="p">(</span><span class="n">canonical_country</span><span class="p">))</span> <span class="k">for</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">canonical_country</span> <span class="ow">in</span>
                                          <span class="p">((</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+[a-z]+\d+ canada [a-z]+\d+[a-z]+&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">),</span> <span class="s1">&#39;canada&#39;</span><span class="p">),</span>
                                           <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+ russia&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">),</span> <span class="s1">&#39;russia&#39;</span><span class="p">))]</span>
 
-    <span class="c1"># Get a map of cleaned country name to canonical country name, and generate trigrams</span>
+    <span class="c1"># Get a map of cleaned country name and country code to canonical country name, and generate trigrams</span>
     <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;canonical_names&#39;</span><span class="p">:</span> <span class="p">[],</span>
                               <span class="s1">&#39;cleaned_location_map&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
                               <span class="s1">&#39;levenshtein&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
                               <span class="s1">&#39;trigrams&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()}</span>
-    <span class="k">for</span> <span class="n">canonical_country</span> <span class="ow">in</span> <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;normalized_country_to_country_codes_map&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">][</span><span class="s1">&#39;canonical_names&#39;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">canonical_country</span><span class="p">,</span> <span class="n">country_codes</span> <span class="ow">in</span> <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;normalized_country_to_country_codes_map&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Add country name</span>
+        <span class="n">canonical_name_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">][</span><span class="s1">&#39;canonical_names&#39;</span><span class="p">])</span>
         <span class="n">cleaned_country</span> <span class="o">=</span> <span class="n">clean_country</span><span class="p">(</span><span class="n">canonical_country</span><span class="p">)</span>
         <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">][</span><span class="s1">&#39;canonical_names&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">canonical_country</span><span class="p">)</span>
-        <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">][</span><span class="s1">&#39;cleaned_location_map&#39;</span><span class="p">][</span><span class="n">cleaned_country</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">][</span><span class="s1">&#39;cleaned_location_map&#39;</span><span class="p">][</span><span class="n">cleaned_country</span><span class="p">]</span> <span class="o">=</span> <span class="n">canonical_name_idx</span><span class="p">,</span> <span class="n">canonical_name_idx</span>
+        <span class="n">_add_cleaned_location</span><span class="p">(</span><span class="n">cleaned_country</span><span class="p">,</span> <span class="n">canonical_name_idx</span><span class="p">,</span> <span class="n">canonical_name_idx</span><span class="p">,</span> <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">])</span>
 
-        <span class="c1"># Add to Levenshtein and trigram maps</span>
-        <span class="n">_add_cleaned_location</span><span class="p">(</span><span class="n">cleaned_country</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">])</span>
+        <span class="c1"># Add corresponding country codes</span>
+        <span class="k">for</span> <span class="n">country_code</span> <span class="ow">in</span> <span class="n">country_codes</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">][</span><span class="s1">&#39;canonical_names&#39;</span><span class="p">])</span>
+            <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">][</span><span class="s1">&#39;canonical_names&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">country_code</span><span class="p">)</span>
+            <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">][</span><span class="s1">&#39;cleaned_location_map&#39;</span><span class="p">][</span><span class="n">country_code</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="n">canonical_name_idx</span><span class="p">,</span> <span class="n">idx</span>
+            <span class="n">_add_cleaned_location</span><span class="p">(</span><span class="n">country_code</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">canonical_name_idx</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Add common country replacements</span>
+    <span class="k">for</span> <span class="n">location_list</span> <span class="ow">in</span> <span class="n">read_resource_file</span><span class="p">(</span><span class="vm">__file__</span><span class="p">,</span> <span class="s1">&#39;resources/country_map.txt&#39;</span><span class="p">):</span>
+        <span class="c1"># A single line can have multiple alternative spellings of the same country. The first spelling is the</span>
+        <span class="c1"># canonical one and all versions will point to that</span>
+        <span class="n">location_list</span> <span class="o">=</span> <span class="n">location_list</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span>
+        <span class="n">canonical_name_idx</span> <span class="o">=</span> <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">][</span><span class="s1">&#39;canonical_names&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">location_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">location</span><span class="p">,</span> <span class="n">cleaned_location</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">location_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">clean_country</span><span class="p">(</span><span class="n">location_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:])):</span>
+            <span class="c1"># Sometimes the clean function removes the whole string</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">cleaned_location</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">assert</span> <span class="n">cleaned_location</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">][</span><span class="s1">&#39;cleaned_location_map&#39;</span><span class="p">],</span> \
+                <span class="sa">f</span><span class="s2">&quot;Location </span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s2"> already exists. Contact maintainer.&quot;</span>
+
+            <span class="n">idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">][</span><span class="s1">&#39;canonical_names&#39;</span><span class="p">])</span>
+            <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">][</span><span class="s1">&#39;canonical_names&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">location</span><span class="p">)</span>
+            <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">][</span><span class="s1">&#39;cleaned_location_map&#39;</span><span class="p">][</span><span class="n">cleaned_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">canonical_name_idx</span><span class="p">,</span> <span class="n">idx</span>
+
+            <span class="c1"># Add to Levenshtein and trigram maps</span>
+            <span class="n">_add_cleaned_location</span><span class="p">(</span><span class="n">cleaned_location</span><span class="p">,</span> <span class="n">canonical_name_idx</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">])</span>
 
     <span class="c1"># Optimize data structure for Levenshtein and trigram similarity functions</span>
     <span class="n">_optimize_resources_dict</span><span class="p">(</span><span class="n">resources</span><span class="p">[</span><span class="s1">&#39;countries&#39;</span><span class="p">])</span>
@@ -280,21 +302,21 @@
                      <span class="s1">&#39;levenshtein&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
                      <span class="s1">&#39;trigrams&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()}</span>
     <span class="k">for</span> <span class="n">location_list</span> <span class="ow">in</span> <span class="n">locations</span><span class="p">:</span>
-        <span class="c1"># A single line can have multiple alternative spellings of the same city. The first spelling is the</span>
+        <span class="c1"># A single line can have multiple alternative spellings of the same location. The first spelling is the</span>
         <span class="c1"># canonical one and all versions will point to that</span>
         <span class="n">location_list</span> <span class="o">=</span> <span class="n">location_list</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span>
-        <span class="n">canonical_name</span> <span class="o">=</span> <span class="n">location_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">location_dict</span><span class="p">[</span><span class="s1">&#39;canonical_names&#39;</span><span class="p">])</span>
-        <span class="n">location_dict</span><span class="p">[</span><span class="s1">&#39;canonical_names&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">canonical_name</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">cleaned_location</span> <span class="ow">in</span> <span class="n">clean_func</span><span class="p">(</span><span class="n">location_list</span><span class="p">):</span>
+        <span class="n">canonical_name_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">location_dict</span><span class="p">[</span><span class="s1">&#39;canonical_names&#39;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">location</span><span class="p">,</span> <span class="n">cleaned_location</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">location_list</span><span class="p">,</span> <span class="n">clean_func</span><span class="p">(</span><span class="n">location_list</span><span class="p">)):</span>
             <span class="c1"># Sometimes the clean function removes the whole string</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">cleaned_location</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="n">location_dict</span><span class="p">[</span><span class="s1">&#39;cleaned_location_map&#39;</span><span class="p">][</span><span class="n">cleaned_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">location_dict</span><span class="p">[</span><span class="s1">&#39;canonical_names&#39;</span><span class="p">])</span>
+            <span class="n">location_dict</span><span class="p">[</span><span class="s1">&#39;canonical_names&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">location</span><span class="p">)</span>
+            <span class="n">location_dict</span><span class="p">[</span><span class="s1">&#39;cleaned_location_map&#39;</span><span class="p">][</span><span class="n">cleaned_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">canonical_name_idx</span><span class="p">,</span> <span class="n">idx</span>
 
             <span class="c1"># Add to Levenshtein and trigram maps</span>
-            <span class="n">_add_cleaned_location</span><span class="p">(</span><span class="n">cleaned_location</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">location_dict</span><span class="p">)</span>
+            <span class="n">_add_cleaned_location</span><span class="p">(</span><span class="n">cleaned_location</span><span class="p">,</span> <span class="n">canonical_name_idx</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">location_dict</span><span class="p">)</span>
 
     <span class="c1"># Optimize data structure for Levenshtein and trigram similarity functions</span>
     <span class="n">_optimize_resources_dict</span><span class="p">(</span><span class="n">location_dict</span><span class="p">)</span>
@@ -302,31 +324,35 @@
     <span class="k">return</span> <span class="n">location_dict</span>
 
 
-<span class="k">def</span> <span class="nf">_add_cleaned_location</span><span class="p">(</span><span class="n">cleaned_location</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">resources_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_add_cleaned_location</span><span class="p">(</span><span class="n">cleaned_location</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">canonical_name_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                          <span class="n">resources_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add a cleaned location to the resources dict and make it ready for Levenshtein and trigram similarity functions.</span>
 <span class="sd">    Post-processing still needs to be done after this, though.</span>
 
 <span class="sd">    :param cleaned_location: cleaned location string</span>
-<span class="sd">    :param idx: index corresponding to the canonical version</span>
+<span class="sd">    :param canonical_name_idx: index corresponding to the canonical version of the location</span>
+<span class="sd">    :param idx: index corresponding to the location name</span>
 <span class="sd">    :param resources_dict: dictionary where to store the Levenshtein and trigram information into</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Add to Levenshtein map</span>
     <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cleaned_location</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">size</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">resources_dict</span><span class="p">[</span><span class="s1">&#39;levenshtein&#39;</span><span class="p">]:</span>
-        <span class="n">resources_dict</span><span class="p">[</span><span class="s1">&#39;levenshtein&#39;</span><span class="p">][</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;levenshtein_tokens&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">cleaned_location</span><span class="p">],</span> <span class="s1">&#39;indices&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">idx</span><span class="p">]}</span>
+        <span class="n">resources_dict</span><span class="p">[</span><span class="s1">&#39;levenshtein&#39;</span><span class="p">][</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;levenshtein_tokens&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">cleaned_location</span><span class="p">],</span>
+                                               <span class="s1">&#39;indices&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="n">canonical_name_idx</span><span class="p">,</span> <span class="n">idx</span><span class="p">)]}</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">resources_dict</span><span class="p">[</span><span class="s1">&#39;levenshtein&#39;</span><span class="p">][</span><span class="n">size</span><span class="p">][</span><span class="s1">&#39;levenshtein_tokens&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cleaned_location</span><span class="p">)</span>
-        <span class="n">resources_dict</span><span class="p">[</span><span class="s1">&#39;levenshtein&#39;</span><span class="p">][</span><span class="n">size</span><span class="p">][</span><span class="s1">&#39;indices&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="n">resources_dict</span><span class="p">[</span><span class="s1">&#39;levenshtein&#39;</span><span class="p">][</span><span class="n">size</span><span class="p">][</span><span class="s1">&#39;indices&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">canonical_name_idx</span><span class="p">,</span> <span class="n">idx</span><span class="p">))</span>
 
     <span class="c1"># Add to trigrams map</span>
     <span class="n">trigram_tokens</span> <span class="o">=</span> <span class="n">get_trigram_tokens</span><span class="p">(</span><span class="n">cleaned_location</span><span class="p">)</span>
     <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">trigram_tokens</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trigram_tokens</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">resources_dict</span><span class="p">[</span><span class="s1">&#39;trigrams&#39;</span><span class="p">]:</span>
-        <span class="n">resources_dict</span><span class="p">[</span><span class="s1">&#39;trigrams&#39;</span><span class="p">][</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;trigram_tokens&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">trigram_tokens</span><span class="p">],</span> <span class="s1">&#39;indices&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">idx</span><span class="p">]}</span>
+        <span class="n">resources_dict</span><span class="p">[</span><span class="s1">&#39;trigrams&#39;</span><span class="p">][</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;trigram_tokens&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">trigram_tokens</span><span class="p">],</span>
+                                            <span class="s1">&#39;indices&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="n">canonical_name_idx</span><span class="p">,</span> <span class="n">idx</span><span class="p">)]}</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">resources_dict</span><span class="p">[</span><span class="s1">&#39;trigrams&#39;</span><span class="p">][</span><span class="n">size</span><span class="p">][</span><span class="s1">&#39;trigram_tokens&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trigram_tokens</span><span class="p">)</span>
-        <span class="n">resources_dict</span><span class="p">[</span><span class="s1">&#39;trigrams&#39;</span><span class="p">][</span><span class="n">size</span><span class="p">][</span><span class="s1">&#39;indices&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="n">resources_dict</span><span class="p">[</span><span class="s1">&#39;trigrams&#39;</span><span class="p">][</span><span class="n">size</span><span class="p">][</span><span class="s1">&#39;indices&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">canonical_name_idx</span><span class="p">,</span> <span class="n">idx</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">_optimize_resources_dict</span><span class="p">(</span><span class="n">resources_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -397,11 +423,11 @@
             <dd><a href="../../../v0.3.0/index.html">v0.3.0</a></dd>
             <dd><a href="../../../v0.3.1/index.html">v0.3.1</a></dd>
             <dd><a href="../../../v0.3.2/index.html">v0.3.2</a></dd>
+            <dd><a href="../../../v0.4.0/index.html">v0.4.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
             <dd><a href="../../../master/_modules/text_scrubber/geo/resources.html">master</a></dd>
-            <dd><a href="../../../optimize_find_in_string/index.html">optimize_find_in_string</a></dd>
         </dl>
     </div>
 </div>
