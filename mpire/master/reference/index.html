@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; mpire 2.4.0 documentation</title>
+  <title>API Reference &mdash; mpire 2.5.0 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.4.0
+                2.5.0
               </div>
             
           
@@ -184,7 +184,7 @@
 <h2><a class="toc-backref" href="#id1">WorkerPool</a><a class="headerlink" href="#workerpool" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="mpire.WorkerPool">
-<em class="property">class </em><code class="sig-prename descclassname">mpire.</code><code class="sig-name descname">WorkerPool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">daemon</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cpu_ids</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">shared_objects</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pass_worker_id</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_worker_state</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">start_method</span><span class="o">=</span><span class="default_value">'fork'</span></em>, <em class="sig-param"><span class="n">keep_alive</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_dill</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">enable_insights</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mpire/pool.html#WorkerPool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mpire.WorkerPool" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mpire.</code><code class="sig-name descname">WorkerPool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">daemon</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cpu_ids</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">shared_objects</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pass_worker_id</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_worker_state</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">start_method</span><span class="o">=</span><span class="default_value">'fork'</span></em>, <em class="sig-param"><span class="n">keep_alive</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_dill</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">enable_insights</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">order_tasks</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mpire/pool.html#WorkerPool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mpire.WorkerPool" title="Permalink to this definition">¶</a></dt>
 <dd><p>A multiprocessing worker pool which acts like a <code class="docutils literal notranslate"><span class="pre">multiprocessing.Pool</span></code>, but is faster and has more options.</p>
 <dl class="py method">
 <dt id="mpire.WorkerPool.__enter__">
@@ -210,7 +210,7 @@
 
 <dl class="py method">
 <dt id="mpire.WorkerPool.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">daemon</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cpu_ids</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">shared_objects</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pass_worker_id</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_worker_state</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">start_method</span><span class="o">=</span><span class="default_value">'fork'</span></em>, <em class="sig-param"><span class="n">keep_alive</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_dill</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">enable_insights</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mpire/pool.html#WorkerPool.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mpire.WorkerPool.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">daemon</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cpu_ids</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">shared_objects</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pass_worker_id</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_worker_state</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">start_method</span><span class="o">=</span><span class="default_value">'fork'</span></em>, <em class="sig-param"><span class="n">keep_alive</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_dill</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">enable_insights</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">order_tasks</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mpire/pool.html#WorkerPool.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mpire.WorkerPool.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -249,6 +249,8 @@ functions) don’t work well when using <code class="docutils literal notranslat
 slower sometimes)</p></li>
 <li><p><strong>enable_insights</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to enable worker insights. Might come at a small performance penalty (often
 neglible)</p></li>
+<li><p><strong>order_tasks</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to provide tasks to the workers in order, such that worker 0 will get chunk 0,
+worker 1 will get chunk 1, etc.</p></li>
 </ul>
 </dd>
 </dl>
@@ -564,6 +566,22 @@ functions. When enabled, functions receive the worker ID depending on other sett
 </dd></dl>
 
 <dl class="py method">
+<dt id="mpire.WorkerPool.set_order_tasks">
+<code class="sig-name descname">set_order_tasks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order_tasks</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mpire/pool.html#WorkerPool.set_order_tasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mpire.WorkerPool.set_order_tasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set whether to provide tasks to the workers in order, such that worker 0 will get chunk 0, worker 1 will get
+chunk 1, etc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>order_tasks</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to provide tasks to the workers in order, such that worker 0 will get chunk 0,
+worker 1 will get chunk 1, etc.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="mpire.WorkerPool.set_shared_objects">
 <code class="sig-name descname">set_shared_objects</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">shared_objects</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mpire/pool.html#WorkerPool.set_shared_objects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mpire.WorkerPool.set_shared_objects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set shared objects to pass to the workers.</p>
@@ -806,10 +824,12 @@ passes it to the function</p></li>
             <dd><a href="../../v2.3.4/reference/index.html">v2.3.4</a></dd>
             <dd><a href="../../v2.3.5/reference/index.html">v2.3.5</a></dd>
             <dd><a href="../../v2.4.0/reference/index.html">v2.4.0</a></dd>
+            <dd><a href="../../v2.5.0/reference/index.html">v2.5.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
             <dd><a href="index.html">master</a></dd>
+            <dd><a href="../../ordered_tasks/reference/index.html">ordered_tasks</a></dd>
         </dl>
     </div>
 </div>

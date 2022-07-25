@@ -201,7 +201,7 @@
 <div class="viewcode-block" id="WorkerPool.__init__"><a class="viewcode-back" href="../../reference/index.html#mpire.WorkerPool.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">daemon</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cpu_ids</span><span class="p">:</span> <span class="n">CPUList</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">shared_objects</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pass_worker_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">use_worker_state</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">start_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_START_METHOD</span><span class="p">,</span> <span class="n">keep_alive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">use_dill</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-                 <span class="n">enable_insights</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+                 <span class="n">enable_insights</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">order_tasks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param n_jobs: Number of workers to spawn. If ``None``, will use ``mpire.cpu_count()``</span>
 <span class="sd">        :param daemon: Whether to start the child processes as daemon</span>
@@ -238,10 +238,12 @@
 <span class="sd">            slower sometimes)</span>
 <span class="sd">        :param enable_insights: Whether to enable worker insights. Might come at a small performance penalty (often</span>
 <span class="sd">            neglible)</span>
+<span class="sd">        :param order_tasks: Whether to provide tasks to the workers in order, such that worker 0 will get chunk 0,</span>
+<span class="sd">            worker 1 will get chunk 1, etc.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Set parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pool_params</span> <span class="o">=</span> <span class="n">WorkerPoolParams</span><span class="p">(</span><span class="n">n_jobs</span><span class="p">,</span> <span class="n">cpu_ids</span><span class="p">,</span> <span class="n">daemon</span><span class="p">,</span> <span class="n">shared_objects</span><span class="p">,</span> <span class="n">pass_worker_id</span><span class="p">,</span> <span class="n">use_worker_state</span><span class="p">,</span>
-                                            <span class="n">start_method</span><span class="p">,</span> <span class="n">keep_alive</span><span class="p">,</span> <span class="n">use_dill</span><span class="p">,</span> <span class="n">enable_insights</span><span class="p">)</span>
+                                            <span class="n">start_method</span><span class="p">,</span> <span class="n">keep_alive</span><span class="p">,</span> <span class="n">use_dill</span><span class="p">,</span> <span class="n">enable_insights</span><span class="p">,</span> <span class="n">order_tasks</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">map_params</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Optional[WorkerMapParams]</span>
 
         <span class="c1"># Worker factory</span>
@@ -255,7 +257,7 @@
 
         <span class="c1"># Container of the child processes and corresponding communication objects</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span> <span class="o">=</span> <span class="n">WorkerComms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_params</span><span class="o">.</span><span class="n">n_jobs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span> <span class="o">=</span> <span class="n">WorkerComms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_params</span><span class="o">.</span><span class="n">n_jobs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_params</span><span class="o">.</span><span class="n">order_tasks</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_exit_results</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Worker insights, used for profiling</span>
@@ -270,6 +272,8 @@
 <span class="sd">            ``worker_id``, ``shared_objects``, ``worker_state``, and finally the arguments passed on using</span>
 <span class="sd">            ``iterable_of_args``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">pass_on</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_params</span><span class="o">.</span><span class="n">pass_worker_id</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pool_params</span><span class="o">.</span><span class="n">pass_worker_id</span> <span class="o">=</span> <span class="n">pass_on</span></div>
 
 <div class="viewcode-block" id="WorkerPool.set_shared_objects"><a class="viewcode-back" href="../../reference/index.html#mpire.WorkerPool.set_shared_objects">[docs]</a>    <span class="k">def</span> <span class="nf">set_shared_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shared_objects</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -282,6 +286,8 @@
 <span class="sd">            functions receive the shared objects depending on other settings. The order is: ``worker_id``,</span>
 <span class="sd">            ``shared_objects``, ``worker_state``, and finally the arguments passed on using ``iterable_of_args```</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">shared_objects</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_params</span><span class="o">.</span><span class="n">shared_objects</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pool_params</span><span class="o">.</span><span class="n">shared_objects</span> <span class="o">=</span> <span class="n">shared_objects</span></div>
 
 <div class="viewcode-block" id="WorkerPool.set_use_worker_state"><a class="viewcode-back" href="../../reference/index.html#mpire.WorkerPool.set_use_worker_state">[docs]</a>    <span class="k">def</span> <span class="nf">set_use_worker_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_worker_state</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -294,6 +300,8 @@
 <span class="sd">            depending on other settings. The order is: ``worker_id``,  ``shared_objects``, ``worker_state``, and finally</span>
 <span class="sd">            the arguments passed on using ``iterable_of_args``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">use_worker_state</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_params</span><span class="o">.</span><span class="n">use_worker_state</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pool_params</span><span class="o">.</span><span class="n">use_worker_state</span> <span class="o">=</span> <span class="n">use_worker_state</span></div>
 
 <div class="viewcode-block" id="WorkerPool.set_keep_alive"><a class="viewcode-back" href="../../reference/index.html#mpire.WorkerPool.set_keep_alive">[docs]</a>    <span class="k">def</span> <span class="nf">set_keep_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keep_alive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -303,6 +311,16 @@
 <span class="sd">        :param keep_alive: When True it will keep workers alive after completing a map call, allowing to reuse workers</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pool_params</span><span class="o">.</span><span class="n">keep_alive</span> <span class="o">=</span> <span class="n">keep_alive</span></div>
+
+<div class="viewcode-block" id="WorkerPool.set_order_tasks"><a class="viewcode-back" href="../../reference/index.html#mpire.WorkerPool.set_order_tasks">[docs]</a>    <span class="k">def</span> <span class="nf">set_order_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order_tasks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set whether to provide tasks to the workers in order, such that worker 0 will get chunk 0, worker 1 will get</span>
+<span class="sd">        chunk 1, etc.</span>
+
+<span class="sd">        :param order_tasks: Whether to provide tasks to the workers in order, such that worker 0 will get chunk 0,</span>
+<span class="sd">            worker 1 will get chunk 1, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pool_params</span><span class="o">.</span><span class="n">order_tasks</span> <span class="o">=</span> <span class="n">order_tasks</span></div>
 
     <span class="k">def</span> <span class="nf">_start_workers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -777,7 +795,10 @@
                 <span class="n">tqdm_manager_owner</span> <span class="o">=</span> <span class="n">TqdmManager</span><span class="o">.</span><span class="n">start_manager</span><span class="p">()</span>
 
             <span class="c1"># Start workers if there aren&#39;t any. If they already exist check if we need to pass on new parameters</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_params</span> <span class="o">!=</span> <span class="n">new_map_params</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">():</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;WorkerPool parameters changed while keep_alive=True. Restarting workers.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stop_and_join</span><span class="p">(</span><span class="n">keep_alive</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">map_params</span> <span class="o">!=</span> <span class="n">new_map_params</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">map_params</span> <span class="o">=</span> <span class="n">new_map_params</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_worker_comms</span><span class="o">.</span><span class="n">add_new_map_params</span><span class="p">(</span><span class="n">new_map_params</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span><span class="p">:</span>
@@ -1143,10 +1164,12 @@
             <dd><a href="../../../v2.3.4/index.html">v2.3.4</a></dd>
             <dd><a href="../../../v2.3.5/index.html">v2.3.5</a></dd>
             <dd><a href="../../../v2.4.0/index.html">v2.4.0</a></dd>
+            <dd><a href="../../../v2.5.0/index.html">v2.5.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
             <dd><a href="../../../master/index.html">master</a></dd>
+            <dd><a href="../../../ordered_tasks/index.html">ordered_tasks</a></dd>
         </dl>
     </div>
 </div>

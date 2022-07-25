@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Keep alive &mdash; mpire 2.4.0 documentation</title>
+  <title>Keep alive &mdash; mpire 2.5.0 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.4.0
+                2.5.0
               </div>
             
           
@@ -110,6 +110,7 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Keep alive</a></li>
 <li class="toctree-l3"><a class="reference internal" href="worker_insights.html">Worker insights</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dill.html">Dill</a></li>
+<li class="toctree-l3"><a class="reference internal" href="order_tasks.html">Order tasks</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../map/index.html">Map family</a></li>
@@ -219,6 +220,8 @@ workers have a long startup time and you need to call one of the map functions m
 </div>
 <section id="caveats">
 <h2><a class="toc-backref" href="#id2">Caveats</a><a class="headerlink" href="#caveats" title="Permalink to this headline">¶</a></h2>
+<p>Changing some WorkerPool init parameters do require a restart. These include <code class="docutils literal notranslate"><span class="pre">pass_worker_id</span></code>, <code class="docutils literal notranslate"><span class="pre">shared_objects</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">use_worker_state</span></code>.</p>
 <p>Keeping workers alive works even when the function to be called or any other parameter passed on to the <code class="docutils literal notranslate"><span class="pre">map</span></code> function
 changes.</p>
 <p>However, when you’re changing either the <code class="docutils literal notranslate"><span class="pre">worker_init</span></code> and/or <code class="docutils literal notranslate"><span class="pre">worker_exit</span></code> function while <code class="docutils literal notranslate"><span class="pre">keep_alive</span></code> is
@@ -316,10 +319,12 @@ changed, the other workers will execute the new exit function when they need to 
             <dd><a href="../../v2.3.4/usage/workerpool/keep_alive.html">v2.3.4</a></dd>
             <dd><a href="../../v2.3.5/usage/workerpool/keep_alive.html">v2.3.5</a></dd>
             <dd><a href="../../v2.4.0/usage/workerpool/keep_alive.html">v2.4.0</a></dd>
+            <dd><a href="../../v2.5.0/usage/workerpool/keep_alive.html">v2.5.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
             <dd><a href="../../master/usage/workerpool/keep_alive.html">master</a></dd>
+            <dd><a href="../../ordered_tasks/usage/workerpool/keep_alive.html">ordered_tasks</a></dd>
         </dl>
     </div>
 </div>
