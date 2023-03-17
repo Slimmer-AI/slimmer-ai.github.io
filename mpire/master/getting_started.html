@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Getting started &mdash; mpire 2.6.0 documentation</title>
+  <title>Getting started &mdash; mpire 2.7.0 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.6.0
+                2.7.0
               </div>
             
           
@@ -212,8 +212,7 @@ It’s as simple as setting the <code class="docutils literal notranslate"><span
     <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">time_consuming_function</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">progress_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>And it will output a nicely formatted <a class="reference external" href="https://tqdm.github.io/">tqdm</a> progress bar. In case you’re running your code inside a notebook it will
-automatically switch to a widget.</p>
+<p>And it will output a nicely formatted <a class="reference external" href="https://tqdm.github.io/">tqdm</a> progress bar.</p>
 <p>MPIRE also offers a dashboard, for which you need to install additional <a class="reference internal" href="install.html#dashboarddep"><span class="std std-ref">dependencies</span></a>. See
 <a class="reference internal" href="usage/dashboard.html#dashboard"><span class="std std-ref">Dashboard</span></a> for more information.</p>
 </section>
@@ -261,15 +260,15 @@ more information.</p>
 </section>
 <section id="worker-insights">
 <h2>Worker insights<a class="headerlink" href="#worker-insights" title="Permalink to this headline">¶</a></h2>
-<p>When you’re multiprocessing setup isn’t performing as you want it to and you have no clue what’s causing it, there’s the
+<p>When your multiprocessing setup isn’t performing as you want it to and you have no clue what’s causing it, there’s the
 worker insights functionality. This will give you some insight in your setup, but it will not profile the function
 you’re running (there are other libraries for that). Instead, it profiles the worker start up time, waiting time and
 working time. When worker init and exit functions are provided it will time those as well.</p>
 <p>Perhaps you’re sending a lot of data over the task queue, which makes the waiting time go up. Whatever the case, you
 can enable and grab the insights using the <code class="docutils literal notranslate"><span class="pre">enable_insights</span></code> flag and <a class="reference internal" href="reference/index.html#mpire.WorkerPool.get_insights" title="mpire.WorkerPool.get_insights"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mpire.WorkerPool.get_insights()</span></code></a> function,
 respectively:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WorkerPool</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">time_consuming_function</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">enable_insights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WorkerPool</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">enable_insights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">time_consuming_function</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
     <span class="n">insights</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">get_insights</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -298,7 +297,7 @@ respectively:</p>
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2022, Slimmer AI
+        &copy; Copyright 2023, Slimmer AI
 
     </p>
   </div>
@@ -348,12 +347,11 @@ respectively:</p>
             <dd><a href="../v2.4.0/getting_started.html">v2.4.0</a></dd>
             <dd><a href="../v2.5.0/getting_started.html">v2.5.0</a></dd>
             <dd><a href="../v2.6.0/getting_started.html">v2.6.0</a></dd>
+            <dd><a href="../v2.7.0/getting_started.html">v2.7.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
-            <dd><a href="../exceptions/getting_started.html">exceptions</a></dd>
             <dd><a href="getting_started.html">master</a></dd>
-            <dd><a href="../ordered_tasks/getting_started.html">ordered_tasks</a></dd>
         </dl>
     </div>
 </div>

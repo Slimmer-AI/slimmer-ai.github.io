@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Maximum number of active tasks &mdash; mpire 2.6.0 documentation</title>
+  <title>Maximum number of active tasks &mdash; mpire 2.7.0 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.6.0
+                2.7.0
               </div>
             
           
@@ -112,6 +112,7 @@
 <li class="toctree-l3"><a class="reference internal" href="numpy.html">Numpy arrays</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../apply.html">Apply family</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../dashboard.html">Dashboard</a></li>
 </ul>
 </li>
@@ -189,23 +190,32 @@
             
   <section id="maximum-number-of-active-tasks">
 <span id="max-active-tasks"></span><h1>Maximum number of active tasks<a class="headerlink" href="#maximum-number-of-active-tasks" title="Permalink to this headline">¶</a></h1>
-<p>When you have tasks that take up a lot of memory you can limit the number of jobs or limit the number of active tasks
-(i.e., the number of tasks currently being available to the workers, tasks that are in the queue ready to be processed).
-The first option is the most obvious one to save memory when the processes themselves use up much memory. The second is
+<p>When you have tasks that take up a lot of memory you can do a few things:</p>
+<ul class="simple">
+<li><p>Limit the number of jobs (i.e., the number of tasks currently being available to the workers, tasks that are in the
+queue ready to be processed).</p></li>
+<li><p>Limit the number of active tasks</p></li>
+</ul>
+<p>The first option is the most obvious one to save memory when the processes themselves use up much memory. The second is
 convenient when the argument list takes up too much memory. For example, suppose you want to kick off an enormous amount
 of jobs (let’s say a billion) of which the arguments take up 1 KB per task (e.g., large strings), then that task queue
 would take up ~1 TB of memory!</p>
-<p>In such cases, a good rule of thumb would be to have twice the amount of active tasks than there are jobs. This means
-that when all workers complete their task at the same time each would directly be able to continue with another task.
-When workers take on their new tasks the generator of tasks is iterated to the point that again there would be twice the
-amount of active tasks.</p>
-<p>In MPIRE, the maximum number of active tasks by default is set to <code class="docutils literal notranslate"><span class="pre">n_jobs</span> <span class="pre">*</span> <span class="pre">2</span></code>, so you don’t have to tweak it for
-memory optimization. If, for whatever reason, you want to change this behavior, you can do so by setting the
-<code class="docutils literal notranslate"><span class="pre">max_active_tasks</span></code> parameter:</p>
+<p>In such cases, a good rule of thumb would be to have twice the amount of active chunks of tasks than there are jobs.
+This means that when all workers complete their task at the same time each would directly be able to continue with
+another task. When workers take on their new tasks the generator of tasks is iterated to the point that again there
+would be twice the amount of active chunks of tasks.</p>
+<p>In MPIRE, the maximum number of active tasks by default is set to <code class="docutils literal notranslate"><span class="pre">n_jobs</span> <span class="pre">*</span> <span class="pre">chunk_size</span> <span class="pre">*</span> <span class="pre">2</span></code>, so you don’t have to
+tweak it for memory optimization. If, for whatever reason, you want to change this behavior, you can do so by setting
+the <code class="docutils literal notranslate"><span class="pre">max_active_tasks</span></code> parameter:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WorkerPool</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
     <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e300</span><span class="p">)),</span> <span class="n">iterable_len</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e300</span><span class="p">),</span>
-                       <span class="n">chunk_size</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e5</span><span class="p">),</span> <span class="n">max_tasks_active</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+                       <span class="n">chunk_size</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e5</span><span class="p">),</span> <span class="n">max_tasks_active</span><span class="o">=</span><span class="mi">4</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e5</span><span class="p">))</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Setting the <code class="docutils literal notranslate"><span class="pre">max_tasks_active</span></code> parameter to a value lower than <code class="docutils literal notranslate"><span class="pre">n_jobs</span> <span class="pre">*</span> <span class="pre">chunk_size</span></code> can result in some workers
+not being able to do anything.</p>
 </div>
 </section>
 
@@ -230,7 +240,7 @@ memory optimization. If, for whatever reason, you want to change this behavior, 
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2022, Slimmer AI
+        &copy; Copyright 2023, Slimmer AI
 
     </p>
   </div>
@@ -280,12 +290,11 @@ memory optimization. If, for whatever reason, you want to change this behavior, 
             <dd><a href="../../v2.4.0/usage/map/max_tasks_active.html">v2.4.0</a></dd>
             <dd><a href="../../v2.5.0/usage/map/max_tasks_active.html">v2.5.0</a></dd>
             <dd><a href="../../v2.6.0/usage/map/max_tasks_active.html">v2.6.0</a></dd>
+            <dd><a href="../../v2.7.0/usage/map/max_tasks_active.html">v2.7.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
-            <dd><a href="../../exceptions/usage/map/max_tasks_active.html">exceptions</a></dd>
             <dd><a href="../../master/usage/map/max_tasks_active.html">master</a></dd>
-            <dd><a href="../../ordered_tasks/usage/map/max_tasks_active.html">ordered_tasks</a></dd>
         </dl>
     </div>
 </div>

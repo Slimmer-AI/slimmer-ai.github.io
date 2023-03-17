@@ -196,7 +196,7 @@
 
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">index</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Obtain the index HTML</span>
 
 <span class="sd">    :return: HTML</span>
@@ -208,7 +208,7 @@
 
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/_progress_bar_update&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">progress_bar_update</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Obtain progress bar updates (should be called through AJAX)</span>
 
 <span class="sd">    :return: JSON string containing progress bar updates</span>
@@ -219,6 +219,8 @@
     <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">pb_id</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_DASHBOARD_TQDM_DICT</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
         <span class="n">progress</span> <span class="o">=</span> <span class="n">_DASHBOARD_TQDM_DICT</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pb_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">progress</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">progress</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;?&#39;</span>
         <span class="k">if</span> <span class="n">progress</span><span class="p">[</span><span class="s1">&#39;success&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">progress</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">progress</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]:</span>
             <span class="n">progress</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span> <span class="o">-</span> <span class="n">progress</span><span class="p">[</span><span class="s1">&#39;started_raw&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">progress</span><span class="p">[</span><span class="s1">&#39;remaining&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">progress</span><span class="p">[</span><span class="s1">&#39;finished_raw&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">now</span><span class="p">)</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -231,7 +233,7 @@
 
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/_progress_bar_new&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">progress_bar_new</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Obtain a piece of HTML for a new progress bar (should be called through AJAX)</span>
 
 <span class="sd">    :return: JSON string containing new progress bar HTML</span>
@@ -267,7 +269,7 @@
 
 
 <div class="viewcode-block" id="start_dashboard"><a class="viewcode-back" href="../../../reference/index.html#mpire.dashboard.start_dashboard">[docs]</a><span class="k">def</span> <span class="nf">start_dashboard</span><span class="p">(</span><span class="n">port_range</span><span class="p">:</span> <span class="n">Sequence</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8080</span><span class="p">,</span> <span class="mi">8100</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Starts a new MPIRE dashboard</span>
 
 <span class="sd">    :param port_range: Port range to try.</span>
@@ -301,7 +303,7 @@
 
 
 <div class="viewcode-block" id="connect_to_dashboard"><a class="viewcode-back" href="../../../reference/index.html#mpire.dashboard.connect_to_dashboard">[docs]</a><span class="k">def</span> <span class="nf">connect_to_dashboard</span><span class="p">(</span><span class="n">manager_port_nr</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">manager_host</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Connects to an existing MPIRE dashboard</span>
 
 <span class="sd">    :param manager_port_nr: Port to use when connecting to a manager</span>
@@ -309,21 +311,29 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">_DASHBOARD_MANAGER</span><span class="p">,</span> <span class="n">_DASHBOARD_TQDM_DICT</span><span class="p">,</span> <span class="n">_DASHBOARD_TQDM_DETAILS_DICT</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">DASHBOARD_STARTED_EVENT</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
-        <span class="c1"># Set connection variables so we can connect to the right manager</span>
-        <span class="n">manager_host</span> <span class="o">=</span> <span class="n">manager_host</span> <span class="ow">or</span> <span class="s2">&quot;127.0.0.1&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">manager_host</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">manager_host</span> <span class="o">=</span> <span class="n">manager_host</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
-        <span class="n">DASHBOARD_MANAGER_HOST</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">manager_host</span>
-        <span class="n">DASHBOARD_MANAGER_PORT</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">manager_port_nr</span>
-        <span class="n">DASHBOARD_STARTED_EVENT</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;You&#39;re already connected to a running dashboard&quot;</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">DASHBOARD_STARTED_EVENT</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;You&#39;re already connected to a running dashboard&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Set connection variables so we can connect to the right manager</span>
+    <span class="n">manager_host</span> <span class="o">=</span> <span class="n">manager_host</span> <span class="ow">or</span> <span class="s2">&quot;127.0.0.1&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">manager_host</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">manager_host</span> <span class="o">=</span> <span class="n">manager_host</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+    <span class="n">DASHBOARD_MANAGER_HOST</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">manager_host</span>
+    <span class="n">DASHBOARD_MANAGER_PORT</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">manager_port_nr</span>
+
+    <span class="c1"># Try to connect</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">get_manager_client_dicts</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">ConnectionRefusedError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ConnectionRefusedError</span><span class="p">(</span><span class="s2">&quot;Could not connect to dashboard manager at &quot;</span>
+                                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">manager_host</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">manager_port_nr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">DASHBOARD_STARTED_EVENT</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></div>
 
 
 <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="n">started</span><span class="p">:</span> <span class="n">Event</span><span class="p">,</span> <span class="n">manager_host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">manager_port_nr</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dashboard_port_nr</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span>
          <span class="n">port_range</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Starts a dashboard server</span>
 
 <span class="sd">    :param started: Event that signals the dashboard server has started</span>
@@ -361,7 +371,7 @@
 
 <span class="nd">@atexit</span><span class="o">.</span><span class="n">register</span>
 <span class="k">def</span> <span class="nf">stop</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Called when the program exits, will shutdown the server</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">_server</span>
@@ -383,7 +393,7 @@
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2022, Slimmer AI
+        &copy; Copyright 2023, Slimmer AI
 
     </p>
   </div>
@@ -433,12 +443,11 @@
             <dd><a href="../../../../v2.4.0/index.html">v2.4.0</a></dd>
             <dd><a href="../../../../v2.5.0/index.html">v2.5.0</a></dd>
             <dd><a href="dashboard.html">v2.6.0</a></dd>
+            <dd><a href="../../../../v2.7.0/index.html">v2.7.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
-            <dd><a href="../../../../exceptions/index.html">exceptions</a></dd>
             <dd><a href="../../../../master/index.html">master</a></dd>
-            <dd><a href="../../../../ordered_tasks/index.html">ordered_tasks</a></dd>
         </dl>
     </div>
 </div>

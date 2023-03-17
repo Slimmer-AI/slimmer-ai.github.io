@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Starting a WorkerPool &mdash; mpire 2.6.0 documentation</title>
+  <title>Starting a WorkerPool &mdash; mpire 2.7.0 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.6.0
+                2.7.0
               </div>
             
           
@@ -114,6 +114,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../map/index.html">Map family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../apply.html">Apply family</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../dashboard.html">Dashboard</a></li>
 </ul>
 </li>
@@ -198,8 +199,8 @@
 </ul>
 </div>
 <p>The <a class="reference internal" href="../../reference/index.html#mpire.WorkerPool" title="mpire.WorkerPool"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mpire.WorkerPool</span></code></a> class controls a pool of worker processes similarly to a <code class="docutils literal notranslate"><span class="pre">multiprocessing.Pool</span></code>. It
-contains all the <code class="docutils literal notranslate"><span class="pre">map</span></code> like functions (with the addition of <a class="reference internal" href="../../reference/index.html#mpire.WorkerPool.map_unordered" title="mpire.WorkerPool.map_unordered"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mpire.WorkerPool.map_unordered()</span></code></a>), but currently
-lacks the <code class="docutils literal notranslate"><span class="pre">apply</span></code> and <code class="docutils literal notranslate"><span class="pre">apply_async</span></code> functions.</p>
+contains all the <code class="docutils literal notranslate"><span class="pre">map</span></code> like functions (with the addition of <a class="reference internal" href="../../reference/index.html#mpire.WorkerPool.map_unordered" title="mpire.WorkerPool.map_unordered"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mpire.WorkerPool.map_unordered()</span></code></a>), together with
+the <code class="docutils literal notranslate"><span class="pre">apply</span></code> and <code class="docutils literal notranslate"><span class="pre">apply_async</span></code> functions (see <a class="reference internal" href="../apply.html#apply-family"><span class="std std-ref">Apply family</span></a>).</p>
 <p>An <a class="reference internal" href="../../reference/index.html#mpire.WorkerPool" title="mpire.WorkerPool"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mpire.WorkerPool</span></code></a> can be started in two different ways. The first and recommended way to do so is using a
 context manager:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mpire</span> <span class="kn">import</span> <span class="n">WorkerPool</span>
@@ -221,7 +222,7 @@ ended.</p>
 
 <span class="c1"># Only needed when keep_alive=True:</span>
 <span class="c1"># Clean up pool (this will block until all processing has completed)</span>
-<span class="n">pool</span><span class="o">.</span><span class="n">stop_and_join</span><span class="p">()</span>
+<span class="n">pool</span><span class="o">.</span><span class="n">stop_and_join</span><span class="p">()</span>  <span class="c1"># or use pool.join() which is an alias of stop_and_join()</span>
 
 <span class="c1"># In the case you want to kill the processes, even though they are still busy</span>
 <span class="n">pool</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
@@ -300,7 +301,7 @@ rare occassions (~1% of the time), still cause deadlocks. Use at your own risk.<
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2022, Slimmer AI
+        &copy; Copyright 2023, Slimmer AI
 
     </p>
   </div>
@@ -350,12 +351,11 @@ rare occassions (~1% of the time), still cause deadlocks. Use at your own risk.<
             <dd><a href="../../v2.4.0/usage/workerpool/setup.html">v2.4.0</a></dd>
             <dd><a href="../../v2.5.0/usage/workerpool/setup.html">v2.5.0</a></dd>
             <dd><a href="../../v2.6.0/usage/workerpool/setup.html">v2.6.0</a></dd>
+            <dd><a href="../../v2.7.0/usage/workerpool/setup.html">v2.7.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
-            <dd><a href="../../exceptions/usage/workerpool/setup.html">exceptions</a></dd>
             <dd><a href="../../master/usage/workerpool/setup.html">master</a></dd>
-            <dd><a href="../../ordered_tasks/usage/workerpool/setup.html">ordered_tasks</a></dd>
         </dl>
     </div>
 </div>

@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to the MPIRE documentation! &mdash; mpire 2.6.0 documentation</title>
+  <title>Welcome to the MPIRE documentation! &mdash; mpire 2.7.0 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.6.0
+                2.7.0
               </div>
             
           
@@ -169,16 +169,17 @@
             
   <section id="welcome-to-the-mpire-documentation">
 <h1>Welcome to the MPIRE documentation!<a class="headerlink" href="#welcome-to-the-mpire-documentation" title="Permalink to this headline">¶</a></h1>
-<p>MPIRE, short for MultiProcessing Is Really Easy, is a Python package for multiprocessing, but faster and more
-user-friendly than the default multiprocessing package. It combines the convenient map like functions of
-<code class="docutils literal notranslate"><span class="pre">multiprocessing.Pool</span></code> with the benefits of using copy-on-write shared objects of <code class="docutils literal notranslate"><span class="pre">multiprocessing.Process</span></code>
-(not supported for Windows), together with easy-to-use worker state, worker insights, and progress bar functionality.</p>
+<p>MPIRE, short for MultiProcessing Is Really Easy, is a Python package for multiprocessing. MPIRE is faster in
+most scenarios, packs more features, and is generally more user-friendly than the default multiprocessing package. It
+combines the convenient map like functions of <code class="docutils literal notranslate"><span class="pre">multiprocessing.Pool</span></code> with the benefits of using copy-on-write shared
+objects of <code class="docutils literal notranslate"><span class="pre">multiprocessing.Process</span></code>, together with easy-to-use worker state, worker insights, worker init and exit
+functions, timeouts, and progress bar functionality.</p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Faster execution than other multiprocessing libraries. See <a class="reference external" href="https://towardsdatascience.com/mpire-for-python-multiprocessing-is-really-easy-d2ae7999a3e9">benchmarks</a>.</p></li>
 <li><p>Intuitive, Pythonic syntax</p></li>
-<li><p>Multiprocessing with <code class="docutils literal notranslate"><span class="pre">map</span></code>/<code class="docutils literal notranslate"><span class="pre">map_unordered</span></code>/<code class="docutils literal notranslate"><span class="pre">imap</span></code>/<code class="docutils literal notranslate"><span class="pre">imap_unordered</span></code> functions</p></li>
+<li><p>Multiprocessing with <code class="docutils literal notranslate"><span class="pre">map</span></code>/<code class="docutils literal notranslate"><span class="pre">map_unordered</span></code>/<code class="docutils literal notranslate"><span class="pre">imap</span></code>/<code class="docutils literal notranslate"><span class="pre">imap_unordered</span></code>/<code class="docutils literal notranslate"><span class="pre">apply</span></code>/<code class="docutils literal notranslate"><span class="pre">apply_async</span></code> functions</p></li>
 <li><p>Easy use of copy-on-write shared objects with a pool of workers (copy-on-write is only available for start method
 <code class="docutils literal notranslate"><span class="pre">fork</span></code>, so it’s not supported on Windows)</p></li>
 <li><p>Each worker can have its own state and with convenient worker init and exit functionality this state can be easily
@@ -234,6 +235,7 @@ found at <a class="reference internal" href="troubleshooting.html#troubleshootin
 <li class="toctree-l3"><a class="reference internal" href="usage/map/numpy.html">Numpy arrays</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="usage/apply.html">Apply family</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/dashboard.html">Dashboard</a></li>
 </ul>
 </li>
@@ -264,7 +266,7 @@ found at <a class="reference internal" href="troubleshooting.html#troubleshootin
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2022, Slimmer AI
+        &copy; Copyright 2023, Slimmer AI
 
     </p>
   </div>
@@ -314,12 +316,11 @@ found at <a class="reference internal" href="troubleshooting.html#troubleshootin
             <dd><a href="v2.4.0/index.html">v2.4.0</a></dd>
             <dd><a href="v2.5.0/index.html">v2.5.0</a></dd>
             <dd><a href="v2.6.0/index.html">v2.6.0</a></dd>
+            <dd><a href="v2.7.0/index.html">v2.7.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
-            <dd><a href="exceptions/index.html">exceptions</a></dd>
             <dd><a href="master/index.html">master</a></dd>
-            <dd><a href="ordered_tasks/index.html">ordered_tasks</a></dd>
         </dl>
     </div>
 </div>

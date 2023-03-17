@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Progress bar &mdash; mpire 2.6.0 documentation</title>
+  <title>Progress bar &mdash; mpire 2.7.0 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.6.0
+                2.7.0
               </div>
             
           
@@ -112,6 +112,7 @@
 <li class="toctree-l3"><a class="reference internal" href="numpy.html">Numpy arrays</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../apply.html">Apply family</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../dashboard.html">Dashboard</a></li>
 </ul>
 </li>
@@ -192,9 +193,14 @@
 <div class="contents local topic" id="contents">
 <p class="topic-title">Contents</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#progress-bar-options" id="id1">Progress bar options</a></p>
+<li><p><a class="reference internal" href="#progress-bar-options" id="id2">Progress bar options</a></p>
 <ul>
-<li><p><a class="reference internal" href="#progress-bar-position" id="id2">Progress bar position</a></p></li>
+<li><p><a class="reference internal" href="#progress-bar-position" id="id3">Progress bar position</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#progress-bar-style" id="id4">Progress bar style</a></p>
+<ul>
+<li><p><a class="reference internal" href="#changing-the-default-style" id="id5">Changing the default style</a></p></li>
 </ul>
 </li>
 </ul>
@@ -207,16 +213,8 @@ to include a progress bar is by enabling the <code class="docutils literal notra
 </div>
 <p>This will display a basic <code class="docutils literal notranslate"><span class="pre">tqdm</span></code> progress bar displaying the time elapsed and remaining, number of tasks completed
 (including a percentage value) and the speed (i.e., number of tasks completed per time unit).</p>
-<p>When inside a Jupyter/IPython notebook, the progress bar will change automatically to a native Jupyter widget.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The Jupyter <code class="docutils literal notranslate"><span class="pre">tqdm</span></code> widget requires the Javascript widget to run, which might not be enabled by default. You will
-notice a <code class="docutils literal notranslate"><span class="pre">Widget</span> <span class="pre">Javascript</span> <span class="pre">not</span> <span class="pre">detected</span></code> error message in your notebook if so. To remedy this, enable the widget
-by executing <code class="docutils literal notranslate"><span class="pre">jupyter</span> <span class="pre">nbextension</span> <span class="pre">enable</span> <span class="pre">--py</span> <span class="pre">--sys-prefix</span> <span class="pre">widgetsnbextension</span></code> in your terminal before starting
-the notebook.</p>
-</div>
 <section id="progress-bar-options">
-<h2><a class="toc-backref" href="#id1">Progress bar options</a><a class="headerlink" href="#progress-bar-options" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Progress bar options</a><a class="headerlink" href="#progress-bar-options" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">tqdm</span></code> progress bar can be configured using the <code class="docutils literal notranslate"><span class="pre">progress_bar_options</span></code> parameter. This parameter accepts a
 dictionary with keyword arguments that will be passed to the <code class="docutils literal notranslate"><span class="pre">tqdm</span></code> constructor.</p>
 <p>Some options in <code class="docutils literal notranslate"><span class="pre">tqdm</span></code> will be overwritten by MPIRE. These include the <code class="docutils literal notranslate"><span class="pre">iterable</span></code>, <code class="docutils literal notranslate"><span class="pre">total</span></code> and <code class="docutils literal notranslate"><span class="pre">leave</span></code>
@@ -231,7 +229,7 @@ default value assigned to them, but can be overwritten by the user.</p>
 </div>
 <p>For a complete list of available options, check out the <a class="reference external" href="https://tqdm.github.io/docs/tqdm/#__init__">tqdm docs</a>.</p>
 <section id="progress-bar-position">
-<h3><a class="toc-backref" href="#id2">Progress bar position</a><a class="headerlink" href="#progress-bar-position" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id3">Progress bar position</a><a class="headerlink" href="#progress-bar-position" title="Permalink to this headline">¶</a></h3>
 <p>You can easily print a progress bar on a different position on the terminal using the <code class="docutils literal notranslate"><span class="pre">position</span></code> parameter of
 <code class="docutils literal notranslate"><span class="pre">tqdm</span></code>, which facilitates the use of multiple progress bars. Here’s an example of using multiple progress bars using
 nested WorkerPools:</p>
@@ -258,6 +256,35 @@ dashboard.</p>
 </div>
 </section>
 </section>
+<section id="progress-bar-style">
+<span id="id1"></span><h2><a class="toc-backref" href="#id4">Progress bar style</a><a class="headerlink" href="#progress-bar-style" title="Permalink to this headline">¶</a></h2>
+<p>You can switch to a notebook widget by changing the <code class="docutils literal notranslate"><span class="pre">progress_bar_style</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">'notebook'</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WorkerPool</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">progress_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">progress_bar_style</span><span class="o">=</span><span class="s1">&#39;notebook&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The available styles are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: use the default style (= <code class="docutils literal notranslate"><span class="pre">'std'</span></code> , see below)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'std'</span></code>: use the standard <code class="docutils literal notranslate"><span class="pre">tqdm</span></code> progress bar</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'notebook'</span></code>: use the Jupyter notebook widget</p></li>
+</ul>
+<p>When in a terminal and using the <code class="docutils literal notranslate"><span class="pre">'notebook'</span></code> style, the progress bar will behave weirdly. This is not recommended.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you run into problems with getting the progress bar to work in a Jupyter notebook (with <code class="docutils literal notranslate"><span class="pre">'notebook'</span></code> style),
+have a look at <a class="reference internal" href="../../troubleshooting.html#troubleshooting-progress-bar"><span class="std std-ref">Progress bar issues with Jupyter notebooks</span></a>.</p>
+</div>
+<section id="changing-the-default-style">
+<h3><a class="toc-backref" href="#id5">Changing the default style</a><a class="headerlink" href="#changing-the-default-style" title="Permalink to this headline">¶</a></h3>
+<p>You can change the default style by setting the <code class="xref py py-obj docutils literal notranslate"><span class="pre">mpire.tqdm_utils.PROGRESS_BAR_DEFAULT_STYLE</span></code> variable:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">mpire.tqdm_utils</span>
+
+<span class="n">mpire</span><span class="o">.</span><span class="n">tqdm_utils</span><span class="o">.</span><span class="n">PROGRESS_BAR_DEFAULT_STYLE</span> <span class="o">=</span> <span class="s1">&#39;notebook&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 
 
@@ -281,7 +308,7 @@ dashboard.</p>
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2022, Slimmer AI
+        &copy; Copyright 2023, Slimmer AI
 
     </p>
   </div>
@@ -331,12 +358,11 @@ dashboard.</p>
             <dd><a href="../../v2.4.0/usage/map/progress_bar.html">v2.4.0</a></dd>
             <dd><a href="../../v2.5.0/usage/map/progress_bar.html">v2.5.0</a></dd>
             <dd><a href="../../v2.6.0/usage/map/progress_bar.html">v2.6.0</a></dd>
+            <dd><a href="../../v2.7.0/usage/map/progress_bar.html">v2.7.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
-            <dd><a href="../../exceptions/usage/map/progress_bar.html">exceptions</a></dd>
             <dd><a href="../../master/usage/map/progress_bar.html">master</a></dd>
-            <dd><a href="../../ordered_tasks/usage/map/progress_bar.html">ordered_tasks</a></dd>
         </dl>
     </div>
 </div>
