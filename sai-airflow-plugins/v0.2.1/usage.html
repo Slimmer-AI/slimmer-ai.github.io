@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Basic usage &mdash; sai-airflow-plugins 0.2.1
+ documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/banner.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API reference" href="reference.html" />
+    <link rel="prev" title="Installation" href="install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            sai-airflow-plugins
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">sai-airflow-plugins documentation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Basic usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fabric-operators">Fabric operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mattermost-operator">Mattermost operator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conditional-operators">Conditional operators</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sai-airflow-plugins</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Basic usage</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="basic-usage">
+<h1>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading"></a></h1>
+<nav class="contents local" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#fabric-operators" id="id1">Fabric operators</a></p></li>
+<li><p><a class="reference internal" href="#mattermost-operator" id="id2">Mattermost operator</a></p></li>
+<li><p><a class="reference internal" href="#conditional-operators" id="id3">Conditional operators</a></p></li>
+</ul>
+</nav>
+<section id="fabric-operators">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Fabric operators</a><a class="headerlink" href="#fabric-operators" title="Permalink to this heading"></a></h2>
+<p>Use <a class="reference internal" href="reference.html#sai_airflow_plugins.operators.fabric_operator.FabricOperator" title="sai_airflow_plugins.operators.fabric_operator.FabricOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">FabricOperator</span></code></a> to execute a command over SSH using the
+<a class="reference external" href="https://www.fabfile.org/">Fabric</a> library, with e.g. a sudo password responder:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">op</span> <span class="o">=</span> <span class="n">FabricOperator</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;example_fabric_task&quot;</span><span class="p">,</span>
+    <span class="n">dag_id</span><span class="o">=</span><span class="s2">&quot;my_dag&quot;</span><span class="p">,</span>
+    <span class="n">ssh_conn_id</span><span class="o">=</span><span class="s2">&quot;ssh_default&quot;</span><span class="p">,</span>
+    <span class="n">remote_host</span><span class="o">=</span><span class="s2">&quot;my.remote.host&quot;</span><span class="p">,</span>
+    <span class="n">command</span><span class="o">=</span><span class="s2">&quot;sudo ls -al &quot;</span><span class="p">,</span>
+    <span class="n">add_sudo_password_responder</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>You can use a <a class="reference internal" href="reference.html#sai_airflow_plugins.hooks.fabric_hook.FabricHook" title="sai_airflow_plugins.hooks.fabric_hook.FabricHook"><code class="xref py py-class docutils literal notranslate"><span class="pre">FabricHook</span></code></a> instead of an <code class="docutils literal notranslate"><span class="pre">ssh_conn_id</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hook</span> <span class="o">=</span> <span class="n">FabricHook</span><span class="p">(</span>
+    <span class="n">remote_host</span><span class="o">=</span><span class="s2">&quot;my.remote.host&quot;</span><span class="p">,</span>
+    <span class="n">username</span><span class="o">=</span><span class="s2">&quot;my.user&quot;</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="s2">&quot;mypass&quot;</span>
+<span class="p">)</span>
+
+<span class="n">op</span> <span class="o">=</span> <span class="n">FabricOperator</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;example_fabric_task&quot;</span><span class="p">,</span>
+    <span class="n">dag_id</span><span class="o">=</span><span class="s2">&quot;my_dag&quot;</span><span class="p">,</span>
+    <span class="n">fabric_hook</span><span class="o">=</span><span class="n">hook</span><span class="p">,</span>
+    <span class="n">command</span><span class="o">=</span><span class="s2">&quot;my_shell_script.sh&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Use a <a class="reference internal" href="reference.html#sai_airflow_plugins.sensors.fabric_sensor.FabricSensor" title="sai_airflow_plugins.sensors.fabric_sensor.FabricSensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FabricSensor</span></code></a> to wait until a command results in
+exit code <code class="docutils literal notranslate"><span class="pre">0</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">op</span> <span class="o">=</span> <span class="n">FabricSensor</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;example_fabric_task&quot;</span><span class="p">,</span>
+    <span class="n">dag_id</span><span class="o">=</span><span class="s2">&quot;my_dag&quot;</span><span class="p">,</span>
+    <span class="n">poke_interval</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mi">3600</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;reschedule&quot;</span><span class="p">,</span>
+    <span class="n">ssh_conn_id</span><span class="o">=</span><span class="s2">&quot;ssh_default&quot;</span><span class="p">,</span>
+    <span class="n">command</span><span class="o">=</span><span class="s2">&quot;test -f {{ params.my_file&quot;</span> <span class="p">}}</span> <span class="s2">&quot;,</span>
+    <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;my_file&quot;</span><span class="p">:</span> <span class="s2">&quot;very_important_data.bin&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="mattermost-operator">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Mattermost operator</a><a class="headerlink" href="#mattermost-operator" title="Permalink to this heading"></a></h2>
+<p>Use <a class="reference internal" href="reference.html#sai_airflow_plugins.operators.mattermost_webhook_operator.MattermostWebhookOperator" title="sai_airflow_plugins.operators.mattermost_webhook_operator.MattermostWebhookOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">MattermostWebhookOperator</span></code></a> for a task that sends
+a message to an <a class="reference external" href="https://docs.mattermost.com/developer/webhooks-incoming.html">incoming Mattermost webhook</a>.</p>
+<p>The HTTP <code class="docutils literal notranslate"><span class="pre">Connection</span></code> that you specify with <code class="docutils literal notranslate"><span class="pre">http_conn_id</span></code> should contain a <code class="docutils literal notranslate"><span class="pre">webhook_token</span></code> in its <code class="docutils literal notranslate"><span class="pre">extras</span></code>
+field. Alternatively you can supply it in the operator:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">op</span> <span class="o">=</span> <span class="n">MattermostWebhookOperator</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;example_mattermost_task&quot;</span><span class="p">,</span>
+    <span class="n">dag_id</span><span class="o">=</span><span class="s2">&quot;my_dag&quot;</span><span class="p">,</span>
+    <span class="n">http_conn_id</span><span class="o">=</span><span class="s2">&quot;http_mattermost&quot;</span><span class="p">,</span>
+    <span class="n">webhook_token</span><span class="o">=</span><span class="s2">&quot;[webhook token]&quot;</span><span class="p">,</span>
+    <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Execution date: {{ ds }}&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also send a message without using a pre-defined Airflow <code class="docutils literal notranslate"><span class="pre">Connection</span></code> object, by specifying the complete
+webhook URL in the operator’s <code class="docutils literal notranslate"><span class="pre">webhook_token</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">op</span> <span class="o">=</span> <span class="n">MattermostWebhookOperator</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;example_mattermost_task&quot;</span><span class="p">,</span>
+    <span class="n">dag_id</span><span class="o">=</span><span class="s2">&quot;my_dag&quot;</span><span class="p">,</span>
+    <span class="n">webhook_token</span><span class="o">=</span><span class="s2">&quot;https://my.mattermost.host/[webhook token]&quot;</span><span class="p">,</span>
+    <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Something went wrong&quot;</span><span class="p">,</span>
+    <span class="n">icon_emoji</span><span class="o">=</span><span class="s2">&quot;:boom:&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="conditional-operators">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Conditional operators</a><a class="headerlink" href="#conditional-operators" title="Permalink to this heading"></a></h2>
+<p>Use <a class="reference internal" href="reference.html#sai_airflow_plugins.operators.conditional_skip_mixin.ConditionalSkipMixin" title="sai_airflow_plugins.operators.conditional_skip_mixin.ConditionalSkipMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConditionalSkipMixin</span></code></a> to add a Python condition to
+an operator. The task will be skipped if the condition evaluates to False. Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyConditionalOperator</span><span class="p">(</span><span class="n">ConditionalSkipMixin</span><span class="p">,</span> <span class="n">MyOperator</span><span class="p">):</span>
+    <span class="n">template_fields</span> <span class="o">=</span> <span class="n">MyOperator</span><span class="o">.</span><span class="n">template_fields</span> <span class="o">+</span> <span class="n">ConditionalSkipMixin</span><span class="o">.</span><span class="n">template_fields</span>
+    <span class="n">ui_color</span> <span class="o">=</span> <span class="s2">&quot;#ff0000&quot;</span>
+
+<span class="n">op</span> <span class="o">=</span> <span class="n">ConditionalTestOperator</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;example_conditional_task&quot;</span><span class="p">,</span>
+    <span class="n">dag_id</span><span class="o">=</span><span class="s2">&quot;my_dag&quot;</span><span class="p">,</span>
+    <span class="n">condition_callable</span><span class="o">=</span><span class="k">lambda</span> <span class="n">my_arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task_instance&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">try_number</span> <span class="o">==</span> <span class="n">my_param</span>
+    <span class="n">condition_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;my_arg&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+    <span class="n">condition_provide_context</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The mixin also works with sensors:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">op</span> <span class="o">=</span> <span class="n">ConditionalBashSensor</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;example_conditional_task&quot;</span><span class="p">,</span>
+    <span class="n">dag_id</span><span class="o">=</span><span class="s2">&quot;my_dag&quot;</span><span class="p">,</span>
+    <span class="n">poke_interval</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mi">3600</span><span class="p">,</span>
+    <span class="n">bash_command</span><span class="o">=</span><span class="s2">&quot;test -f very_important_data.bin &quot;</span><span class="p">,</span>
+    <span class="n">condition_callable</span><span class="o">=</span><span class="k">lambda</span> <span class="n">my_arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task_instance&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">try_number</span> <span class="o">==</span> <span class="n">my_param</span>
+    <span class="n">condition_args</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+    <span class="n">condition_provide_context</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>You can find several predefined conditional operators in modules
+<a class="reference internal" href="reference.html#module-sai_airflow_plugins.operators.conditional_operators" title="sai_airflow_plugins.operators.conditional_operators"><code class="xref py py-mod docutils literal notranslate"><span class="pre">conditional_operators</span></code></a> and <a class="reference internal" href="reference.html#module-sai_airflow_plugins.sensors.conditional_sensors" title="sai_airflow_plugins.sensors.conditional_sensors"><code class="xref py py-mod docutils literal notranslate"><span class="pre">conditional_sensors</span></code></a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="install.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="reference.html" class="btn btn-neutral float-right" title="API reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Slimmer.AI.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> Other Versions</span>
+        v: v0.2.1
+        <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        <dl>
+            <dt>Tags</dt>
+            <dd><a href="../v0.1.0/usage.html">v0.1.0</a></dd>
+            <dd><a href="../v0.1.1/usage.html">v0.1.1</a></dd>
+            <dd><a href="../v0.1.2/usage.html">v0.1.2</a></dd>
+            <dd><a href="../v0.1.3/usage.html">v0.1.3</a></dd>
+            <dd><a href="../v0.1.4/usage.html">v0.1.4</a></dd>
+            <dd><a href="../v0.1.5/usage.html">v0.1.5</a></dd>
+            <dd><a href="../v0.1.6/usage.html">v0.1.6</a></dd>
+            <dd><a href="../v0.1.7/usage.html">v0.1.7</a></dd>
+            <dd><a href="../v0.1.8/usage.html">v0.1.8</a></dd>
+            <dd><a href="../v0.1.9/usage.html">v0.1.9</a></dd>
+            <dd><a href="../v0.2.0/usage.html">v0.2.0</a></dd>
+            <dd><a href="usage.html">v0.2.1</a></dd>
+        </dl>
+        <dl>
+            <dt>Branches</dt>
+            <dd><a href="../main/usage.html">main</a></dd>
+        </dl>
+    </div>
+</div>
+<script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
